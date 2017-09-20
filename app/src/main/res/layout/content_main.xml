@@ -9,6 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/bgcolor"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.invincix.khanam.MainActivity"
     tools:showIn="@layout/app_bar_main">
@@ -28,9 +29,13 @@
         android:inputType="phone"
         android:ems="10"
         android:id="@+id/phone_number_4"
+        android:backgroundTint="@color/colorAccent"
+        android:foregroundTint="@color/colorAccent"
+        android:textColor="@color/colorAccent"
         android:layout_above="@+id/button_save"
         android:layout_alignStart="@+id/phone_number_3"
-        android:layout_marginBottom="25dp" />
+        android:layout_marginBottom="25dp"
+        android:textColorLink="?attr/colorBackgroundFloating" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -39,7 +44,12 @@
         android:ems="10"
         android:id="@+id/phone_number_3"
         android:layout_above="@+id/phone_number_4"
-        android:layout_alignStart="@+id/phone_number_2" />
+        android:backgroundTint="@color/colorAccent"
+        android:textColor="@color/colorAccent"
+        android:foregroundTint="@color/colorAccent"
+        android:layout_alignStart="@+id/phone_number_2"
+        android:textColorLink="@android:color/white"
+        android:textColorHint="?android:attr/textColorPrimaryInverseDisableOnly" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -47,9 +57,12 @@
         android:inputType="phone"
         android:ems="10"
         android:id="@+id/phone_number_2"
+        android:textColor="@color/colorAccent"
         android:layout_above="@+id/phone_number_3"
         android:layout_alignStart="@+id/phone_number_1"
-        />
+        android:textColorLink="@android:color/white"
+        android:backgroundTint="@color/colorAccent"
+        android:foregroundTint="@color/colorAccent" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -59,7 +72,12 @@
         android:id="@+id/phone_number_1"
         android:layout_above="@+id/phone_number_2"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="11dp" />
+        android:layout_marginBottom="11dp"
+        android:textColorLink="@android:color/white"
+        android:backgroundTint="@color/colorAccent"
+        android:foregroundTint="@color/colorAccent"
+        android:textColor="@color/colorAccent"
+        />
 
     <TextView
         android:text="Enter Your Name?"
@@ -67,6 +85,7 @@
         android:layout_height="wrap_content"
         android:textSize="25sp"
         android:id="@+id/getname"
+        android:textColor="#ffffff"
         android:layout_alignParentTop="true"
         android:layout_alignEnd="@+id/phone_number_1"
         android:layout_marginTop="28dp" />
@@ -76,6 +95,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="25sp"
+        android:textColor="#ffffff"
         android:layout_below="@+id/edit_name"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="36dp"
@@ -85,10 +105,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
+        android:backgroundTint="@color/colorAccent"
+        android:foregroundTint="@color/colorAccent"
         android:ems="10"
         android:id="@+id/edit_name"
         android:layout_marginTop="21dp"
+        android:textColor="@color/colorAccent"
         android:layout_below="@+id/getname"
-        android:layout_alignEnd="@+id/getname" />
+        android:layout_alignEnd="@+id/getname"
+        android:textColorLink="?attr/colorBackgroundFloating"
+        android:textColorHighlight="@color/colorAccent" />
 
 </RelativeLayout>

@@ -5,6 +5,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity
     public int counter;
     public String longitude;
     public static final String STORE_DATA = "MyPrefs";
+    private TextView toolbarText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Hiiii Suraj Bhai", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -87,6 +89,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //set toolbar text
+        toolbarText=(TextView)findViewById(R.id.toolbartext);
+        Typeface custom=Typeface.createFromAsset(getAssets(),"fonts/toolbarfont.ttf");
+        toolbarText.setTypeface(custom);
 
 
         longitude = " ";
