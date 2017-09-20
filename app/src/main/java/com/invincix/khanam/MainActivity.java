@@ -37,8 +37,18 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private EditText phone_number_1;
     private EditText phone_number_2;
@@ -53,11 +63,32 @@ public class MainActivity extends AppCompatActivity {
     public String longitude;
     public static final String STORE_DATA = "MyPrefs";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+
         longitude = " ";
         latitude = " ";
         counter=0;
@@ -88,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             }
-              else {
+            else {
                 if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
                 {
                     PermissionUtils.requestPermission(MainActivity.this, WRITE_EXTERNAL_STORAGE_REQUEST_CODE,
@@ -236,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        }
+            }
 
         } else {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -297,24 +328,24 @@ public class MainActivity extends AppCompatActivity {
                     Log.e("Button", "Clicked");
                     if (data_validation()) {
 
-                            String name = edit_name.getText().toString();
-                            String ph_no_1 = phone_number_1.getText().toString();
-                            String ph_no_2 = phone_number_2.getText().toString();
-                            String ph_no_3 = phone_number_3.getText().toString();
-                            String ph_no_4 = phone_number_4.getText().toString();
-                            SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.clear();
+                        String name = edit_name.getText().toString();
+                        String ph_no_1 = phone_number_1.getText().toString();
+                        String ph_no_2 = phone_number_2.getText().toString();
+                        String ph_no_3 = phone_number_3.getText().toString();
+                        String ph_no_4 = phone_number_4.getText().toString();
+                        SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.clear();
 
-                            editor.putString("LOCAL_NAME", name);
-                            editor.putString("LOCAL_PHONE_NUMBER_1", ph_no_1);
-                            editor.putString("LOCAL_PHONE_NUMBER_2", ph_no_2);
-                            editor.putString("LOCAL_PHONE_NUMBER_3", ph_no_3);
-                            editor.putString("LOCAL_PHONE_NUMBER_4", ph_no_4);
-                            editor.apply();
-                            Toast.makeText(getApplicationContext(), "Information Saved", Toast.LENGTH_LONG).show();
+                        editor.putString("LOCAL_NAME", name);
+                        editor.putString("LOCAL_PHONE_NUMBER_1", ph_no_1);
+                        editor.putString("LOCAL_PHONE_NUMBER_2", ph_no_2);
+                        editor.putString("LOCAL_PHONE_NUMBER_3", ph_no_3);
+                        editor.putString("LOCAL_PHONE_NUMBER_4", ph_no_4);
+                        editor.apply();
+                        Toast.makeText(getApplicationContext(), "Information Saved", Toast.LENGTH_LONG).show();
 
-                        }
+                    }
 
 
                     else {
@@ -371,114 +402,174 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+
+
+
+
     }
 
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
-    class RequestService extends AsyncTask<String, Void, String> {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        private static final String TAG = "PhoneNumbers";
-        int responseCode;
-        String responseBody;
-        private String JsonResponse;
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
 
-        protected void onPreExecute() {
+        return super.onOptionsItemSelected(item);
+    }
 
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
 
         }
 
-        @Override
-        protected String doInBackground(String... params) {
-            String data_phone_number_1 = params[0];
-            String data_phone_number_2 = params[1];
-            String data_phone_number_3 = params[2];
-            String data_phone_number_4 = params[3];
-            String data_name = params[4];
-            String data_latitude = params[5];
-            String data_longitude = params[6];
-            String mobiles = data_phone_number_1 + "," + data_phone_number_2 + "," + data_phone_number_3 + "," + data_phone_number_4;
-            String message = "I " + data_name + " in trouble at https://maps.google.com/?ie=UTF8&ll=" + data_latitude + "," + data_longitude + " Need urgent help and attention.";
-            String authkey = "175066AfkBDqjLjK6e59be06c7";
-            String encoded_message = URLEncoder.encode(message);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+}
 
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
+class RequestService extends AsyncTask<String, Void, String> {
 
-            try {
-                URL url = new URL("https://control.msg91.com/api/sendhttp.php?authkey=" + authkey + "&mobiles=" + mobiles + "&message=" + encoded_message + "&sender=SAVEME&route=4&country=0");
-                urlConnection = (HttpURLConnection) url.openConnection();
+
+    private static final String TAG = "PhoneNumbers";
+    int responseCode;
+    String responseBody;
+    private String JsonResponse;
+
+    protected void onPreExecute() {
+
+
+    }
+
+    @Override
+    protected String doInBackground(String... params) {
+        String data_phone_number_1 = params[0];
+        String data_phone_number_2 = params[1];
+        String data_phone_number_3 = params[2];
+        String data_phone_number_4 = params[3];
+        String data_name = params[4];
+        String data_latitude = params[5];
+        String data_longitude = params[6];
+        String mobiles = data_phone_number_1 + "," + data_phone_number_2 + "," + data_phone_number_3 + "," + data_phone_number_4;
+        String message = "I " + data_name + " in trouble at https://maps.google.com/?ie=UTF8&ll=" + data_latitude + "," + data_longitude + " Need urgent help and attention.";
+        String authkey = "175066AfkBDqjLjK6e59be06c7";
+        String encoded_message = URLEncoder.encode(message);
+
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+
+        try {
+            URL url = new URL("https://control.msg91.com/api/sendhttp.php?authkey=" + authkey + "&mobiles=" + mobiles + "&message=" + encoded_message + "&sender=SAVEME&route=4&country=0");
+            urlConnection = (HttpURLConnection) url.openConnection();
 
 //set headers
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setRequestProperty("Content-Type", "application/json");
-                urlConnection.connect();
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.connect();
 //0
 //get response code
-                responseCode = urlConnection.getResponseCode();
-                responseBody = urlConnection.getResponseMessage();
+            responseCode = urlConnection.getResponseCode();
+            responseBody = urlConnection.getResponseMessage();
 
-                InputStream inputStream = urlConnection.getInputStream();
+            InputStream inputStream = urlConnection.getInputStream();
 //input stream
-                StringBuilder buffer = new StringBuilder();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    //  android.util.Log.e(TAG, "InputStream Is Null");
-                    return null;
+            StringBuilder buffer = new StringBuilder();
+            if (inputStream == null) {
+                // Nothing to do.
+                //  android.util.Log.e(TAG, "InputStream Is Null");
+                return null;
 
-                }
-                reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            }
+            reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
-                String inputLine;
-                while ((inputLine = reader.readLine()) != null)
-                    buffer.append(inputLine).append("\n");
+            String inputLine;
+            while ((inputLine = reader.readLine()) != null)
+                buffer.append(inputLine).append("\n");
 
-                if (buffer.length() == 0) {
-                    //android.util.Log.e(TAG, "Stream was empty. No point in parsing.");
-                    return null;
-                } else {
+            if (buffer.length() == 0) {
+                //android.util.Log.e(TAG, "Stream was empty. No point in parsing.");
+                return null;
+            } else {
 
-                    JsonResponse = buffer.toString();
+                JsonResponse = buffer.toString();
 //response data
-                    //android.util.Log.i(TAG, "doInBackGround() " + JsonResponse);
-                    return JsonResponse;
-                }
+                //android.util.Log.i(TAG, "doInBackGround() " + JsonResponse);
+                return JsonResponse;
+            }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        android.util.Log.e(TAG, "Error closing stream", e);
-                    }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (final IOException e) {
+                    android.util.Log.e(TAG, "Error closing stream", e);
                 }
             }
-            return null;
+        }
+        return null;
+    }
+
+    protected void onPostExecute(String data) {
+
+        //android.util.Log.i(TAG, "no return");
+        if (data == null) {
+            android.util.Log.e(TAG, "Error Null");
         }
 
-        protected void onPostExecute(String data) {
 
-            //android.util.Log.i(TAG, "no return");
-            if (data == null) {
-                android.util.Log.e(TAG, "Error Null");
-            }
+        if (responseCode == 200) {
 
+            android.util.Log.i(TAG, "Response Code = 200.... " + data);
 
-            if (responseCode == 200) {
+            Log.d(TAG, "Messages Sent");
 
-                android.util.Log.i(TAG, "Response Code = 200.... " + data);
-
-                Log.d(TAG, "Messages Sent");
-
-
-            }
 
         }
-
 
     }
+
+
 }
