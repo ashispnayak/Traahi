@@ -17,12 +17,15 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ShareActionProvider;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.content.SharedPreferences;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity
     public static final String STORE_DATA = "MyPrefs";
     private TextView toolbarText;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +99,22 @@ public class MainActivity extends AppCompatActivity
         Typeface custom=Typeface.createFromAsset(getAssets(),"fonts/toolbarfont.ttf");
         toolbarText.setTypeface(custom);
 
+        //nav header custom
+        NavigationView navView= (NavigationView) findViewById(R.id.nav_view);
+        View header=navView.getHeaderView(0);
+        LinearLayout sideNavLayout = (LinearLayout)header.findViewById(R.id.navheadlayout);
+        sideNavLayout.setBackgroundResource(R.drawable.navhead);
+        Menu menu = navigationView.getMenu();
+
+        //changes communicate color
+        MenuItem tools= menu.findItem(R.id.communicate);
+        SpannableString s = new SpannableString(tools.getTitle());
+        s.setSpan(new TextAppearanceSpan(this, R.style.communicatecolor), 0, s.length(), 0);
+        tools.setTitle(s);
+        navigationView.setNavigationItemSelectedListener(this);
+
+
+
 
         longitude = " ";
         latitude = " ";
@@ -123,7 +143,9 @@ public class MainActivity extends AppCompatActivity
                 }
                 Toast.makeText(getApplicationContext(), "Please Restart the app for the permissions to take effect", Toast.LENGTH_LONG).show();
 
-
+                Intent startinent=getIntent();
+                finish();
+                startActivity(startinent);
 
             }
             else {
@@ -132,15 +154,13 @@ public class MainActivity extends AppCompatActivity
                     PermissionUtils.requestPermission(MainActivity.this, WRITE_EXTERNAL_STORAGE_REQUEST_CODE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE, true);
                     Toast.makeText(getApplicationContext(), "Please Restart the app for the permissions to take effect", Toast.LENGTH_LONG).show();
-
+                    Intent startinent=getIntent();
+                    finish();
+                    startActivity(startinent);
 
                 }
 
                 LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                if(counter>0)
-                {
-                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                }
 
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
                     @Override
@@ -164,6 +184,7 @@ public class MainActivity extends AppCompatActivity
                 Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (myLocation == null) {
                     Toast.makeText(getApplicationContext(), "Please Turn On Your Location", Toast.LENGTH_LONG).show();
+
                 } else {
                     myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     longitude = String.valueOf(myLocation.getLongitude());
@@ -301,6 +322,7 @@ public class MainActivity extends AppCompatActivity
             Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (myLocation == null) {
                 Toast.makeText(getApplicationContext(), "Please Turn On Your Location", Toast.LENGTH_LONG).show();
+
             } else {
                 myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 longitude = String.valueOf(myLocation.getLongitude());
@@ -453,18 +475,33 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+         if (id == R.id.nav_nearestPolicStation) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_nearestAmbulance) {
 
-        } else if (id == R.id.nav_manage) {
+        }
+         else if (id == R.id.nav_PCR) {
 
-        } else if (id == R.id.nav_share) {
+         }
+         else if (id == R.id.nav_RTI_Process) {
 
-        } else if (id == R.id.nav_send) {
+         }
+         else if (id == R.id.nav_safetyTips) {
 
+         }
+         else if (id == R.id.nav_credits) {
+
+         }
+         else if (id == R.id.nav_about_us) {
+
+         }
+
+         else if (id == R.id.nav_share) {
+             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+             sharingIntent.setType("text/plain");
+             sharingIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message));
+             sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Traahi");
+             startActivity(Intent.createChooser(sharingIntent, "Share via "));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -16,7 +16,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/background_dark"
+            android:background="#2d8caa"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <TextView
@@ -24,6 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Traahi"
+                android:textColor="#3a3a3c"
                 android:textSize="50sp"
                 android:textStyle="bold"
                 android:layout_gravity="center"

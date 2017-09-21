@@ -29,8 +29,8 @@
         android:inputType="phone"
         android:ems="10"
         android:id="@+id/phone_number_4"
-        android:backgroundTint="@color/colorAccent"
-        android:foregroundTint="@color/colorAccent"
+        android:backgroundTint="@color/toolbarcolor"
+        android:foregroundTint="@color/toolbarcolor"
         android:textColor="@color/colorAccent"
         android:layout_above="@+id/button_save"
         android:layout_alignStart="@+id/phone_number_3"
@@ -44,9 +44,9 @@
         android:ems="10"
         android:id="@+id/phone_number_3"
         android:layout_above="@+id/phone_number_4"
-        android:backgroundTint="@color/colorAccent"
         android:textColor="@color/colorAccent"
-        android:foregroundTint="@color/colorAccent"
+        android:backgroundTint="@color/toolbarcolor"
+        android:foregroundTint="@color/toolbarcolor"
         android:layout_alignStart="@+id/phone_number_2"
         android:textColorLink="@android:color/white"
         android:textColorHint="?android:attr/textColorPrimaryInverseDisableOnly" />
@@ -61,8 +61,8 @@
         android:layout_above="@+id/phone_number_3"
         android:layout_alignStart="@+id/phone_number_1"
         android:textColorLink="@android:color/white"
-        android:backgroundTint="@color/colorAccent"
-        android:foregroundTint="@color/colorAccent" />
+        android:backgroundTint="@color/toolbarcolor"
+        android:foregroundTint="@color/toolbarcolor" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -74,8 +74,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="11dp"
         android:textColorLink="@android:color/white"
-        android:backgroundTint="@color/colorAccent"
-        android:foregroundTint="@color/colorAccent"
+        android:backgroundTint="@color/toolbarcolor"
+        android:foregroundTint="@color/toolbarcolor"
         android:textColor="@color/colorAccent"
         />
 
@@ -85,7 +85,7 @@
         android:layout_height="wrap_content"
         android:textSize="25sp"
         android:id="@+id/getname"
-        android:textColor="#ffffff"
+        android:textColor="@color/toolbarcolor"
         android:layout_alignParentTop="true"
         android:layout_alignEnd="@+id/phone_number_1"
         android:layout_marginTop="28dp" />
@@ -95,7 +95,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="25sp"
-        android:textColor="#ffffff"
+        android:textColor="@color/toolbarcolor"
         android:layout_below="@+id/edit_name"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="36dp"
@@ -105,8 +105,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:backgroundTint="@color/colorAccent"
-        android:foregroundTint="@color/colorAccent"
+        android:backgroundTint="@color/toolbarcolor"
+        android:foregroundTint="@color/toolbarcolor"
         android:ems="10"
         android:id="@+id/edit_name"
         android:layout_marginTop="21dp"

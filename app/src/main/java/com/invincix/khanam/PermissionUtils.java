@@ -147,9 +147,10 @@ public abstract class PermissionUtils {
             return dialog;
         }
 /*
-* 1000 - Homepage Location Service
-* 1 - Request Blood Location Service
-*4000-
+
+* 1 -Main Activity
+* 2 -Send Messages
+
 * */
 
         private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 3000;
@@ -159,13 +160,15 @@ public abstract class PermissionUtils {
             final int requestCode = arguments.getInt(ARGUMENT_PERMISSION_REQUEST_CODE);
             mFinishActivity = arguments.getBoolean(ARGUMENT_FINISH_ACTIVITY);
 
-            if(requestCode == 1000){
-                message = "Permission required to update your location";
-            }else if(requestCode == 1){
+             if(requestCode == 1){
                 message = "Permission Required To find Location ";
-            }else if(requestCode == 3000 ){
-                message = "Permission Required To Update Data";
             }
+             else if(requestCode == 2 ){
+                 message = "Permission Required To find Location";
+             }
+             else if(requestCode == 3000 ){
+                 message = "Permission Required To Update Data";
+             }
             return new AlertDialog.Builder(getActivity(),R.style.MyAlertDialogStyle)
                     .setMessage(message)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -173,25 +176,13 @@ public abstract class PermissionUtils {
                         public void onClick(DialogInterface dialog, int which) {
                             // After click on Ok, request the permission.
 
-                            if(requestCode == 1000){
+                            if(requestCode == 1){
                                 ActivityCompat.requestPermissions(getActivity(),
                                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                                         requestCode);
-                            }else if(requestCode == 1){
-                                ActivityCompat.requestPermissions(getActivity(),
-                                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                                        requestCode);
-                            }else if(requestCode == 3000 || requestCode == 5000){
+                            }else if(requestCode == 3000){
                                 ActivityCompat.requestPermissions(getActivity(),
                                         new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        requestCode);
-                            }else if(requestCode == 4000){
-                                ActivityCompat.requestPermissions(getActivity(),
-                                        new String[]{android.Manifest.permission.CAMERA},
-                                        requestCode);
-                            }else if(requestCode == 5000){
-                                ActivityCompat.requestPermissions(getActivity(),
-                                        new String[]{Manifest.permission.CALL_PHONE},
                                         requestCode);
                             }
                             // Do not finish the Activity while requesting permission.
