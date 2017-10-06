@@ -4,26 +4,7 @@
     <group android:checkableBehavior="single">
 
 
-        <item
-            android:id="@+id/nav_nearestPolicStation"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Nearest Police Station" />
-        <item
-            android:id="@+id/nav_nearestAmbulance"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Nearest Ambulance" />
-        <item
-            android:id="@+id/nav_PCR"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Nearest PCR" />
-        <item
-            android:id="@+id/nav_RTI_Process"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="RTI Process" />
-        <item
-            android:id="@+id/nav_safetyTips"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Safety Tips" />
+
         <item
             android:id="@+id/nav_credits"
             android:icon="@drawable/ic_menu_slideshow"

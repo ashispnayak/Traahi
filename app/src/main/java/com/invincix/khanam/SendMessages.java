@@ -10,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ public class SendMessages extends AppCompatActivity {
     public String latitude;
     public String longitude;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 2;
-    private TextView ph_1,ph_2,ph_3,ph_4,sendingmessages;
+    private TextView ph_1, ph_2, ph_3, ph_4, sendingmessages;
 
 
     @Override
@@ -41,117 +42,57 @@ public class SendMessages extends AppCompatActivity {
 
         longitude = " ";
         latitude = " ";
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Permission to access the location if missing.
-                PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                        Manifest.permission.ACCESS_FINE_LOCATION, true);
-
-
-                Toast.makeText(getApplicationContext(), "Please Restart the app for the permissions to take effect", Toast.LENGTH_LONG).show();
-
-                Intent startinent = getIntent();
-                finish();
-                startActivity(startinent);
-
-            } else {
-
-                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        //Retrieve Datas
+        SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
+        String data_phone_number_1 = (sharedPref.getString("LOCAL_PHONE_NUMBER_1", null));
+        String data_phone_number_2 = (sharedPref.getString("LOCAL_PHONE_NUMBER_2", null));
+        String data_phone_number_3 = (sharedPref.getString("LOCAL_PHONE_NUMBER_3", null));
+        String data_phone_number_4 = (sharedPref.getString("LOCAL_PHONE_NUMBER_4", null));
+        String data_name = (sharedPref.getString("LOCAL_NAME", null));
+        ph_1 = (TextView) findViewById(R.id.ph_1);
+        ph_2 = (TextView) findViewById(R.id.ph_2);
+        ph_3 = (TextView) findViewById(R.id.ph_3);
+        ph_4 = (TextView) findViewById(R.id.ph_4);
+        sendingmessages = (TextView) findViewById(R.id.sendingmessage);
+        ph_1.setText(data_phone_number_1);
+        ph_2.setText(data_phone_number_2);
+        ph_3.setText(data_phone_number_3);
+        ph_4.setText(data_phone_number_4);
+        sendingmessages.setText("Hii " + data_name + " sending messages");
 
 
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
-                    @Override
-                    public void onStatusChanged(String s, int i, Bundle bundle) {
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String s) {
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String s) {
-
-                    }
-
-                    @Override
-                    public void onLocationChanged(final Location location) {
-
-                    }
-                });
-                Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (myLocation == null) {
-                    Toast.makeText(getApplicationContext(), "Please Turn On Your Location", Toast.LENGTH_LONG).show();
-
-                } else {
-                    myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    longitude = String.valueOf(myLocation.getLongitude());
-                    latitude = String.valueOf(myLocation.getLatitude());
-                    Log.e("longitude", longitude);
-
-                    if (longitude != " " && latitude != " ") {
-                        //Retrieve Datas
-                        SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
-                        String data_phone_number_1 = (sharedPref.getString("LOCAL_PHONE_NUMBER_1", ""));
-                        String data_phone_number_2 = (sharedPref.getString("LOCAL_PHONE_NUMBER_2", ""));
-                        String data_phone_number_3 = (sharedPref.getString("LOCAL_PHONE_NUMBER_3", ""));
-                        String data_phone_number_4 = (sharedPref.getString("LOCAL_PHONE_NUMBER_4", ""));
-                        String data_name = (sharedPref.getString("LOCAL_NAME", ""));
-                        ph_1=(TextView)findViewById(R.id.ph_1);
-                        ph_2=(TextView)findViewById(R.id.ph_2);
-                        ph_3=(TextView)findViewById(R.id.ph_3);
-                        ph_4=(TextView)findViewById(R.id.ph_4);
-                        sendingmessages=(TextView)findViewById(R.id.sendingmessage);
-                        ph_1.setText(data_phone_number_1);
-                        ph_2.setText(data_phone_number_2);
-                        ph_3.setText(data_phone_number_3);
-                        ph_4.setText(data_phone_number_4);
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+            }
 
+            @Override
+            public void onProviderEnabled(String s) {
+            }
 
-                        if (data_name != null && data_phone_number_1 != null && data_phone_number_2 != null && data_phone_number_3 != null && data_phone_number_4 != null) {
-                            new SendMessageWithTouch().execute(data_phone_number_1, data_phone_number_2, data_phone_number_3, data_phone_number_4, data_name, latitude, longitude);
-                            Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();
-
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(), "Messages not Sent", Toast.LENGTH_LONG).show();
-
-                        }
-                    }
-                }
+            @Override
+            public void onProviderDisabled(String s) {
 
             }
-        }
-        else{
 
+            @Override
+            public void onLocationChanged(final Location location) {
 
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-
-                }
-
-                @Override
-                public void onLocationChanged(final Location location) {
-
-                }
-            });
+            }
+        });
             Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (myLocation == null) {
                 Toast.makeText(getApplicationContext(), "Please Turn On Your Location", Toast.LENGTH_LONG).show();
@@ -163,29 +104,20 @@ public class SendMessages extends AppCompatActivity {
                 Log.e("longitude", longitude);
 
                 if (longitude != " " && latitude != " ") {
-                    //Retrieve Datas
-                    SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
-                    String data_phone_number_1 = (sharedPref.getString("LOCAL_PHONE_NUMBER_1", ""));
-                    String data_phone_number_2 = (sharedPref.getString("LOCAL_PHONE_NUMBER_2", ""));
-                    String data_phone_number_3 = (sharedPref.getString("LOCAL_PHONE_NUMBER_3", ""));
-                    String data_phone_number_4 = (sharedPref.getString("LOCAL_PHONE_NUMBER_4", ""));
-                    String data_name = (sharedPref.getString("LOCAL_NAME", ""));
 
 
-                    ph_1=(TextView)findViewById(R.id.ph_1);
-                    ph_2=(TextView)findViewById(R.id.ph_2);
-                    ph_3=(TextView)findViewById(R.id.ph_3);
-                    ph_4=(TextView)findViewById(R.id.ph_4);
-                    sendingmessages=(TextView)findViewById(R.id.sendingmessage);
-                    ph_1.setText(data_phone_number_1);
-                    ph_2.setText(data_phone_number_2);
-                    ph_3.setText(data_phone_number_3);
-                    ph_4.setText(data_phone_number_4);
+
+
+
 
 
                     if (data_name != null && data_phone_number_1 != null && data_phone_number_2 != null && data_phone_number_3 != null && data_phone_number_4 != null) {
                         new SendMessageWithTouch().execute(data_phone_number_1, data_phone_number_2, data_phone_number_3, data_phone_number_4, data_name, latitude, longitude);
                         Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();
+
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(), "Provide atleast 4 numbers", Toast.LENGTH_LONG).show();
 
                     }
 
@@ -196,7 +128,7 @@ public class SendMessages extends AppCompatActivity {
 
 
         }
-    }
+
 
 
 class SendMessageWithTouch extends AsyncTask<String, Void, String> {

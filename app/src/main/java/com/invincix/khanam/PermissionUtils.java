@@ -1,208 +1,213 @@
 package com.invincix.khanam;
 
-/**
- * Created by Ashis on 9/18/2017.
- */
-
-
-import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Utility class for access to runtime permissions.
+ * Created by Ashis on 10/3/2017.
  */
-public abstract class PermissionUtils {
 
-    /**
-     * Requests the fine location permission. If a rationale with an additional explanation should
-     * be shown to the user, displays a dialog that triggers the request.
-     */
-    public static void requestPermissionMultiple(AppCompatActivity activity, int requestId,
-                                                 String permission, boolean finishActivity) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
-            // Display a dialog with rationale.
-            PermissionUtils.RationaleDialog.newInstance(requestId, finishActivity)
-                    .show(activity.getSupportFragmentManager(), "dialog");
-        } else {
-            // Location permission has not been granted yet, request it.
-            ActivityCompat.requestPermissions(activity, new String[]{permission}, requestId);
 
+
+
+    public class PermissionUtils
+    {
+
+        Context context;
+        Activity current_activity;
+
+        PermissionResultCallback permissionResultCallback;
+
+
+        ArrayList<String> permission_list=new ArrayList<>();
+        ArrayList<String> listPermissionsNeeded=new ArrayList<>();
+        String dialog_content="";
+        int req_code;
+
+        public PermissionUtils(Context context)
+        {
+            this.context=context;
+            this.current_activity= (Activity) context;
+
+            permissionResultCallback= (PermissionResultCallback) context;
         }
-    }
-    public static void requestPermission(AppCompatActivity activity, int requestId,
-                                         String permission, boolean finishActivity) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
-            // Display a dialog with rationale.
-            PermissionUtils.RationaleDialog.newInstance(requestId, finishActivity)
-                    .show(activity.getSupportFragmentManager(), "dialog");
-        } else {
-            // Location permission has not been granted yet, request it.
-            ActivityCompat.requestPermissions(activity, new String[]{permission}, requestId);
 
-        }
-    }
-
-    /**
-     * Checks if the result contains a {@link PackageManager#PERMISSION_GRANTED} result for a
-     * permission from a runtime permissions request.
-     *
-     * @see android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback
-     */
-    public static boolean isPermissionGranted(String[] grantPermissions, int[] grantResults,
-                                              String permission) {
-        for (int i = 0; i < grantPermissions.length; i++) {
-            if (permission.equals(grantPermissions[i])) {
-                return grantResults[i] == PackageManager.PERMISSION_GRANTED;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * A dialog that displays a permission denied message.
-     */
-    public static class PermissionDeniedDialog extends DialogFragment {
-
-        private static final String ARGUMENT_FINISH_ACTIVITY = "finish";
-
-        private boolean mFinishActivity = false;
 
         /**
-         * Creates a new instance of this dialog and optionally finishes the calling Activity
-         * when the 'Ok' button is clicked.
-         */
-        public static PermissionDeniedDialog newInstance(boolean finishActivity) {
-            Bundle arguments = new Bundle();
-            arguments.putBoolean(ARGUMENT_FINISH_ACTIVITY, finishActivity);
-
-            PermissionDeniedDialog dialog = new PermissionDeniedDialog();
-            dialog.setArguments(arguments);
-            return dialog;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            mFinishActivity = getArguments().getBoolean(ARGUMENT_FINISH_ACTIVITY);
-
-            return new AlertDialog.Builder(getActivity())
-                    .setMessage("Location Permission Denied")
-                    .setPositiveButton(android.R.string.ok, null)
-                    .create();
-        }
-
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            super.onDismiss(dialog);
-            if (mFinishActivity) {
-                Toast.makeText(getActivity(),"Dismiss",
-                        Toast.LENGTH_SHORT).show();
-                getActivity().finish();
-            }
-        }
-    }
-
-    /**
-     * A dialog that explains the use of the location permission and requests the necessary
-     * permission.
-     * <p>
-     * The activity should implement
-     * {@link android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback}
-     * to handle permit or denial of this permission request.
-     */
-    public static class RationaleDialog extends DialogFragment {
-
-        private static final String ARGUMENT_PERMISSION_REQUEST_CODE = "requestCode";
-
-        private static final String ARGUMENT_FINISH_ACTIVITY = "finish";
-
-        private boolean mFinishActivity = false;
-        private String message;
-
-        /**
-         * Creates a new instance of a dialog displaying the rationale for the use of the location
-         * permission.
-         * <p>
-         * The permission is requested after clicking 'ok'.
+         * Check the API Level & Permission
          *
-         * @param requestCode    Id of the request that is used to request the permission. It is
-         *                       returned to the
-         *                       {@link android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback}.
-         * @param finishActivity Whether the calling Activity should be finished if the dialog is
-         *                       cancelled.
+         * @param permissions
+         * @param dialog_content
+         * @param request_code
          */
-        public static RationaleDialog newInstance(int requestCode, boolean finishActivity) {
-            Bundle arguments = new Bundle();
-            arguments.putInt(ARGUMENT_PERMISSION_REQUEST_CODE, requestCode);
-            arguments.putBoolean(ARGUMENT_FINISH_ACTIVITY, finishActivity);
-            RationaleDialog dialog = new RationaleDialog();
-            dialog.setArguments(arguments);
-            return dialog;
-        }
-/*
 
-* 1 -Main Activity
-* 2 -Send Messages
+        public void check_permission(ArrayList<String> permissions, String dialog_content, int request_code)
+        {
+            this.permission_list=permissions;
+            this.dialog_content=dialog_content;
+            this.req_code=request_code;
 
-* */
-
-        private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 3000;
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            Bundle arguments = getArguments();
-            final int requestCode = arguments.getInt(ARGUMENT_PERMISSION_REQUEST_CODE);
-            mFinishActivity = arguments.getBoolean(ARGUMENT_FINISH_ACTIVITY);
-
-             if(requestCode == 1){
-                message = "Permission Required To find Location ";
+            if(Build.VERSION.SDK_INT >= 23)
+            {
+                if (checkAndRequestPermissions(permissions, request_code))
+                {
+                    permissionResultCallback.PermissionGranted(request_code);
+                    Log.i("all permissions", "granted");
+                    Log.i("proceed", "to callback");
+                }
             }
-             else if(requestCode == 2 ){
-                 message = "Permission Required To find Location";
-             }
-             else if(requestCode == 3000 ){
-                 message = "Permission Required To Update Data";
-             }
-            return new AlertDialog.Builder(getActivity(),R.style.MyAlertDialogStyle)
-                    .setMessage(message)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // After click on Ok, request the permission.
+            else
+            {
+                permissionResultCallback.PermissionGranted(request_code);
 
-                            if(requestCode == 1){
-                                ActivityCompat.requestPermissions(getActivity(),
-                                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                                        requestCode);
-                            }else if(requestCode == 3000){
-                                ActivityCompat.requestPermissions(getActivity(),
-                                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        requestCode);
-                            }
-                            // Do not finish the Activity while requesting permission.
-                            mFinishActivity = false;
+                Log.i("all permissions", "granted");
+                Log.i("proceed", "to callback");
+            }
+
+        }
+
+
+        /**
+         * Check and request the Permissions
+         *
+         * @param permissions
+         * @param request_code
+         * @return
+         */
+
+        private  boolean checkAndRequestPermissions(ArrayList<String> permissions,int request_code) {
+
+            if(permissions.size()>0)
+            {
+                listPermissionsNeeded = new ArrayList<>();
+
+                for(int i=0;i<permissions.size();i++)
+                {
+                    int hasPermission = ContextCompat.checkSelfPermission(current_activity,permissions.get(i));
+
+                    if (hasPermission != PackageManager.PERMISSION_GRANTED) {
+                        listPermissionsNeeded.add(permissions.get(i));
+                    }
+
+                }
+
+                if (!listPermissionsNeeded.isEmpty())
+                {
+                    ActivityCompat.requestPermissions(current_activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),request_code);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /**
+         *
+         *
+         * @param requestCode
+         * @param permissions
+         * @param grantResults
+         */
+        public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
+        {
+            switch (requestCode)
+            {
+                case 1:
+                    if(grantResults.length>0)
+                    {
+                        Map<String, Integer> perms = new HashMap<>();
+
+                        for (int i = 0; i < permissions.length; i++)
+                        {
+                            perms.put(permissions[i], grantResults[i]);
                         }
-                    })
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .create();
-        }
 
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            super.onDismiss(dialog);
-            if (mFinishActivity) {
-                Toast.makeText(getActivity(),
-                        "Permission Denied",
-                        Toast.LENGTH_SHORT)
-                        .show();
-                getActivity().finish();
+                        final ArrayList<String> pending_permissions=new ArrayList<>();
+
+                        for (int i = 0; i < listPermissionsNeeded.size(); i++)
+                        {
+                            if (perms.get(listPermissionsNeeded.get(i)) != PackageManager.PERMISSION_GRANTED)
+                            {
+                                if(ActivityCompat.shouldShowRequestPermissionRationale(current_activity,listPermissionsNeeded.get(i)))
+                                    pending_permissions.add(listPermissionsNeeded.get(i));
+                                else
+                                {
+                                    Log.i("Go to settings","and enable permissions");
+                                    permissionResultCallback.NeverAskAgain(req_code);
+                                    Toast.makeText(current_activity, "Go to settings and enable permissions", Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            }
+
+                        }
+
+                        if(pending_permissions.size()>0)
+                        {
+                            showMessageOKCancel(dialog_content,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            switch (which) {
+                                                case DialogInterface.BUTTON_POSITIVE:
+                                                    check_permission(permission_list,dialog_content,req_code);
+                                                    break;
+                                                case DialogInterface.BUTTON_NEGATIVE:
+                                                    Log.i("permisson","not fully given");
+                                                    if(permission_list.size()==pending_permissions.size())
+                                                        permissionResultCallback.PermissionDenied(req_code);
+                                                    else
+                                                        permissionResultCallback.PartialPermissionGranted(req_code,pending_permissions);
+                                                    break;
+                                            }
+
+
+                                        }
+                                    });
+
+                        }
+                        else
+                        {
+                            Log.i("all","permissions granted");
+                            Log.i("proceed","to next step");
+                            permissionResultCallback.PermissionGranted(req_code);
+
+                        }
+
+
+
+                    }
+                    break;
             }
         }
+
+
+        /**
+         * Explain why the app needs permissions
+         *
+         * @param message
+         * @param okListener
+         */
+        private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+            new android.app.AlertDialog.Builder(current_activity)
+                    .setMessage(message)
+                    .setPositiveButton("Ok", okListener)
+                    .setNegativeButton("Cancel", okListener)
+                    .create()
+                    .show();
+        }
+
     }
-}
+

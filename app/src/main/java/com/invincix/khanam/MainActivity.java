@@ -2,7 +2,20 @@ package com.invincix.khanam;
 
 
 import android.Manifest;
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.Button;
+
+import java.util.ArrayList;
+
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
@@ -14,6 +27,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ShareActionProvider;
@@ -22,9 +36,12 @@ import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.content.SharedPreferences;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +58,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
+
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.NavigationView;
@@ -52,38 +70,45 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnRequestPermissionsResultCallback, PermissionResultCallback {
 
     private EditText phone_number_1;
     private EditText phone_number_2;
-    private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 3000;
     private EditText phone_number_3;
     private EditText phone_number_4;
-    private EditText edit_name;
-    private Button save;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private TextView textname;
+    private ImageButton addcontacts,safetybutton,policebutton,pcrbutton,rtibutton,ambulancebutton;
     public String latitude;
-    public int counter;
     public String longitude;
     public static final String STORE_DATA = "MyPrefs";
     private TextView toolbarText;
+    public int counter;
+    ArrayList<String> permissions = new ArrayList<>();
+
+    PermissionUtils permissionUtils;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Context context =this;
+        permissionUtils = new PermissionUtils((Activity) context);
+
+
+        //Request for permissions for api level 23 and higher
+        permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        permissionUtils.check_permission(permissions, "Allow Trahi to access your location and storage?", 1);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Hiiii Suraj Bhai", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
+
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -94,348 +119,232 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Retrieve Datas
+        SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
+        String data_phone_number_1 = (sharedPref.getString("LOCAL_PHONE_NUMBER_1", null));
+        String data_phone_number_2 = (sharedPref.getString("LOCAL_PHONE_NUMBER_2", null));
+        String data_phone_number_3 = (sharedPref.getString("LOCAL_PHONE_NUMBER_3", null));
+        String data_phone_number_4 = (sharedPref.getString("LOCAL_PHONE_NUMBER_0", null));
+        String data_name = (sharedPref.getString("LOCAL_NAME", null));
+
+
+
+        //add contacts
+        addcontacts=(ImageButton)findViewById(R.id.addcontacts);
+        addcontacts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(MainActivity.this,AddContacts.class);
+                startActivity(intent);
+            }
+        });
+
+        //nearest policestation
+        policebutton=(ImageButton)findViewById(R.id.policebutton);
+        policebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+        //nearest ambulance
+        ambulancebutton=(ImageButton)findViewById(R.id.ambubutton);
+       ambulancebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+        //nearest pcr
+        pcrbutton=(ImageButton)findViewById(R.id.pcrbutton);
+        pcrbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+        //safety
+        safetybutton=(ImageButton)findViewById(R.id.safetybutton);
+        safetybutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+        //rti process
+        rtibutton=(ImageButton)findViewById(R.id.rtibutton);
+        rtibutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+
         //set toolbar text
-        toolbarText=(TextView)findViewById(R.id.toolbartext);
-        Typeface custom=Typeface.createFromAsset(getAssets(),"fonts/toolbarfont.ttf");
+        toolbarText = (TextView) findViewById(R.id.toolbartext);
+        Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
         toolbarText.setTypeface(custom);
 
         //nav header custom
-        NavigationView navView= (NavigationView) findViewById(R.id.nav_view);
-        View header=navView.getHeaderView(0);
-        LinearLayout sideNavLayout = (LinearLayout)header.findViewById(R.id.navheadlayout);
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        View header = navView.getHeaderView(0);
+        LinearLayout sideNavLayout = (LinearLayout) header.findViewById(R.id.navheadlayout);
         sideNavLayout.setBackgroundResource(R.drawable.navhead);
         Menu menu = navigationView.getMenu();
 
         //changes communicate color
-        MenuItem tools= menu.findItem(R.id.communicate);
+        MenuItem tools = menu.findItem(R.id.communicate);
         SpannableString s = new SpannableString(tools.getTitle());
         s.setSpan(new TextAppearanceSpan(this, R.style.communicatecolor), 0, s.length(), 0);
         tools.setTitle(s);
         navigationView.setNavigationItemSelectedListener(this);
 
 
-
-
         longitude = " ";
         latitude = " ";
-        counter=0;
+        counter = 0;
 
         Log.e("longitude", longitude);
 
-        //Retrieve Location
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        //check if name is null, if its null set its value
+        if (data_name == null) {
+            permissionUtils.check_permission(permissions, "Allow Trahi to write data?", 2);
 
+            AlertDialog.Builder namegetter = new AlertDialog.Builder(MainActivity.this,R.style.MyAlertDialogStyle);
 
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Permission to access the location if missing.
-                PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                        Manifest.permission.ACCESS_FINE_LOCATION, true);
+            namegetter.setTitle("Enter Your Name");
+            final EditText input = new EditText(this);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            input.setLayoutParams(lp);
+            namegetter.setView(input);
 
-                if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                {
-                    PermissionUtils.requestPermission(MainActivity.this, WRITE_EXTERNAL_STORAGE_REQUEST_CODE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE, true);
-
-
-                }
-                Toast.makeText(getApplicationContext(), "Please Restart the app for the permissions to take effect", Toast.LENGTH_LONG).show();
-
-                Intent startinent=getIntent();
-                finish();
-                startActivity(startinent);
-
-            }
-            else {
-                if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                {
-                    PermissionUtils.requestPermission(MainActivity.this, WRITE_EXTERNAL_STORAGE_REQUEST_CODE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE, true);
-                    Toast.makeText(getApplicationContext(), "Please Restart the app for the permissions to take effect", Toast.LENGTH_LONG).show();
-                    Intent startinent=getIntent();
-                    finish();
-                    startActivity(startinent);
-
-                }
-
-                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
-                    @Override
-                    public void onStatusChanged(String s, int i, Bundle bundle) {
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String s) {
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String s) {
-
-                    }
-
-                    @Override
-                    public void onLocationChanged(final Location location) {
-
-                    }
-                });
-                Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (myLocation == null) {
-                    Toast.makeText(getApplicationContext(), "Please Turn On Your Location", Toast.LENGTH_LONG).show();
-
-                } else {
-                    myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    longitude = String.valueOf(myLocation.getLongitude());
-                    latitude = String.valueOf(myLocation.getLatitude());
-                    Log.e("longitude", longitude);
-
-                    if (longitude != " " && latitude != " ") {
-                        //Retrieve Datas
-                        SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
-                        String data_phone_number_1 = (sharedPref.getString("LOCAL_PHONE_NUMBER_1", ""));
-                        String data_phone_number_2 = (sharedPref.getString("LOCAL_PHONE_NUMBER_2", ""));
-                        String data_phone_number_3 = (sharedPref.getString("LOCAL_PHONE_NUMBER_3", ""));
-                        String data_phone_number_4 = (sharedPref.getString("LOCAL_PHONE_NUMBER_4", ""));
-                        String data_name = (sharedPref.getString("LOCAL_NAME", ""));
-                        if (data_name != null && data_phone_number_1 != null && data_phone_number_2 != null && data_phone_number_3 != null && data_phone_number_4 != null) {
-                            new RequestService().execute(data_phone_number_1, data_phone_number_2, data_phone_number_3, data_phone_number_4, data_name, latitude, longitude);
-
-                        }
-                    }
-                }
-
-                phone_number_1 = (EditText) findViewById(R.id.phone_number_1);
-                phone_number_2 = (EditText) findViewById(R.id.phone_number_2);
-                phone_number_3 = (EditText) findViewById(R.id.phone_number_3);
-                phone_number_4 = (EditText) findViewById(R.id.phone_number_4);
-                edit_name = (EditText) findViewById(R.id.edit_name);
-                save = (Button) findViewById(R.id.button_save);
-                save.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.e("Button", "Clicked");
-                        if (data_validation()) {
-
-                            String name = edit_name.getText().toString();
-                            String ph_no_1 = phone_number_1.getText().toString();
-                            String ph_no_2 = phone_number_2.getText().toString();
-                            String ph_no_3 = phone_number_3.getText().toString();
-                            String ph_no_4 = phone_number_4.getText().toString();
+            namegetter.setIcon(R.drawable.ic_love);
+            namegetter.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
                             SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.clear();
-
+                            String name = input.getText().toString();
+                            Log.e(name, " name");
                             editor.putString("LOCAL_NAME", name);
-                            editor.putString("LOCAL_PHONE_NUMBER_1", ph_no_1);
-                            editor.putString("LOCAL_PHONE_NUMBER_2", ph_no_2);
-                            editor.putString("LOCAL_PHONE_NUMBER_3", ph_no_3);
-                            editor.putString("LOCAL_PHONE_NUMBER_4", ph_no_4);
                             editor.apply();
-                            Toast.makeText(getApplicationContext(), "Information Saved", Toast.LENGTH_LONG).show();
-
+                            Intent intent = getIntent();
+                            finish();
+                            startActivity(intent);
                         }
+                    });
 
+            namegetter.show();
+        }
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-                        else {
-                            phone_number_1.setText("");
-                            phone_number_2.setText("");
-                            phone_number_3.setText("");
-                            phone_number_4.setText("");
-                            edit_name.setText("");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+            }
 
-                        }
+            @Override
+            public void onProviderEnabled(String s) {
+            }
 
-                    }
-
-                    private boolean data_validation() {
-                        boolean valid = true;
-                        if (TextUtils.isEmpty(phone_number_1.getText().toString())) {
-                            phone_number_1.setError("Required");
-                            valid = false;
-
-                        } else {
-                            phone_number_1.setError(null);
-                        }
-                        if (TextUtils.isEmpty(phone_number_2.getText().toString())) {
-                            phone_number_2.setError("Required");
-                            valid = false;
-
-                        } else {
-                            phone_number_2.setError(null);
-                        }
-                        if (TextUtils.isEmpty(phone_number_3.getText().toString())) {
-                            phone_number_3.setError("Required");
-                            valid = false;
-
-                        } else {
-                            phone_number_3.setError(null);
-                        }
-                        if (TextUtils.isEmpty(phone_number_4.getText().toString())) {
-                            phone_number_4.setError("Required");
-                            valid = false;
-
-                        } else {
-                            phone_number_4.setError(null);
-                        }
-                        if (TextUtils.isEmpty(edit_name.getText().toString())) {
-                            edit_name.setError("Required");
-                            valid = false;
-
-                        } else {
-                            edit_name.setError(null);
-                        }
-                        return valid;
-                    }
-                });
-
-
-
-
-
+            @Override
+            public void onProviderDisabled(String s) {
 
             }
+
+            @Override
+            public void onLocationChanged(final Location location) {
+
+            }
+        });
+        Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (myLocation == null) {
+            Toast.makeText(getApplicationContext(), "Please Turn On Your Location", Toast.LENGTH_LONG).show();
 
         } else {
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-
-                }
-
-                @Override
-                public void onLocationChanged(final Location location) {
-
-                }
-            });
-            Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (myLocation == null) {
-                Toast.makeText(getApplicationContext(), "Please Turn On Your Location", Toast.LENGTH_LONG).show();
-
-            } else {
-                myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                longitude = String.valueOf(myLocation.getLongitude());
-                latitude = String.valueOf(myLocation.getLatitude());
-                Log.e("longitude", longitude);
-
-                if (longitude != " " && latitude != " ") {
-                    //Retrieve Datas
-                    SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
-                    String data_phone_number_1 = (sharedPref.getString("LOCAL_PHONE_NUMBER_1", ""));
-                    String data_phone_number_2 = (sharedPref.getString("LOCAL_PHONE_NUMBER_2", ""));
-                    String data_phone_number_3 = (sharedPref.getString("LOCAL_PHONE_NUMBER_3", ""));
-                    String data_phone_number_4 = (sharedPref.getString("LOCAL_PHONE_NUMBER_4", ""));
-                    String data_name = (sharedPref.getString("LOCAL_NAME", ""));
-                    if (data_name != null && data_phone_number_1 != null && data_phone_number_2 != null && data_phone_number_3 != null && data_phone_number_4 != null) {
-                        new RequestService().execute(data_phone_number_1, data_phone_number_2, data_phone_number_3, data_phone_number_4, data_name, latitude, longitude);
-
-                    }
-                }
-            }
-
-
-            phone_number_1 = (EditText) findViewById(R.id.phone_number_1);
-            phone_number_2 = (EditText) findViewById(R.id.phone_number_2);
-            phone_number_3 = (EditText) findViewById(R.id.phone_number_3);
-            phone_number_4 = (EditText) findViewById(R.id.phone_number_4);
-            edit_name = (EditText) findViewById(R.id.edit_name);
-            save = (Button) findViewById(R.id.button_save);
-            save.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.e("Button", "Clicked");
-                    if (data_validation()) {
-
-                        String name = edit_name.getText().toString();
-                        String ph_no_1 = phone_number_1.getText().toString();
-                        String ph_no_2 = phone_number_2.getText().toString();
-                        String ph_no_3 = phone_number_3.getText().toString();
-                        String ph_no_4 = phone_number_4.getText().toString();
-                        SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.clear();
-
-                        editor.putString("LOCAL_NAME", name);
-                        editor.putString("LOCAL_PHONE_NUMBER_1", ph_no_1);
-                        editor.putString("LOCAL_PHONE_NUMBER_2", ph_no_2);
-                        editor.putString("LOCAL_PHONE_NUMBER_3", ph_no_3);
-                        editor.putString("LOCAL_PHONE_NUMBER_4", ph_no_4);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Information Saved", Toast.LENGTH_LONG).show();
-
-                    }
-
-
-                    else {
-                        phone_number_1.setText("");
-                        phone_number_2.setText("");
-                        phone_number_3.setText("");
-                        phone_number_4.setText("");
-                        edit_name.setText("");
-
-                    }
-
-                }
-
-                private boolean data_validation() {
-                    boolean valid = true;
-                    if (TextUtils.isEmpty(phone_number_1.getText().toString())) {
-                        phone_number_1.setError("Required");
-                        valid = false;
-
-                    } else {
-                        phone_number_1.setError(null);
-                    }
-                    if (TextUtils.isEmpty(phone_number_2.getText().toString())) {
-                        phone_number_2.setError("Required");
-                        valid = false;
-
-                    } else {
-                        phone_number_2.setError(null);
-                    }
-                    if (TextUtils.isEmpty(phone_number_3.getText().toString())) {
-                        phone_number_3.setError("Required");
-                        valid = false;
-
-                    } else {
-                        phone_number_3.setError(null);
-                    }
-                    if (TextUtils.isEmpty(phone_number_4.getText().toString())) {
-                        phone_number_4.setError("Required");
-                        valid = false;
-
-                    } else {
-                        phone_number_4.setError(null);
-                    }
-                    if (TextUtils.isEmpty(edit_name.getText().toString())) {
-                        edit_name.setError("Required");
-                        valid = false;
-
-                    } else {
-                        edit_name.setError(null);
-                    }
-                    return valid;
-                }
-            });
-
+            myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            longitude = String.valueOf(myLocation.getLongitude());
+            latitude = String.valueOf(myLocation.getLatitude());
+            Log.e("longitude", longitude);
 
         }
 
 
 
 
+
+
+
+
+
     }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        // redirects to utils
+
+        permissionUtils.onRequestPermissionsResult(requestCode,permissions,grantResults);
+
+    }
+
+    // Callback functions
+
+
+    @Override
+    public void PermissionGranted(int request_code) {
+        Log.i("PERMISSION","GRANTED");
+    }
+
+    @Override
+    public void PartialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
+        Log.i("PERMISSION PARTIALLY","GRANTED");
+    }
+
+    @Override
+    public void PermissionDenied(int request_code) {
+        Log.i("PERMISSION","DENIED");
+    }
+
+    @Override
+    public void NeverAskAgain(int request_code) {
+        Log.i("PERMISSION","NEVER ASK AGAIN");
+    }
+
+
+
 
     @Override
     public void onBackPressed() {
@@ -475,21 +384,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-         if (id == R.id.nav_nearestPolicStation) {
-
-        } else if (id == R.id.nav_nearestAmbulance) {
-
-        }
-         else if (id == R.id.nav_PCR) {
-
-         }
-         else if (id == R.id.nav_RTI_Process) {
-
-         }
-         else if (id == R.id.nav_safetyTips) {
-
-         }
-         else if (id == R.id.nav_credits) {
+        if (id == R.id.nav_credits) {
 
          }
          else if (id == R.id.nav_about_us) {
@@ -508,112 +403,8 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-}
-
-class RequestService extends AsyncTask<String, Void, String> {
-
-
-    private static final String TAG = "PhoneNumbers";
-    int responseCode;
-    String responseBody;
-    private String JsonResponse;
-
-    protected void onPreExecute() {
-
-
-    }
-
-    @Override
-    protected String doInBackground(String... params) {
-        String data_phone_number_1 = params[0];
-        String data_phone_number_2 = params[1];
-        String data_phone_number_3 = params[2];
-        String data_phone_number_4 = params[3];
-        String data_name = params[4];
-        String data_latitude = params[5];
-        String data_longitude = params[6];
-        String mobiles = data_phone_number_1 + "," + data_phone_number_2 + "," + data_phone_number_3 + "," + data_phone_number_4;
-        String message = "I " + data_name + " in trouble at https://maps.google.com/?ie=UTF8&ll=" + data_latitude + "," + data_longitude + " Need urgent help and attention.";
-        String authkey = "175066AfkBDqjLjK6e59be06c7";
-        String encoded_message = URLEncoder.encode(message);
-
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
-
-        try {
-            URL url = new URL("https://control.msg91.com/api/sendhttp.php?authkey=" + authkey + "&mobiles=" + mobiles + "&message=" + encoded_message + "&sender=SAVEME&route=4&country=0");
-            urlConnection = (HttpURLConnection) url.openConnection();
-
-//set headers
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Content-Type", "application/json");
-            urlConnection.connect();
-//0
-//get response code
-            responseCode = urlConnection.getResponseCode();
-            responseBody = urlConnection.getResponseMessage();
-
-            InputStream inputStream = urlConnection.getInputStream();
-//input stream
-            StringBuilder buffer = new StringBuilder();
-            if (inputStream == null) {
-                // Nothing to do.
-                //  android.util.Log.e(TAG, "InputStream Is Null");
-                return null;
-
-            }
-            reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-
-            String inputLine;
-            while ((inputLine = reader.readLine()) != null)
-                buffer.append(inputLine).append("\n");
-
-            if (buffer.length() == 0) {
-                //android.util.Log.e(TAG, "Stream was empty. No point in parsing.");
-                return null;
-            } else {
-
-                JsonResponse = buffer.toString();
-//response data
-                //android.util.Log.i(TAG, "doInBackGround() " + JsonResponse);
-                return JsonResponse;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final IOException e) {
-                    android.util.Log.e(TAG, "Error closing stream", e);
-                }
-            }
-        }
-        return null;
-    }
-
-    protected void onPostExecute(String data) {
-
-        //android.util.Log.i(TAG, "no return");
-        if (data == null) {
-            android.util.Log.e(TAG, "Error Null");
-        }
-
-
-        if (responseCode == 200) {
-
-            android.util.Log.i(TAG, "Response Code = 200.... " + data);
-
-            Log.d(TAG, "Messages Sent");
-
-
-        }
-
-    }
-
 
 }
+
+
+
