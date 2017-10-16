@@ -8,9 +8,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
+
+import com.michaldrabik.tapbarmenulib.TapBarMenu;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 
 import java.util.ArrayList;
 
@@ -22,61 +27,24 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.provider.Settings;
+
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.ShareActionProvider;
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.style.TextAppearanceSpan;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.content.SharedPreferences;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.net.URLEncoder;
-
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnRequestPermissionsResultCallback, PermissionResultCallback {
+        implements  OnRequestPermissionsResultCallback, PermissionResultCallback {
 
-    private EditText phone_number_1;
-    private EditText phone_number_2;
-    private EditText phone_number_3;
-    private EditText phone_number_4;
-    private TextView textname;
+
     private ImageButton addcontacts,safetybutton,policebutton,pcrbutton,rtibutton,ambulancebutton;
     public String latitude;
     public String longitude;
@@ -85,15 +53,22 @@ public class MainActivity extends AppCompatActivity
     public int counter;
     ArrayList<String> permissions = new ArrayList<>();
 
+
+
+
     PermissionUtils permissionUtils;
+    @Bind(R.id.tapBarMenu) TapBarMenu tapBarMenu;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.content_main);
         Context context =this;
         permissionUtils = new PermissionUtils((Activity) context);
+        ButterKnife.bind(this);
+
 
 
         //Request for permissions for api level 23 and higher
@@ -102,30 +77,7 @@ public class MainActivity extends AppCompatActivity
         permissionUtils.check_permission(permissions, "Allow Trahi to access your location and storage?", 1);
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-
-
-
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        //Retrieve Datas
-        SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
-        String data_phone_number_1 = (sharedPref.getString("LOCAL_PHONE_NUMBER_1", null));
-        String data_phone_number_2 = (sharedPref.getString("LOCAL_PHONE_NUMBER_2", null));
-        String data_phone_number_3 = (sharedPref.getString("LOCAL_PHONE_NUMBER_3", null));
-        String data_phone_number_4 = (sharedPref.getString("LOCAL_PHONE_NUMBER_0", null));
-        String data_name = (sharedPref.getString("LOCAL_NAME", null));
 
 
 
@@ -152,7 +104,7 @@ public class MainActivity extends AppCompatActivity
 
         //nearest ambulance
         ambulancebutton=(ImageButton)findViewById(R.id.ambubutton);
-       ambulancebutton.setOnClickListener(new View.OnClickListener() {
+        ambulancebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
@@ -177,8 +129,8 @@ public class MainActivity extends AppCompatActivity
         safetybutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
-
+                Intent intent=new Intent(MainActivity.this,SafetyTips.class);
+                startActivity(intent);
 
             }
         });
@@ -195,24 +147,30 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-        //set toolbar text
-        toolbarText = (TextView) findViewById(R.id.toolbartext);
-        Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
-        toolbarText.setTypeface(custom);
 
-        //nav header custom
-        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
-        View header = navView.getHeaderView(0);
-        LinearLayout sideNavLayout = (LinearLayout) header.findViewById(R.id.navheadlayout);
-        sideNavLayout.setBackgroundResource(R.drawable.navhead);
-        Menu menu = navigationView.getMenu();
 
-        //changes communicate color
-        MenuItem tools = menu.findItem(R.id.communicate);
-        SpannableString s = new SpannableString(tools.getTitle());
-        s.setSpan(new TextAppearanceSpan(this, R.style.communicatecolor), 0, s.length(), 0);
-        tools.setTitle(s);
-        navigationView.setNavigationItemSelectedListener(this);
+
+
+
+
+
+        //Retrieve Datas
+        SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
+       // String data_phone_number_1 = (sharedPref.getString("LOCAL_PHONE_NUMBER_0", null));
+       // String data_phone_number_2 = (sharedPref.getString("LOCAL_PHONE_NUMBER_1", null));
+       // String data_phone_number_3 = (sharedPref.getString("LOCAL_PHONE_NUMBER_2", null));
+       // String data_phone_number_4 = (sharedPref.getString("LOCAL_PHONE_NUMBER_3", null));
+        String data_name = (sharedPref.getString("LOCAL_NAME", null));
+
+
+
+
+
+
+
+
+
+
 
 
         longitude = " ";
@@ -346,22 +304,9 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -378,31 +323,35 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        if (id == R.id.nav_credits) {
-
-         }
-         else if (id == R.id.nav_about_us) {
-
-         }
-
-         else if (id == R.id.nav_share) {
-             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-             sharingIntent.setType("text/plain");
-             sharingIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message));
-             sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Traahi");
-             startActivity(Intent.createChooser(sharingIntent, "Share via "));
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+    @OnClick(R.id.tapBarMenu) public void onMenuButtonClick() {
+        Log.e("Menu","Clicked");
+        tapBarMenu.toggle();
     }
+
+    @OnClick({ R.id.share, R.id.credits, R.id.aboutus, R.id.options}) public void onMenuItemClick(View view) {
+        tapBarMenu.close();
+        switch (view.getId()) {
+            case R.id.share:
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message));
+                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Traahi");
+                startActivity(Intent.createChooser(sharingIntent, "Share via "));
+                break;
+            case R.id.credits:
+                Log.i("TAG", "Item 2 selected");
+                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.aboutus:
+                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.options:
+                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
 
 }
 

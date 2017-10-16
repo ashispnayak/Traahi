@@ -44,10 +44,10 @@ public class SendMessages extends AppCompatActivity {
         latitude = " ";
         //Retrieve Datas
         SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
-        String data_phone_number_1 = (sharedPref.getString("LOCAL_PHONE_NUMBER_1", null));
-        String data_phone_number_2 = (sharedPref.getString("LOCAL_PHONE_NUMBER_2", null));
-        String data_phone_number_3 = (sharedPref.getString("LOCAL_PHONE_NUMBER_3", null));
-        String data_phone_number_4 = (sharedPref.getString("LOCAL_PHONE_NUMBER_4", null));
+        String data_phone_number_1 = (sharedPref.getString("LOCAL_PHONE_NUMBER_0", null));
+        String data_phone_number_2 = (sharedPref.getString("LOCAL_PHONE_NUMBER_1", null));
+        String data_phone_number_3 = (sharedPref.getString("LOCAL_PHONE_NUMBER_2", null));
+        String data_phone_number_4 = (sharedPref.getString("LOCAL_PHONE_NUMBER_3", null));
         String data_name = (sharedPref.getString("LOCAL_NAME", null));
         ph_1 = (TextView) findViewById(R.id.ph_1);
         ph_2 = (TextView) findViewById(R.id.ph_2);

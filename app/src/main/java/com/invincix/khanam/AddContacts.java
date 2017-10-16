@@ -37,7 +37,7 @@ public class AddContacts extends AppCompatActivity {
 
     public String data_contact_name,data_contact_number;
     int counter=0;
-    public static int contactimage= R.drawable.contactname;
+    public static int contactimage= R.drawable.ic_contact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,6 +161,7 @@ public class AddContacts extends AppCompatActivity {
                 Toast.makeText(
                         getApplicationContext(),
                        contact, Toast.LENGTH_SHORT).show();
+
 
 
             }

@@ -87,7 +87,7 @@ public class ContactsAdapter extends BaseAdapter {
 
             if (value!=null) {
 
-                imageView.setImageResource(R.drawable.contactname);
+                imageView.setImageResource(R.drawable.ic_contact);
 
             }
         } else {
