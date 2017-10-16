@@ -84,8 +84,12 @@ public class SafetyTips extends AppCompatActivity {
 
     public void show()
     {
+        mProgressDialog=new ProgressDialog(SafetyTips.this);
+
         if(isNetworkAvailable())
         {
+            mProgressDialog.dismiss();
+
             ProgressBar mProgress=(ProgressBar)findViewById(R.id.progressBarFeed) ;
 
             Log.e("FOund","Internet");
@@ -95,11 +99,11 @@ public class SafetyTips extends AppCompatActivity {
         }
         else{
             recyclerView.setVisibility(View.GONE);
+            mProgressDialog.dismiss();
             Snackbar.make(findViewById(R.id.safetytipslayout), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
                     .setAction("RETRY", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            mProgressDialog=new ProgressDialog(SafetyTips.this);
                             mProgressDialog.setMessage("Retrying...");
                             mProgressDialog.show();
                             show();
