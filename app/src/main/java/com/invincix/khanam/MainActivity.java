@@ -96,7 +96,8 @@ public class MainActivity extends AppCompatActivity
         policebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
+                Intent intentp=new Intent(MainActivity.this,NearestPolice.class);
+                startActivity(intentp);
 
 
             }
@@ -140,8 +141,8 @@ public class MainActivity extends AppCompatActivity
         rtibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
-
+                Intent intentrti=new Intent(MainActivity.this,RtiProcess.class);
+                startActivity(intentrti);
 
             }
         });

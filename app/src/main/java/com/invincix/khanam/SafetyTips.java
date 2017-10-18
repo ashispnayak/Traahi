@@ -50,7 +50,6 @@ public class SafetyTips extends AppCompatActivity {
     private static ArrayList<SafetyTipsFeed> data;
     private ProgressDialog mProgressDialog;
     private DatabaseReference mDatabase;
-    private ProgressDialog progressDialog;
     private TextView textView_NetworkErrorIcon;
 
 
@@ -64,13 +63,15 @@ public class SafetyTips extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarsafetytips);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         //set toolbar text
         TextView toolbarText = (TextView) findViewById(R.id.toolbartext_tips);
         Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
         toolbarText.setTypeface(custom);
 
-        textView_NetworkErrorIcon = (TextView) findViewById(R.id.textView_NetworkError);
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Safety");
 
@@ -84,11 +85,9 @@ public class SafetyTips extends AppCompatActivity {
 
     public void show()
     {
-        mProgressDialog=new ProgressDialog(SafetyTips.this);
 
         if(isNetworkAvailable())
         {
-            mProgressDialog.dismiss();
 
             ProgressBar mProgress=(ProgressBar)findViewById(R.id.progressBarFeed) ;
 
@@ -104,8 +103,7 @@ public class SafetyTips extends AppCompatActivity {
                     .setAction("RETRY", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            mProgressDialog.setMessage("Retrying...");
-                            mProgressDialog.show();
+
                             show();
 
 
@@ -113,6 +111,7 @@ public class SafetyTips extends AppCompatActivity {
                     })
                     .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
                     .show();
+
         }
 
     }

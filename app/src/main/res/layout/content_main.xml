@@ -14,8 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_pcr"
-        android:background="@drawable/roundcorner"
-
+        android:background="?android:selectableItemBackground"
         android:id="@+id/pcrbutton"
         android:layout_below="@+id/addcontacts"
         android:layout_alignStart="@+id/addcontacts"
@@ -25,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_ambulance"
-        android:background="@drawable/roundcorner"
+        android:background="?android:selectableItemBackground"
         android:id="@+id/ambubutton"
 
         android:layout_alignTop="@+id/pcrbutton"
@@ -37,7 +36,7 @@
         app:srcCompat="@drawable/ic_rti"
         android:layout_marginTop="20dp"
 
-        android:background="@drawable/roundcorner"
+        android:background="?android:selectableItemBackground"
         android:id="@+id/rtibutton"
         android:layout_below="@+id/pcrbutton"
         android:layout_alignStart="@+id/pcrbutton" />
@@ -46,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_safety"
-        android:background="@drawable/roundcorner"
+        android:background="?android:selectableItemBackground"
         android:id="@+id/safetybutton"
         android:layout_alignTop="@+id/rtibutton"
         android:layout_alignStart="@+id/ambubutton" />
@@ -55,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_police_station"
-        android:background="@drawable/roundcorner"
+        android:background="?android:selectableItemBackground"
         android:id="@+id/policebutton"
         android:layout_marginTop="200dp"
         android:layout_marginEnd="26dp"
@@ -66,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_add_contacts"
-        android:background="@drawable/roundcorner"
+        android:background="?android:selectableItemBackground"
         android:id="@+id/addcontacts"
         android:layout_marginTop="200dp"
         android:layout_marginStart="26dp"
