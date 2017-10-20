@@ -32,7 +32,9 @@ public class SendMessages extends AppCompatActivity {
     public String latitude;
     public String longitude;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 2;
-    private TextView ph_1, ph_2, ph_3, ph_4, sendingmessages;
+    int counter;
+    String[] data_phone_number=new String[8];
+    private TextView ph_1, ph_2, ph_3, ph_4, ph_5,ph_6,ph_7,ph_8,sendingmessages;
 
 
     @Override
@@ -44,20 +46,33 @@ public class SendMessages extends AppCompatActivity {
         latitude = " ";
         //Retrieve Datas
         SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
-        String data_phone_number_1 = (sharedPref.getString("LOCAL_PHONE_NUMBER_0", null));
-        String data_phone_number_2 = (sharedPref.getString("LOCAL_PHONE_NUMBER_1", null));
-        String data_phone_number_3 = (sharedPref.getString("LOCAL_PHONE_NUMBER_2", null));
-        String data_phone_number_4 = (sharedPref.getString("LOCAL_PHONE_NUMBER_3", null));
+        counter= (sharedPref.getInt("CONTACT_NUMBER",-1));
+        for(int i=0;i<=counter;i++) {
+            data_phone_number[i]=sharedPref.getString("LOCAL_PHONE_NUMBER_"+String.valueOf(i), null);
+
+
+
+        }
         String data_name = (sharedPref.getString("LOCAL_NAME", null));
         ph_1 = (TextView) findViewById(R.id.ph_1);
         ph_2 = (TextView) findViewById(R.id.ph_2);
         ph_3 = (TextView) findViewById(R.id.ph_3);
         ph_4 = (TextView) findViewById(R.id.ph_4);
+        ph_5 = (TextView) findViewById(R.id.ph_5);
+        ph_6 = (TextView) findViewById(R.id.ph_6);
+        ph_7 = (TextView) findViewById(R.id.ph_7);
+        ph_8 = (TextView) findViewById(R.id.ph_8);
+
         sendingmessages = (TextView) findViewById(R.id.sendingmessage);
-        ph_1.setText(data_phone_number_1);
-        ph_2.setText(data_phone_number_2);
-        ph_3.setText(data_phone_number_3);
-        ph_4.setText(data_phone_number_4);
+        ph_1.setText(data_phone_number[0]);
+        ph_2.setText(data_phone_number[1]);
+        ph_3.setText(data_phone_number[2]);
+        ph_4.setText(data_phone_number[3]);
+        ph_5.setText(data_phone_number[4]);
+        ph_6.setText(data_phone_number[5]);
+        ph_7.setText(data_phone_number[6]);
+        ph_8.setText(data_phone_number[7]);
+
         sendingmessages.setText("Hii " + data_name + " sending messages");
 
 
@@ -111,8 +126,8 @@ public class SendMessages extends AppCompatActivity {
 
 
 
-                    if (data_name != null && data_phone_number_1 != null && data_phone_number_2 != null && data_phone_number_3 != null && data_phone_number_4 != null) {
-                        new SendMessageWithTouch().execute(data_phone_number_1, data_phone_number_2, data_phone_number_3, data_phone_number_4, data_name, latitude, longitude);
+                    if (data_name != null && data_phone_number[0] != null && data_phone_number[1] != null && data_phone_number[2] != null && data_phone_number[3] != null) {
+                        new SendMessageWithTouch().execute(data_phone_number[0], data_phone_number[1],data_phone_number[2],data_phone_number[3],data_phone_number[4],data_phone_number[5],data_phone_number[6],data_phone_number[7],data_name, latitude, longitude);
                         Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();
 
                     }
@@ -150,10 +165,15 @@ class SendMessageWithTouch extends AsyncTask<String, Void, String> {
         String data_phone_number_2 = params[1];
         String data_phone_number_3 = params[2];
         String data_phone_number_4 = params[3];
-        String data_name = params[4];
-        String data_latitude = params[5];
-        String data_longitude = params[6];
-        String mobiles = data_phone_number_1 + "," + data_phone_number_2 + "," + data_phone_number_3 + "," + data_phone_number_4;
+        String data_phone_number_5 = params[4];
+        String data_phone_number_6 = params[5];
+        String data_phone_number_7 = params[6];
+        String data_phone_number_8 = params[7];
+
+        String data_name = params[8];
+        String data_latitude = params[9];
+        String data_longitude = params[10];
+        String mobiles = data_phone_number_1 + "," + data_phone_number_2 + "," + data_phone_number_3 + "," + data_phone_number_4 + "," + data_phone_number_5 + "," + data_phone_number_6 + "," + data_phone_number_7 + "," + data_phone_number_8;
         String message = "I " + data_name + " in trouble at https://maps.google.com/?ie=UTF8&ll=" + data_latitude + "," + data_longitude + " Need urgent help and attention.";
         String authkey = "175066AfkBDqjLjK6e59be06c7";
         String encoded_message = URLEncoder.encode(message);

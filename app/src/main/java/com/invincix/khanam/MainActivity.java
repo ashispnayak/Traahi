@@ -156,11 +156,15 @@ public class MainActivity extends AppCompatActivity
 
 
         //Retrieve Datas
+
         SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
-       // String data_phone_number_1 = (sharedPref.getString("LOCAL_PHONE_NUMBER_0", null));
-       // String data_phone_number_2 = (sharedPref.getString("LOCAL_PHONE_NUMBER_1", null));
-       // String data_phone_number_3 = (sharedPref.getString("LOCAL_PHONE_NUMBER_2", null));
-       // String data_phone_number_4 = (sharedPref.getString("LOCAL_PHONE_NUMBER_3", null));
+        counter= (sharedPref.getInt("CONTACT_NUMBER",-1));
+        for(int i=0;i<=counter;i++) {
+            sharedPref.getString("LOCAL_PHONE_NUMBER_"+String.valueOf(i), null);
+            sharedPref.getString("LOCAL_CONTACT_NAME_"+String.valueOf(i), null);
+
+        }
+
         String data_name = (sharedPref.getString("LOCAL_NAME", null));
 
 
@@ -176,7 +180,6 @@ public class MainActivity extends AppCompatActivity
 
         longitude = " ";
         latitude = " ";
-        counter = 0;
 
         Log.e("longitude", longitude);
 

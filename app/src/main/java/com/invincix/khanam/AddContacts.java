@@ -48,7 +48,7 @@ public class AddContacts extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
+        final SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
 
         counter= (sharedPref.getInt("CONTACT_NUMBER",-1));
         Log.e(String.valueOf(counter),"counter value begin");
@@ -151,6 +151,8 @@ public class AddContacts extends AppCompatActivity {
             public void onItemClick(AdapterView parent, View view, final int position, long id) {
 Log.e("Postition: ", String.valueOf(position));
 
+                final int a=position;
+                final int b=contactnames.size();
                 PopupMenu popupMenu=new PopupMenu(AddContacts.this,view);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_grid,popupMenu.getMenu());
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -162,7 +164,7 @@ Log.e("Postition: ", String.valueOf(position));
                                 AlertDialog.Builder builder = new AlertDialog.Builder(AddContacts.this);
                                 LayoutInflater inflater = (LayoutInflater) AddContacts.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                                 builder.setView(R.layout.edit_contact_dialog);
-                                builder.setView(inflater.inflate(R.layout.add_contact_dialog, null));
+                                builder.setView(inflater.inflate(R.layout.edit_contact_dialog, null));
                                 builder.setPositiveButton("Save Edit", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -200,6 +202,16 @@ Log.e("Postition: ", String.valueOf(position));
                                 counter--;
                                 SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPref.edit();
+                                for(int i=a;i<b;i++)
+                                {
+                                 String phno=(sharedPref.getString("LOCAL_PHONE_NUMBER_"+String.valueOf(i+1), null));
+                                    String contname=(sharedPref.getString("LOCAL_CONTACT_NAME_"+String.valueOf(i+1), null));
+                                    editor.putString("LOCAL_PHONE_NUMBER_"+String.valueOf(i),phno);
+                                    editor.putString("LOCAL_CONTACT_NAME_"+String.valueOf(i),phno);
+
+
+                                }
+
                                 editor.putInt("CONTACT_NUMBER", counter);
                                 editor.apply();
 

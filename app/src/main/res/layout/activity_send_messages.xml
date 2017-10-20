@@ -4,60 +4,86 @@
     android:id="@+id/activity_send_messages"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.invincix.khanam.SendMessages">
-
     <TextView
         android:text="Sending Messages to the following numbers...."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:textSize="30sp"
-        android:layout_marginTop="36dp"
         android:id="@+id/sendingmessage"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginBottom="84dp"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/sendingmessage"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="58dp"
-        android:textSize="30sp"
+        android:layout_marginTop="84dp"
         android:id="@+id/ph_1" />
 
     <TextView
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
         android:layout_below="@+id/ph_1"
-        android:layout_alignStart="@+id/ph_1"
-        android:layout_marginTop="27dp"
+        android:layout_alignEnd="@+id/ph_1"
+        android:layout_marginTop="17dp"
         android:id="@+id/ph_2" />
 
     <TextView
         android:text=""
         android:layout_width="wrap_content"
-        android:textSize="30sp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ph_2"
-        android:layout_alignEnd="@+id/ph_2"
-        android:layout_marginTop="25dp"
+        android:layout_below="@+id/sendingmessage"
+        android:layout_alignStart="@+id/ph_2"
         android:id="@+id/ph_3" />
 
     <TextView
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:layout_marginTop="25dp"
-        android:id="@+id/ph_4"
         android:layout_below="@+id/ph_3"
-        android:layout_alignStart="@+id/ph_3" />
+        android:layout_alignStart="@+id/ph_3"
+        android:layout_marginTop="16dp"
+        android:id="@+id/ph_4" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ph_4"
+        android:layout_alignStart="@+id/ph_4"
+        android:layout_marginTop="19dp"
+        android:id="@+id/ph_5" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ph_5"
+        android:layout_alignStart="@+id/ph_5"
+        android:layout_marginTop="23dp"
+        android:id="@+id/ph_6" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ph_6"
+        android:layout_alignStart="@+id/ph_6"
+        android:layout_marginTop="22dp"
+        android:id="@+id/ph_7" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ph_7"
+        android:layout_alignStart="@+id/ph_7"
+        android:layout_marginTop="21dp"
+        android:id="@+id/ph_8" />
+
+
 </RelativeLayout>

@@ -149,6 +149,12 @@ public class SafetyTips extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
     public void populatefeed(){
 
 
