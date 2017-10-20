@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity
         //Request for permissions for api level 23 and higher
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        permissions.add(Manifest.permission.READ_CONTACTS);
         permissionUtils.check_permission(permissions, "Allow Trahi to access your location and storage?", 1);
 
 

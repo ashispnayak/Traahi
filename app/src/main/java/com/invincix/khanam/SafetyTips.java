@@ -127,27 +127,7 @@ public class SafetyTips extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private void showMessageDialog(String title, String message) {
 
-
-        AlertDialog.Builder builderSingle;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            builderSingle = new AlertDialog.Builder(SafetyTips.this, R.style.MyAlertDialogStyle);
-        } else {
-            builderSingle = new AlertDialog.Builder(SafetyTips.this);
-        }
-
-        builderSingle.setMessage(message);
-        builderSingle.setTitle(title);
-        builderSingle.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        builderSingle.show();
-
-    }
 
     @Override
     public boolean onSupportNavigateUp() {
