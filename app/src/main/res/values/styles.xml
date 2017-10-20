@@ -7,7 +7,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:actionMenuTextColor">@color/bgcolor</item>
         <item name="actionOverflowButtonStyle">@style/DotsDarkTheme</item>
         <item name="windowActionBarOverlay">true</item>
@@ -20,17 +19,7 @@
     </style>
 
 
-    <!-- changes overflow menu icon color -->
-    <style name="DotsDarkTheme" parent="@style/Widget.AppCompat.ActionButton.Overflow" >
-        <item name="android:tint">@color/toolbarcolor</item>
-    </style>
 
-
-    <!-- changes communicate item icon color -->
-    <style name="communicatecolor">
-        <item name="android:textColor">#fdfdfd</item>
-        <item name="android:textSize">20sp</item>
-    </style>
 
     <!-- Alert Dialog style-->
     <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
@@ -43,9 +32,9 @@
         <item name="android:background">#8798d1</item>
     </style>
 
-    <!-- changes drawer icon color -->
-    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="color">@color/toolbarcolor</item>
+    <!-- changes overflow menu icon color -->
+    <style name="DotsDarkTheme" parent="@style/Widget.AppCompat.ActionButton.Overflow" >
+        <item name="android:tint">@color/toolbarcolor</item>
     </style>
 
     <style name="TransparentToolbar" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">

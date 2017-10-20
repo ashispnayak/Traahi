@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#F15F79">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:id="@+id/dialog_title"
+        android:text="Edit Contact"
+        android:textColor="#ffffff"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:background="#8798d1"
+        />
+    <EditText
+        android:id="@+id/contactname"
+        android:inputType="textPersonName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
+        android:hint="Contact Name" />
+    <EditText
+        android:id="@+id/contactnumber"
+        android:inputType="number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
+        android:hint="Contact Number"/>
+</LinearLayout>

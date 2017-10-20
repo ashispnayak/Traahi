@@ -8,10 +8,12 @@ import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -103,16 +105,8 @@ public class AddContacts extends AppCompatActivity {
                                                                     final ContactsAdapter contactsAdapter = new ContactsAdapter(AddContacts.this, contactnames, contactnumbers, contactimage);
                                                                     gridView.setAdapter(contactsAdapter);
 
-                                                                    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                                        @Override
-                                                                        public void onItemClick(AdapterView parent, View view, int position, long id) {
-                                                                            String contact = contactnames.get(position);
 
-                                                                            Toast.makeText(
-                                                                                    getApplicationContext(),
-                                                                                    contact, Toast.LENGTH_SHORT).show();
-                                                                        }
-                                                                    });
+
                                                                 }
                                                                 else{
 
@@ -154,13 +148,72 @@ public class AddContacts extends AppCompatActivity {
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView parent, View view, int position, long id) {
-                String contact = contactnames.get(position);
+            public void onItemClick(AdapterView parent, View view, final int position, long id) {
+Log.e("Postition: ", String.valueOf(position));
+
+                PopupMenu popupMenu=new PopupMenu(AddContacts.this,view);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_grid,popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()){
+                            case R.id.action_edit:
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(AddContacts.this);
+                                LayoutInflater inflater = (LayoutInflater) AddContacts.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                builder.setView(R.layout.edit_contact_dialog);
+                                builder.setView(inflater.inflate(R.layout.add_contact_dialog, null));
+                                builder.setPositiveButton("Save Edit", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        AlertDialog aDialog = (AlertDialog) dialog;
+                                        EditText contactname = (EditText) aDialog.findViewById(R.id.contactname);
+                                        EditText contactnumber = (EditText) aDialog.findViewById(R.id.contactnumber);
+                                        data_contact_name = contactname.getText().toString();
+                                        data_contact_number = contactnumber.getText().toString();
+                                        if (validation_of_data(data_contact_name, data_contact_number)) {
+                                            SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = sharedPref.edit();
+                                            editor.putString("LOCAL_CONTACT_NAME_" + String.valueOf(position), data_contact_name);
+                                            editor.putString("LOCAL_PHONE_NUMBER_" + String.valueOf(position), data_contact_number);
+                                            editor.apply();
+                                            contactnames.set(position,data_contact_name);
+                                            contactnumbers.set(position,data_contact_number);
+                                            final GridView gridView = (GridView) findViewById(R.id.grid);
+                                            final ContactsAdapter contactsAdapter = new ContactsAdapter(AddContacts.this, contactnames, contactnumbers, contactimage);
+                                            gridView.setAdapter(contactsAdapter);
+
+                                        }
+                                    }
+                                });
+                                builder.show();
+                                break;
 
 
-                Toast.makeText(
-                        getApplicationContext(),
-                       contact, Toast.LENGTH_SHORT).show();
+                            case R.id.action_delete:
+                                contactnames.remove(position);
+                                contactnumbers.remove(position);
+                                final GridView gridView = (GridView) findViewById(R.id.grid);
+                                final ContactsAdapter contactsAdapter = new ContactsAdapter(AddContacts.this, contactnames, contactnumbers, contactimage);
+                                gridView.setAdapter(contactsAdapter);
+                                counter--;
+                                SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPref.edit();
+                                editor.putInt("CONTACT_NUMBER", counter);
+                                editor.apply();
+
+                                break;
+                            default:
+                                break;
+
+
+
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
 
 
 
