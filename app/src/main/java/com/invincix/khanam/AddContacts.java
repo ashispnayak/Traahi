@@ -322,14 +322,23 @@ Log.e("Postition: ", String.valueOf(position));
                 new String[]{contactID},
                 null);
 
+
         if (cursorPhone.moveToFirst()) {
             Rcontactnumber = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            Log.e("before", "Contact Phone Number: " + Rcontactnumber);
+
+            if(Rcontactnumber.startsWith("+91"))
+            {
+                Rcontactnumber=Rcontactnumber.substring(3);
+            }
+            Rcontactnumber=Rcontactnumber.replaceAll(" ","");
+
         }
 
 
         cursorPhone.close();
 
-        Log.d("", "Contact Phone Number: " + Rcontactnumber);
+        Log.e("after", "Contact Phone Number: " + Rcontactnumber);
     }
 
     private void retrieveContactName() {
