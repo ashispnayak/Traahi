@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.michaldrabik.tapbarmenulib.TapBarMenu;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -51,10 +52,16 @@ public class MainActivity extends AppCompatActivity
     public static final String STORE_DATA = "MyPrefs";
     private TextView toolbarText;
     public int counter;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
     ArrayList<String> permissions = new ArrayList<>();
 
 
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+       // mAuth.addAuthStateListener(mAuthListener);
+    }
 
     PermissionUtils permissionUtils;
     @Bind(R.id.tapBarMenu) TapBarMenu tapBarMenu;
@@ -68,6 +75,19 @@ public class MainActivity extends AppCompatActivity
         Context context =this;
         permissionUtils = new PermissionUtils((Activity) context);
         ButterKnife.bind(this);
+
+     /*   mAuth=FirebaseAuth.getInstance();
+        mAuthListener=new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(firebaseAuth.getCurrentUser()==null){
+                    Intent loginIntent=new Intent(MainActivity.this,LoginActivity.class);
+                    loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(loginIntent);
+                }
+
+            }
+        };*/
 
 
 
@@ -109,8 +129,8 @@ public class MainActivity extends AppCompatActivity
         ambulancebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
-
+                Intent intenth=new Intent(MainActivity.this,NearestHospitals.class);
+                startActivity(intenth);
 
             }
         });

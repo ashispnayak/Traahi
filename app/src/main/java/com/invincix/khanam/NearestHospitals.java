@@ -1,30 +1,20 @@
 package com.invincix.khanam;
 
-import android.*;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,20 +27,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.HashMap;
 import java.util.List;
 
-public class NearestPolice extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
-
+public class NearestHospitals extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
     private GoogleMap mMap;
     public static final int TYPE_POLICE=76;
     private double latitude,longitude;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nearest_police);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        setContentView(R.layout.activity_nearest_hospitals); // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.mappolice);
+                .findFragmentById(R.id.maphospital);
         mapFragment.getMapAsync(this);
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -119,16 +106,16 @@ public class NearestPolice extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         mMap.clear();
-        String Police= "police";
-        String url = getUrl(latitude, longitude, Police);
+        String Hospital= "hospital";
+        String url = getUrl(latitude, longitude, Hospital);
         Object[] DataTransfer = new Object[2];
         DataTransfer[0] = mMap;
         DataTransfer[1] = url;
         Log.d("onClick", url);
-        GetNearbyPoliceData getNearbyPoliceData = new GetNearbyPoliceData();
-        getNearbyPoliceData.execute(DataTransfer);
+        GetNearbyHospitalData getNearbyHospitalData = new GetNearbyHospitalData();
+        getNearbyHospitalData.execute(DataTransfer);
 
 
 
@@ -155,7 +142,7 @@ public class NearestPolice extends FragmentActivity implements OnMapReadyCallbac
         googlePlacesUrl.append("location=" + latitude + "," + longitude);
         googlePlacesUrl.append("&radius=" + 10000);
         googlePlacesUrl.append("&type=" + nearbyPlace);
-        googlePlacesUrl.append("&key=" + "AIzaSyATuUiZUkEc_UgHuqsBJa1oqaODI-3mLs0");
+        googlePlacesUrl.append("&key=" + "AIzaSyDGZAOUfDB8867dAbiKWc2GVj-oIXDNCH4");
         googlePlacesUrl.append("&sensor=true");
         Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
@@ -170,57 +157,54 @@ public class NearestPolice extends FragmentActivity implements OnMapReadyCallbac
         return false;
     }
 }
- class GetNearbyPoliceData extends AsyncTask<Object, String, String> {
+class GetNearbyHospitalData extends AsyncTask<Object, String, String> {
 
-     String googlePlacesData;
-     GoogleMap mMap;
-     String url;
+    String googlePlacesData;
+    GoogleMap mMap;
+    String url;
 
-     @Override
-     protected String doInBackground(Object... params) {
-         try {
-             Log.d("GetNearbyPlacesData", "doInBackground entered");
-             mMap = (GoogleMap) params[0];
-             url = (String) params[1];
-             DownloadUrl downloadUrl = new DownloadUrl();
-             googlePlacesData = downloadUrl.readUrl(url);
-             Log.d("GooglePlacesReadTask", "doInBackground Exit");
-         } catch (Exception e) {
-             Log.d("GooglePlacesReadTask", e.toString());
-         }
-         return googlePlacesData;
-     }
+    @Override
+    protected String doInBackground(Object... params) {
+        try {
+            Log.d("GetNearbyPlacesData", "doInBackground entered");
+            mMap = (GoogleMap) params[0];
+            url = (String) params[1];
+            DownloadUrl downloadUrl = new DownloadUrl();
+            googlePlacesData = downloadUrl.readUrl(url);
+            Log.d("GooglePlacesReadTask", "doInBackground Exit");
+        } catch (Exception e) {
+            Log.d("GooglePlacesReadTask", e.toString());
+        }
+        return googlePlacesData;
+    }
 
-     @Override
-     protected void onPostExecute(String result) {
-         Log.d("GooglePlacesReadTask", "onPostExecute Entered");
-         List<HashMap<String, String>> nearbyPlacesList = null;
-         DataParser dataParser = new DataParser();
-         nearbyPlacesList = dataParser.parse(result);
-         ShowNearbyPlaces(nearbyPlacesList);
-         Log.d("GooglePlacesReadTask", "onPostExecute Exit");
-     }
+    @Override
+    protected void onPostExecute(String result) {
+        Log.d("GooglePlacesReadTask", "onPostExecute Entered");
+        List<HashMap<String, String>> nearbyPlacesList = null;
+        DataParser dataParser = new DataParser();
+        nearbyPlacesList = dataParser.parse(result);
+        ShowNearbyPlaces(nearbyPlacesList);
+        Log.d("GooglePlacesReadTask", "onPostExecute Exit");
+    }
 
-     private void ShowNearbyPlaces(List<HashMap<String, String>> nearbyPlacesList) {
-         for (int i = 0; i < nearbyPlacesList.size(); i++) {
-             Log.d("onPostExecute", "Entered into showing locations");
-             MarkerOptions markerOptions = new MarkerOptions();
-             HashMap<String, String> googlePlace = nearbyPlacesList.get(i);
-             double lat = Double.parseDouble(googlePlace.get("lat"));
-             double lng = Double.parseDouble(googlePlace.get("lng"));
-             String placeName = googlePlace.get("place_name");
-             String vicinity = googlePlace.get("vicinity");
-             LatLng latLng = new LatLng(lat, lng);
+    private void ShowNearbyPlaces(List<HashMap<String, String>> nearbyPlacesList) {
+        for (int i = 0; i < nearbyPlacesList.size(); i++) {
+            Log.d("onPostExecute", "Entered into showing locations");
+            MarkerOptions markerOptions = new MarkerOptions();
+            HashMap<String, String> googlePlace = nearbyPlacesList.get(i);
+            double lat = Double.parseDouble(googlePlace.get("lat"));
+            double lng = Double.parseDouble(googlePlace.get("lng"));
+            String placeName = googlePlace.get("place_name");
+            String vicinity = googlePlace.get("vicinity");
+            LatLng latLng = new LatLng(lat, lng);
 
-             mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + " : " + vicinity).icon(BitmapDescriptorFactory.fromResource(R.drawable.policemarker)));
-
-
-             //move map camera
-             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-             mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
-         }
-     }
- }
+            mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + " : " + vicinity));
 
 
-
+            //move map camera
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        }
+    }
+}
