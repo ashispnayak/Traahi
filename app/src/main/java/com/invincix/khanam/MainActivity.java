@@ -12,19 +12,31 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.huxq17.swipecardsview.SwipeCardsView;
 import com.michaldrabik.tapbarmenulib.TapBarMenu;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -43,10 +55,30 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements  OnRequestPermissionsResultCallback, PermissionResultCallback {
+        implements ConnectionCallbacks, OnConnectionFailedListener, OnRequestPermissionsResultCallback, PermissionResultCallback {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
 
-    private ImageButton addcontacts,safetybutton,policebutton,pcrbutton,rtibutton,ambulancebutton;
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
+
+    private Location mLastLocation;
+
+    // Google client to interact with Google API
+    private GoogleApiClient mGoogleApiClient;
+
+    // boolean flag to toggle periodic location updates
+    private boolean mRequestingLocationUpdates = false;
+
+    private LocationRequest mLocationRequest;
+
+    // Location updates intervals in sec
+    private static int UPDATE_INTERVAL = 10000; // 10 sec
+    private static int FATEST_INTERVAL = 5000; // 5 sec
+    private static int DISPLACEMENT = 10; // 10 meters
+
+    private SwipeCardsView swipeCardsView;
+    private List<MainPageCardModel> modelList = new ArrayList<>();
+    private ImageButton addcontacts, safetybutton, policebutton, muncipalitybutton, rtibutton, ambulancebutton;
     public String latitude;
     public String longitude;
     public static final String STORE_DATA = "MyPrefs";
@@ -57,24 +89,50 @@ public class MainActivity extends AppCompatActivity
     ArrayList<String> permissions = new ArrayList<>();
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-       // mAuth.addAuthStateListener(mAuthListener);
-    }
-
     PermissionUtils permissionUtils;
-    @Bind(R.id.tapBarMenu) TapBarMenu tapBarMenu;
-
+    @Bind(R.id.tapBarMenu)
+    TapBarMenu tapBarMenu;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
-        Context context =this;
+        Context context = this;
         permissionUtils = new PermissionUtils((Activity) context);
         ButterKnife.bind(this);
+
+        swipeCardsView = (SwipeCardsView)findViewById(R.id.SwipecardView);
+        swipeCardsView.retainLastCard(true);
+        swipeCardsView.enableSwipe(true);
+
+        swipeCardsView.setCardsSlideListener(new SwipeCardsView.CardsSlideListener() {
+            @Override
+            public void onShow(int index) {
+                Log.e("Index",String.valueOf(index));
+            }
+
+            @Override
+            public void onCardVanish(int index, SwipeCardsView.SlideType type) {
+                switch (type){
+                    case LEFT:
+
+                        break;
+                    case RIGHT:
+
+                        break;
+                }
+            }
+
+            @Override
+            public void onItemClick(View cardImageView, int index) {
+                Toast.makeText(getApplicationContext(), "Index" + String.valueOf(index), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        getCardData();
+
+
 
      /*   mAuth=FirebaseAuth.getInstance();
         mAuthListener=new FirebaseAuth.AuthStateListener() {
@@ -88,8 +146,15 @@ public class MainActivity extends AppCompatActivity
 
             }
         };*/
+        TextView horText = (TextView) findViewById(R.id.horText);
+        Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
+        horText.setTypeface(custom);
 
+        if (checkPlayServices()) {
 
+            // Building the GoogleApi client
+            buildGoogleApiClient();
+        }
 
         //Request for permissions for api level 23 and higher
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -98,26 +163,22 @@ public class MainActivity extends AppCompatActivity
         permissionUtils.check_permission(permissions, "Allow Trahi to access your location and storage?", 1);
 
 
-
-
-
-
         //add contacts
-        addcontacts=(ImageButton)findViewById(R.id.addcontacts);
+        addcontacts = (ImageButton) findViewById(R.id.addcontacts);
         addcontacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this,AddContacts.class);
+                Intent intent = new Intent(MainActivity.this, AddContacts.class);
                 startActivity(intent);
             }
         });
 
         //nearest policestation
-        policebutton=(ImageButton)findViewById(R.id.policebutton);
+        policebutton = (ImageButton) findViewById(R.id.policebutton);
         policebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentp=new Intent(MainActivity.this,NearestPolice.class);
+                Intent intentp = new Intent(MainActivity.this, NearestPolice.class);
                 startActivity(intentp);
 
 
@@ -125,19 +186,19 @@ public class MainActivity extends AppCompatActivity
         });
 
         //nearest ambulance
-        ambulancebutton=(ImageButton)findViewById(R.id.ambubutton);
+        ambulancebutton = (ImageButton) findViewById(R.id.ambubutton);
         ambulancebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intenth=new Intent(MainActivity.this,NearestHospitals.class);
+                Intent intenth = new Intent(MainActivity.this, NearestHospitals.class);
                 startActivity(intenth);
 
             }
         });
 
         //nearest pcr
-        pcrbutton=(ImageButton)findViewById(R.id.pcrbutton);
-        pcrbutton.setOnClickListener(new View.OnClickListener() {
+        muncipalitybutton = (ImageButton) findViewById(R.id.municipalitybutton);
+        muncipalitybutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
@@ -147,56 +208,39 @@ public class MainActivity extends AppCompatActivity
         });
 
         //safety
-        safetybutton=(ImageButton)findViewById(R.id.safetybutton);
+        safetybutton = (ImageButton) findViewById(R.id.safetybutton);
         safetybutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this,SafetyTips.class);
+                Intent intent = new Intent(MainActivity.this, SafetyTips.class);
                 startActivity(intent);
 
             }
         });
 
         //rti process
-        rtibutton=(ImageButton)findViewById(R.id.rtibutton);
+        rtibutton = (ImageButton) findViewById(R.id.rtibutton);
         rtibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentrti=new Intent(MainActivity.this,RtiProcess.class);
+                Intent intentrti = new Intent(MainActivity.this, RtiProcess.class);
                 startActivity(intentrti);
 
             }
         });
 
 
-
-
-
-
-
-
-
         //Retrieve Datas
 
         SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
-        counter= (sharedPref.getInt("CONTACT_NUMBER",-1));
-        for(int i=0;i<=counter;i++) {
-            sharedPref.getString("LOCAL_PHONE_NUMBER_"+String.valueOf(i), null);
-            sharedPref.getString("LOCAL_CONTACT_NAME_"+String.valueOf(i), null);
+        counter = (sharedPref.getInt("CONTACT_NUMBER", -1));
+        for (int i = 0; i <= counter; i++) {
+            sharedPref.getString("LOCAL_PHONE_NUMBER_" + String.valueOf(i), null);
+            sharedPref.getString("LOCAL_CONTACT_NAME_" + String.valueOf(i), null);
 
         }
 
         String data_name = (sharedPref.getString("LOCAL_NAME", null));
-
-
-
-
-
-
-
-
-
-
 
 
         longitude = " ";
@@ -205,12 +249,11 @@ public class MainActivity extends AppCompatActivity
         Log.e("longitude", longitude);
 
 
-
         //check if name is null, if its null set its value
         if (data_name == null) {
             permissionUtils.check_permission(permissions, "Allow Trahi to write data?", 2);
 
-            AlertDialog.Builder namegetter = new AlertDialog.Builder(MainActivity.this,R.style.MyAlertDialogStyle);
+            AlertDialog.Builder namegetter = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
 
             namegetter.setTitle("Enter Your Name");
             final EditText input = new EditText(this);
@@ -238,60 +281,19 @@ public class MainActivity extends AppCompatActivity
 
             namegetter.show();
         }
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
-            }
-
-            @Override
-            public void onLocationChanged(final Location location) {
-
-            }
-        });
-        Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (myLocation == null) {
-            Toast.makeText(getApplicationContext(), "Please Turn On Your Location", Toast.LENGTH_LONG).show();
-
-        } else {
-            myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            longitude = String.valueOf(myLocation.getLongitude());
-            latitude = String.valueOf(myLocation.getLatitude());
-            Log.e("longitude", longitude);
-
-        }
-
-
-
-
-
-
-
+     displayLocation();
 
 
     }
 
+    private void getCardData() {
+        modelList.add(new MainPageCardModel("https://firebasestorage.googleapis.com/v0/b/traahi-invincians.appspot.com/o/womensafety.png?alt=media&token=357cd312-e06c-4112-8d22-4f604f1d2b36"));
+        modelList.add(new MainPageCardModel("https://i.pinimg.com/originals/89/8d/70/898d70a79d51a944cd247b5fd0a1ab5a.jpg"));
+        modelList.add(new MainPageCardModel("http://www.topdesignmag.com/wp-content/uploads/2011/05/347.jpg"));
 
+        MainPageCardAdapter cardAdapter = new MainPageCardAdapter(modelList,this);
+        swipeCardsView.setAdapter(cardAdapter);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -326,13 +328,102 @@ public class MainActivity extends AppCompatActivity
         Log.i("PERMISSION","NEVER ASK AGAIN");
     }
 
+    private void displayLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mLastLocation = LocationServices.FusedLocationApi
+                .getLastLocation(mGoogleApiClient);
+
+       if (mLastLocation != null) {
+           latitude = String.valueOf(mLastLocation.getLatitude());
+           longitude = String.valueOf(mLastLocation.getLongitude());
+           Log.e("Latitude",String.valueOf(latitude));
+           SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
+           SharedPreferences.Editor editor = sharedPref.edit();
+           editor.putString("LATITUDE_SAVE", latitude);
+           editor.putString("LONGITUDE_SAVE", longitude);
+           editor.apply();
 
 
+       } else {
 
+           Log.e("Location not retrieved","Turn on your location");
+       }
+   }
+    /**
+     * Creating google api client object
+     * */
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+    }
 
+    /**
+     * Method to verify google play services on the device
+     * */
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil
+                .isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "This device is not supported.", Toast.LENGTH_LONG)
+                        .show();
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        checkPlayServices();
+    }
+
+    /**
+     * Google api callback methods
+     */
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
+                + result.getErrorCode());
+    }
+
+    @Override
+    public void onConnected(Bundle arg0) {
+
+        // Once connected with google api, get the location
+        displayLocation();
+    }
+
+    @Override
+    public void onConnectionSuspended(int arg0) {
+        mGoogleApiClient.connect();
+    }
 
 
 

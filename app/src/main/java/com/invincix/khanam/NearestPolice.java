@@ -1,30 +1,24 @@
 package com.invincix.khanam;
 
-import android.*;
+
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.content.SharedPreferences;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.AsyncTask;
+
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.support.design.widget.BottomSheetBehavior;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,75 +31,68 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.HashMap;
 import java.util.List;
 
-public class NearestPolice extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
+import static android.util.Log.d;
+
+
+public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    public static final int TYPE_POLICE=76;
-    private double latitude,longitude;
+    private String latitude, longitude;
+    private TextView placename, placeaddress, placenumber, policetoolbar;
+    private Button policeDirection;
+    private ImageButton closeButton;
+    private BottomSheetBehavior mBottomSheetBehaviour;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearest_police);
+
+        //Setting the Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.policetoolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        assert toolbar != null;
+        toolbar.bringToFront();
+
+        //set toolbar text
+        policetoolbar = (TextView) findViewById(R.id.policetoolbartext) ;
+        Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
+        policetoolbar.setTypeface(custom);
+
+        //Setting the bottom Sheet
+
+        View bottomSheet = findViewById(R.id.police_bottom_sheet);
+        try {
+            mBottomSheetBehaviour = BottomSheetBehavior.from(bottomSheet);
+        } catch (NullPointerException npe) {
+            npe.printStackTrace();
+        }
+        mBottomSheetBehaviour.setHideable(true);
+        mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_HIDDEN);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mappolice);
         mapFragment.getMapAsync(this);
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
-            }
-
-            @Override
-            public void onLocationChanged(final Location location) {
-
-            }
-        });
-        Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (myLocation == null) {
-            Toast.makeText(getApplicationContext(), "Please Turn On Your Location", Toast.LENGTH_LONG).show();
-
-        } else {
-            myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-            latitude =myLocation.getLatitude();
-            longitude=myLocation.getLongitude();
-
-        }
-
-
-
-
-
-
-
-
+        SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
+        latitude = sharedPref.getString("LATITUDE_SAVE", null);
+        longitude = sharedPref.getString("LONGITUDE_SAVE", null);
+        placename = (TextView) findViewById(R.id.policestationname);
+        placeaddress = (TextView) findViewById(R.id.policestationaddress);
+        placenumber = (TextView) findViewById(R.id.policestationnumber);
+        policeDirection = (Button) findViewById(R.id.policedirection);
+        closeButton = (ImageButton) findViewById(R.id.closebutton);
 
     }
-
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
     /**
      * Manipulates the map once available.
@@ -119,108 +106,142 @@ public class NearestPolice extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.clear();
-        String Police= "police";
+        String Police = "police";
         String url = getUrl(latitude, longitude, Police);
         Object[] DataTransfer = new Object[2];
         DataTransfer[0] = mMap;
         DataTransfer[1] = url;
-        Log.d("onClick", url);
-        GetNearbyPoliceData getNearbyPoliceData = new GetNearbyPoliceData();
-        getNearbyPoliceData.execute(DataTransfer);
-
-
-
-
-
-
+        d("onClick", url);
+        new GetNearbyPoliceData().execute(DataTransfer);
     }
 
-    private boolean CheckGooglePlayServices() {
-        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-        int result = googleAPI.isGooglePlayServicesAvailable(this);
-        if(result != ConnectionResult.SUCCESS) {
-            if(googleAPI.isUserResolvableError(result)) {
-                googleAPI.getErrorDialog(this, result,
-                        0).show();
-            }
-            return false;
-        }
-        return true;
-    }
-    private String getUrl(double latitude, double longitude, String nearbyPlace) {
+
+    private String getUrl(String latitude, String longitude, String nearbyPlace) {
 
         StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         googlePlacesUrl.append("location=" + latitude + "," + longitude);
         googlePlacesUrl.append("&radius=" + 10000);
         googlePlacesUrl.append("&type=" + nearbyPlace);
-        googlePlacesUrl.append("&key=" + "AIzaSyATuUiZUkEc_UgHuqsBJa1oqaODI-3mLs0");
+        googlePlacesUrl.append("&key=" + "AIzaSyAr9qKZuxiXtvrqSzIcYNjEAI2wFvYmCuo");
         googlePlacesUrl.append("&sensor=true");
-        Log.d("getUrl", googlePlacesUrl.toString());
+        d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
     }
 
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        StringBuilder pname = new StringBuilder();
-        StringBuilder pcontact = new StringBuilder();
-        StringBuilder pdistance = new StringBuilder();
-        return false;
+
+    class GetNearbyPoliceData extends AsyncTask<Object, String, String> implements GoogleMap.OnMarkerClickListener {
+
+        String googlePlacesData;
+
+        String url;
+
+        Marker mMarker;
+
+        @Override
+        protected String doInBackground(Object... params) {
+            try {
+                d("GetNearbyPlacesData", "doInBackground entered");
+                mMap = (GoogleMap) params[0];
+                url = (String) params[1];
+                DownloadUrl downloadUrl = new DownloadUrl();
+                googlePlacesData = downloadUrl.readUrl(url);
+                d("GooglePlacesReadTask", "doInBackground Exit");
+            } catch (Exception e) {
+                d("GooglePlacesReadTask", e.toString());
+            }
+            return googlePlacesData;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            d("GooglePlacesReadTask", "onPostExecute Entered");
+            List<HashMap<String, String>> nearbyPlacesList = null;
+            DataParser dataParser = new DataParser();
+            nearbyPlacesList = dataParser.parse(result);
+            ShowNearbyPlaces(nearbyPlacesList);
+            d("GooglePlacesReadTask", "onPostExecute Exit");
+        }
+
+        private void ShowNearbyPlaces(List<HashMap<String, String>> nearbyPlacesList) {
+            for (int i = 0; i < nearbyPlacesList.size(); i++) {
+                d("onPostExecute", "Entered into showing locations");
+                MarkerOptions markerOptions = new MarkerOptions();
+                HashMap<String, String> googlePlace = nearbyPlacesList.get(i);
+                double lat = Double.parseDouble(googlePlace.get("lat"));
+                double lng = Double.parseDouble(googlePlace.get("lng"));
+                String placeName = googlePlace.get("place_name");
+                String vicinity = googlePlace.get("vicinity");
+                LatLng latLng = new LatLng(lat, lng);
+
+                mMarker = null;
+
+                mMap.setOnMarkerClickListener( this);
+
+
+                mMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + "~" + vicinity).icon(BitmapDescriptorFactory.fromResource(R.drawable.policemarker)));
+                mMarker.hideInfoWindow();
+
+                //move map camera
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+            }
+        }
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+            mMarker.hideInfoWindow();
+            final Double latitude = marker.getPosition().latitude;
+            final Double longitude = marker.getPosition().longitude;
+            android.util.Log.d("marker lat",String.valueOf(latitude)+"63");
+            String title = marker.getTitle();
+            String titlepart[] = title.split("~");
+            final String placeName = titlepart[0];
+            String placeAddress = titlepart[1];
+            String placeContact = " ";
+
+            Log.e("clicked","marker");
+
+            if(mBottomSheetBehaviour.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
+                placename.setText(placeName);
+                placeaddress.setText(placeAddress);
+                if(placeContact == " "){
+                    placenumber.setText("Not Available");
+                }
+                policeDirection.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        String uriBegin = "geo:" + latitude + "," + longitude;
+                        String query = latitude + "," + longitude + "(" + placeName + ")";
+                        String encodedQuery = Uri.encode(query);
+                        String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
+                        Uri uri = Uri.parse(uriString);
+                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                    }
+                });
+                closeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_HIDDEN);
+                    }
+                });
+
+
+            }
+            else{
+                mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+
+
+            return true;
+
+        }
+
     }
+
 }
- class GetNearbyPoliceData extends AsyncTask<Object, String, String> {
-
-     String googlePlacesData;
-     GoogleMap mMap;
-     String url;
-
-     @Override
-     protected String doInBackground(Object... params) {
-         try {
-             Log.d("GetNearbyPlacesData", "doInBackground entered");
-             mMap = (GoogleMap) params[0];
-             url = (String) params[1];
-             DownloadUrl downloadUrl = new DownloadUrl();
-             googlePlacesData = downloadUrl.readUrl(url);
-             Log.d("GooglePlacesReadTask", "doInBackground Exit");
-         } catch (Exception e) {
-             Log.d("GooglePlacesReadTask", e.toString());
-         }
-         return googlePlacesData;
-     }
-
-     @Override
-     protected void onPostExecute(String result) {
-         Log.d("GooglePlacesReadTask", "onPostExecute Entered");
-         List<HashMap<String, String>> nearbyPlacesList = null;
-         DataParser dataParser = new DataParser();
-         nearbyPlacesList = dataParser.parse(result);
-         ShowNearbyPlaces(nearbyPlacesList);
-         Log.d("GooglePlacesReadTask", "onPostExecute Exit");
-     }
-
-     private void ShowNearbyPlaces(List<HashMap<String, String>> nearbyPlacesList) {
-         for (int i = 0; i < nearbyPlacesList.size(); i++) {
-             Log.d("onPostExecute", "Entered into showing locations");
-             MarkerOptions markerOptions = new MarkerOptions();
-             HashMap<String, String> googlePlace = nearbyPlacesList.get(i);
-             double lat = Double.parseDouble(googlePlace.get("lat"));
-             double lng = Double.parseDouble(googlePlace.get("lng"));
-             String placeName = googlePlace.get("place_name");
-             String vicinity = googlePlace.get("vicinity");
-             LatLng latLng = new LatLng(lat, lng);
-
-             mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + " : " + vicinity).icon(BitmapDescriptorFactory.fromResource(R.drawable.policemarker)));
-
-
-             //move map camera
-             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-             mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
-         }
-     }
- }
-
-
 

@@ -5,76 +5,114 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backroundmain1"
+    android:background="@drawable/backgroundmain"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.invincix.khanam.MainActivity"
     >
-    <ImageButton
+    <com.huxq17.swipecardsview.SwipeCardsView
+        android:layout_marginTop="80dp"
+        android:id="@+id/SwipecardView"
+        android:layout_height="300dp"
+        android:layout_width="match_parent"
+        app:alphaOffsetStep="20"
+        app:scaleOffsetStep="0.08"
+        app:yOffsetStep="20dp"
+        android:background="#01abff">
+
+    </com.huxq17.swipecardsview.SwipeCardsView>
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_pcr"
-        android:background="?android:selectableItemBackground"
-        android:id="@+id/pcrbutton"
-        android:layout_below="@+id/addcontacts"
-        android:layout_alignStart="@+id/addcontacts"
-        android:layout_marginTop="20dp" />
+        android:layout_below="@id/SwipecardView"
+        android:orientation="vertical"
+        android:background="#a81a59"
+        android:layout_marginTop="5dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Traahi Items"
+            android:id="@+id/horText"
+            android:textColor="#3795e4"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            />
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/buttonscroll">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/hor_add_contacts"
+            android:background="?android:selectableItemBackground"
+            android:id="@+id/addcontacts"
+
+
+            />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/hor_police_stations"
+            android:background="?android:selectableItemBackground"
+            android:id="@+id/policebutton"
+
+
+            />
+
+
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_ambulance"
+        app:srcCompat="@drawable/hor_hospital"
         android:background="?android:selectableItemBackground"
         android:id="@+id/ambubutton"
 
-        android:layout_alignTop="@+id/pcrbutton"
-        android:layout_alignStart="@+id/policebutton" />
+       />
+
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_rti"
-        android:layout_marginTop="20dp"
-
-        android:background="?android:selectableItemBackground"
-        android:id="@+id/rtibutton"
-        android:layout_below="@+id/pcrbutton"
-        android:layout_alignStart="@+id/pcrbutton" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_safety"
+        app:srcCompat="@drawable/hor_safety_tips"
         android:background="?android:selectableItemBackground"
         android:id="@+id/safetybutton"
-        android:layout_alignTop="@+id/rtibutton"
-        android:layout_alignStart="@+id/ambubutton" />
+         />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_police_station"
-        android:background="?android:selectableItemBackground"
-        android:id="@+id/policebutton"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="26dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/hor_rtiprocess"
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_add_contacts"
-        android:background="?android:selectableItemBackground"
-        android:id="@+id/addcontacts"
-        android:layout_marginTop="200dp"
-        android:layout_marginStart="26dp"
 
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+            android:background="?android:selectableItemBackground"
+            android:id="@+id/rtibutton"
+            />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/hor_municipality"
+            android:background="?android:selectableItemBackground"
+            android:id="@+id/municipalitybutton"
+
+            />
 
 
 
 
+
+
+</LinearLayout>
+    </HorizontalScrollView>
+    </LinearLayout>
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
@@ -148,13 +186,3 @@
 
     </FrameLayout>
 </RelativeLayout>
-
-
-
-
-
-
-
-
-
-

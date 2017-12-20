@@ -41,6 +41,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import com.victor.loading.newton.NewtonCradleLoading;
 
 import java.util.ArrayList;
 
@@ -49,9 +50,9 @@ public class SafetyTips extends AppCompatActivity {
 
     private static RecyclerView recyclerView;
     private static ArrayList<SafetyTipsFeed> data;
-    private ProgressDialog mProgressDialog;
     private DatabaseReference mDatabase;
     private TextView textView_NetworkErrorIcon;
+    private NewtonCradleLoading newtonCradleLoading;
 
 
     @Override
@@ -61,6 +62,7 @@ public class SafetyTips extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_safety_tips);
 
+        newtonCradleLoading.setVisibility(View.VISIBLE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarsafetytips);
         setSupportActionBar(toolbar);
@@ -90,16 +92,18 @@ public class SafetyTips extends AppCompatActivity {
         if(isNetworkAvailable())
         {
 
-            ProgressBar mProgress=(ProgressBar)findViewById(R.id.progressBarFeed) ;
+            newtonCradleLoading = (NewtonCradleLoading) findViewById(R.id.progressBarFeed);
 
             Log.e("FOund","Internet");
-            mProgress.setVisibility(View.VISIBLE);
+            newtonCradleLoading.start();
+            newtonCradleLoading.setVisibility(View.VISIBLE);
+
             populatefeed();
 
         }
         else{
             recyclerView.setVisibility(View.GONE);
-            mProgressDialog.dismiss();
+            newtonCradleLoading.setVisibility(View.GONE);
             Snackbar.make(findViewById(R.id.safetytipslayout), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
                     .setAction("RETRY", new View.OnClickListener() {
                         @Override
@@ -149,9 +153,12 @@ public class SafetyTips extends AppCompatActivity {
         ) {
             @Override
             protected void populateViewHolder(CustomAdapter viewHolder, SafetyTipsFeed model, int position) {
-                ProgressBar mProgress=(ProgressBar)findViewById(R.id.progressBarFeed) ;
+                newtonCradleLoading = (NewtonCradleLoading) findViewById(R.id.progressBarFeed);
 
-                mProgress.setVisibility(View.GONE);
+                if (newtonCradleLoading.isStart()) {
+
+                    newtonCradleLoading.setVisibility(View.GONE);
+                }
 
                 viewHolder.setName(model.getName());
                 viewHolder.setDescription(model.getDescription());
@@ -183,6 +190,7 @@ public class SafetyTips extends AppCompatActivity {
         }
         public void setUrl(Context c,String url){
             ImageView postimage= (ImageView) mview.findViewById(R.id.safetyimage);
+            postimage.setScaleType(ImageView.ScaleType.CENTER_CROP);
             Picasso.with(c).load(url).into(postimage);
 
         }
