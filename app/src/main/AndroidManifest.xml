@@ -43,8 +43,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddContacts" />
-        <activity android:name=".SafetyTips"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".SafetyTips"
+            android:theme="@style/AppTheme.NoActionBar" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -67,7 +68,7 @@
         <activity
             android:name=".NearestPolice"
             android:label="@string/title_activity_nearest_police"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".RtiProcess" />
         <activity
             android:name=".LoginActivity"
@@ -75,6 +76,8 @@
         <activity android:name=".Municipality" />
         <activity
             android:name=".NearestHospitals"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".SafetyTipsDetails"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

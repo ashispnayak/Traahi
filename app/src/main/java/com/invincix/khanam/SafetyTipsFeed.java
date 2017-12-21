@@ -8,14 +8,16 @@ public class SafetyTipsFeed {
     private String Name;
     private String url;
     private String Description;
+    private String coverImg;
 
     public SafetyTipsFeed() {
     }
 
-    public SafetyTipsFeed(String name, String url, String description) {
+    public SafetyTipsFeed(String name, String url, String description, String coverImg) {
         Name = name;
         this.url = url;
         Description = description;
+        this.coverImg = coverImg;
     }
 
     public String getName() {
@@ -32,6 +34,13 @@ public class SafetyTipsFeed {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+    public String getCoverImg() {
+        return coverImg;
+    }
+
+    public void setCoverImg(String coverImg) {
+        this.coverImg = coverImg;
     }
 
     public String getDescription() {

@@ -5,105 +5,203 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backgroundmain"
+
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.invincix.khanam.MainActivity"
     >
-    <com.huxq17.swipecardsview.SwipeCardsView
-        android:layout_marginTop="80dp"
-        android:id="@+id/SwipecardView"
-        android:layout_height="300dp"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        app:alphaOffsetStep="20"
-        app:scaleOffsetStep="0.08"
-        app:yOffsetStep="20dp"
-        android:background="#01abff">
+        android:layout_height="wrap_content"
+        android:background="#cf3025"
+        android:id="@+id/mainappbar"
+        app:elevation="0dp"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    </com.huxq17.swipecardsview.SwipeCardsView>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/maintoolbar"
+            android:layout_width="match_parent"
+            android:background="#cf3025"
+            android:elevation="4dp"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            android:layout_gravity="bottom">
+
+            <TextView
+                android:id="@+id/maintoolbartext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Traahi"
+                android:textColor="#fdfdfd"
+                android:textSize="40sp"
+                android:layout_gravity="center"
+                />
+
+
+        </android.support.v7.widget.Toolbar>
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="-be safe anytime,anywhere"
+        android:id="@+id/safeTag"
+        android:padding="7dp"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:background="#f73103"
+        android:textStyle="bold"
+        android:layout_below="@+id/mainappbar"
+        />
+    <com.daimajia.slider.library.SliderLayout
+        android:id="@+id/slider"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_below="@+id/safeTag"
+
+        />
+    <android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/slider"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="7dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="3dp">
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/SwipecardView"
         android:orientation="vertical"
-        android:background="#a81a59"
-        android:layout_marginTop="5dp"
+
         >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Traahi Items"
             android:id="@+id/horText"
-            android:textColor="#3795e4"
+            android:textColor="#808080"
             android:textStyle="bold"
-            android:textSize="30dp"
+            android:textSize="20sp"
             />
     <HorizontalScrollView
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:scrollbars="none"
         android:id="@+id/buttonscroll">
 
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+                 <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                     android:layout_gravity="center"
+                     app:srcCompat="@drawable/hor_ic_addcont"
+                     android:background="@null"
+                android:id="@+id/addcontacts"
+             />
+            <TextView
+                android:layout_width="85dp"
+                android:layout_height="wrap_content"
+                android:text="Add Contacts"
+                android:textColor="#808080"/>
 
+            </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/hor_add_contacts"
-            android:background="?android:selectableItemBackground"
-            android:id="@+id/addcontacts"
-
-
-            />
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/hor_police_stations"
-            android:background="?android:selectableItemBackground"
+            app:srcCompat="@drawable/hor_ic_police"
+            android:layout_gravity="center"
+            android:background="@null"
             android:id="@+id/policebutton"
-
-
             />
+            <TextView
+                android:layout_width="85dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Nearby Police"
+                android:textColor="#808080"/>
+            </LinearLayout>
 
 
-
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/hor_hospital"
-        android:background="?android:selectableItemBackground"
+        app:srcCompat="@drawable/hor_ic_hospital"
+        android:layout_gravity="center"
+        android:background="@null"
         android:id="@+id/ambubutton"
 
        />
+            <TextView
+                android:layout_width="85dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Nearby Hospital"
+                android:textColor="#808080"/>
+            </LinearLayout>
 
-
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/hor_safety_tips"
-        android:background="?android:selectableItemBackground"
+        app:srcCompat="@drawable/hor_ic_safetytip"
+        android:background="@null"
+        android:layout_gravity="center"
         android:id="@+id/safetybutton"
          />
+            <TextView
+                android:layout_width="85dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Safety Tips"
+                android:textColor="#808080"/>
+
+
+            </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/hor_rtiprocess"
-
-
-            android:background="?android:selectableItemBackground"
+            app:srcCompat="@drawable/hor_ic_rti"
+            android:background="@null"
+            android:layout_gravity="center"
             android:id="@+id/rtibutton"
             />
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/hor_municipality"
-            android:background="?android:selectableItemBackground"
-            android:id="@+id/municipalitybutton"
+            <TextView
+                android:layout_width="85dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="RTI Process"
+                android:textColor="#808080"/>
+            </LinearLayout>
 
-            />
 
 
 
@@ -113,12 +211,14 @@
 </LinearLayout>
     </HorizontalScrollView>
     </LinearLayout>
+    </android.support.v7.widget.CardView>
+
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
 
 
@@ -127,7 +227,7 @@
             android:layout_width="match_parent"
             android:layout_height="63dp"
             android:layout_gravity="bottom"
-            app:tbm_backgroundColor="@color/red"
+            app:tbm_backgroundColor="#f73103"
             app:tbm_menuAnchor="bottom"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true">

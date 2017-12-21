@@ -124,7 +124,7 @@ public class NearestHospitals extends  AppCompatActivity  implements OnMapReadyC
         googlePlacesUrl.append("location=" + latitude + "," + longitude);
         googlePlacesUrl.append("&radius=" + 10000);
         googlePlacesUrl.append("&type=" + nearbyPlace);
-        googlePlacesUrl.append("&key=" + "AIzaSyAr9qKZuxiXtvrqSzIcYNjEAI2wFvYmCuo");
+        googlePlacesUrl.append("&key=" + "AIzaSyD484c-DRhKtVYWtOgXkrJ1gXgfsJcvpEg");
         googlePlacesUrl.append("&sensor=true");
         d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
@@ -181,7 +181,7 @@ public class NearestHospitals extends  AppCompatActivity  implements OnMapReadyC
                 mMap.setOnMarkerClickListener( this);
 
 
-                mMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + "~" + vicinity).icon(BitmapDescriptorFactory.fromResource(R.drawable.doctormarker)));
+                mMarker = mMap.addMarker(new MarkerOptions().position(latLng).anchor(0.5f, .05f).title(placeName + "~" + vicinity).icon(BitmapDescriptorFactory.fromResource(R.drawable.doctormarker)));
                 mMarker.hideInfoWindow();
 
                 //move map camera
@@ -200,7 +200,6 @@ public class NearestHospitals extends  AppCompatActivity  implements OnMapReadyC
             final String placeName = titlepart[0];
             String placeAddress = titlepart[1];
             String placeContact = " ";
-
             Log.e("clicked","marker");
 
             if(mBottomSheetBehaviour1.getState() != BottomSheetBehavior.STATE_EXPANDED) {

@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         android:id="@+id/safetytipslayout"
         android:fitsSystemWindows="true"
-        android:background="@drawable/backgroundcontact"
+
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.invincix.khanam.SafetyTips"
        >
@@ -22,7 +22,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbarsafetytips"
         android:layout_width="match_parent"
-        android:background="#01abff"
+        android:background="#cf3025"
         android:layout_height="?attr/actionBarSize"
         app:popupTheme="@style/AppTheme.PopupOverlay">
         <TextView

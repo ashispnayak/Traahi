@@ -11,8 +11,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.daimajia.slider.library.Animations.DescriptionAnimation;
+import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
+import com.daimajia.slider.library.SliderTypes.TextSliderView;
+import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.google.firebase.auth.FirebaseAuth;
-import com.huxq17.swipecardsview.SwipeCardsView;
 import com.michaldrabik.tapbarmenulib.TapBarMenu;
 
 import butterknife.Bind;
@@ -21,6 +26,7 @@ import butterknife.OnClick;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
@@ -55,7 +61,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements ConnectionCallbacks, OnConnectionFailedListener, OnRequestPermissionsResultCallback, PermissionResultCallback {
+        implements ConnectionCallbacks, OnConnectionFailedListener, OnRequestPermissionsResultCallback, PermissionResultCallback, BaseSliderView.OnSliderClickListener,
+        ViewPagerEx.OnPageChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -76,14 +83,13 @@ public class MainActivity extends AppCompatActivity
     private static int FATEST_INTERVAL = 5000; // 5 sec
     private static int DISPLACEMENT = 10; // 10 meters
 
-    private SwipeCardsView swipeCardsView;
-    private List<MainPageCardModel> modelList = new ArrayList<>();
-    private ImageButton addcontacts, safetybutton, policebutton, muncipalitybutton, rtibutton, ambulancebutton;
+    private ImageButton addcontacts, safetybutton, policebutton, rtibutton, ambulancebutton;
     public String latitude;
     public String longitude;
     public static final String STORE_DATA = "MyPrefs";
-    private TextView toolbarText;
+    private TextView toolbarText,texttag;
     public int counter;
+    private SliderLayout imageSlider;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     ArrayList<String> permissions = new ArrayList<>();
@@ -102,35 +108,37 @@ public class MainActivity extends AppCompatActivity
         permissionUtils = new PermissionUtils((Activity) context);
         ButterKnife.bind(this);
 
-        swipeCardsView = (SwipeCardsView)findViewById(R.id.SwipecardView);
-        swipeCardsView.retainLastCard(true);
-        swipeCardsView.enableSwipe(true);
+        imageSlider = (SliderLayout)findViewById(R.id.slider);
 
-        swipeCardsView.setCardsSlideListener(new SwipeCardsView.CardsSlideListener() {
-            @Override
-            public void onShow(int index) {
-                Log.e("Index",String.valueOf(index));
-            }
 
-            @Override
-            public void onCardVanish(int index, SwipeCardsView.SlideType type) {
-                switch (type){
-                    case LEFT:
 
-                        break;
-                    case RIGHT:
+        HashMap<String,String> url_maps = new HashMap<String, String>();
+        url_maps.put("Women Safety", "https://firebasestorage.googleapis.com/v0/b/traahi-a9bd5.appspot.com/o/womensafety.png?alt=media&token=e126e87d-6e3a-49e9-b072-c2586f40a4b6");
+                url_maps.put("Emergency", "https://i.pinimg.com/originals/89/8d/70/898d70a79d51a944cd247b5fd0a1ab5a.jpg");
+                        url_maps.put("Traahi Volunteer", "http://www.topdesignmag.com/wp-content/uploads/2011/05/347.jpg");
 
-                        break;
-                }
-            }
 
-            @Override
-            public void onItemClick(View cardImageView, int index) {
-                Toast.makeText(getApplicationContext(), "Index" + String.valueOf(index), Toast.LENGTH_SHORT).show();
-            }
-        });
+        for(String name : url_maps.keySet()){
+            TextSliderView textSliderView = new TextSliderView(this);
+            // initialize a SliderLayout
+            textSliderView
+                    .description(name)
+                    .image(url_maps.get(name))
+                    .setScaleType(BaseSliderView.ScaleType.Fit)
+                    .setOnSliderClickListener(this);
 
-        getCardData();
+            //add your extra information
+            textSliderView.bundle(new Bundle());
+            textSliderView.getBundle()
+                    .putString("extra",name);
+
+            imageSlider.addSlider(textSliderView);
+        }
+        imageSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
+        imageSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+        imageSlider.setCustomAnimation(new DescriptionAnimation());
+        imageSlider.setDuration(2000);
+        imageSlider.addOnPageChangeListener(this);
 
 
 
@@ -147,8 +155,12 @@ public class MainActivity extends AppCompatActivity
             }
         };*/
         TextView horText = (TextView) findViewById(R.id.horText);
+        toolbarText = (TextView)  findViewById(R.id.maintoolbartext);
+        texttag = (TextView) findViewById(R.id.safeTag) ;
         Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
         horText.setTypeface(custom);
+        toolbarText.setTypeface(custom);
+        texttag.setTypeface(custom);
 
         if (checkPlayServices()) {
 
@@ -196,16 +208,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        //nearest pcr
-        muncipalitybutton = (ImageButton) findViewById(R.id.municipalitybutton);
-        muncipalitybutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
 
-
-            }
-        });
 
         //safety
         safetybutton = (ImageButton) findViewById(R.id.safetybutton);
@@ -286,14 +289,33 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void getCardData() {
-        modelList.add(new MainPageCardModel("https://firebasestorage.googleapis.com/v0/b/traahi-invincians.appspot.com/o/womensafety.png?alt=media&token=357cd312-e06c-4112-8d22-4f604f1d2b36"));
-        modelList.add(new MainPageCardModel("https://i.pinimg.com/originals/89/8d/70/898d70a79d51a944cd247b5fd0a1ab5a.jpg"));
-        modelList.add(new MainPageCardModel("http://www.topdesignmag.com/wp-content/uploads/2011/05/347.jpg"));
-
-        MainPageCardAdapter cardAdapter = new MainPageCardAdapter(modelList,this);
-        swipeCardsView.setAdapter(cardAdapter);
+    @Override
+    protected void onStop() {
+        imageSlider.stopAutoCycle();
+        super.onStop();
     }
+
+    @Override
+    public void onSliderClick(BaseSliderView slider) {
+        Toast.makeText(this,slider.getBundle().get("extra") + "",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset,
+                               int positionOffsetPixels) {}
+
+    @Override
+    public void onPageSelected(int position) {
+        Log.e("Slider Demo", "Page Changed: " + position);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {}
+
+
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,

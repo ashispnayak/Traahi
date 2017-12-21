@@ -87,6 +87,8 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
         policeDirection = (Button) findViewById(R.id.policedirection);
         closeButton = (ImageButton) findViewById(R.id.closebutton);
 
+
+
     }
     @Override
     public boolean onSupportNavigateUp() {
@@ -124,7 +126,7 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
         googlePlacesUrl.append("location=" + latitude + "," + longitude);
         googlePlacesUrl.append("&radius=" + 10000);
         googlePlacesUrl.append("&type=" + nearbyPlace);
-        googlePlacesUrl.append("&key=" + "AIzaSyAr9qKZuxiXtvrqSzIcYNjEAI2wFvYmCuo");
+        googlePlacesUrl.append("&key=" + "AIzaSyD484c-DRhKtVYWtOgXkrJ1gXgfsJcvpEg");
         googlePlacesUrl.append("&sensor=true");
         d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
@@ -139,6 +141,7 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
         String url;
 
         Marker mMarker;
+
 
         @Override
         protected String doInBackground(Object... params) {
@@ -181,7 +184,7 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
                 mMap.setOnMarkerClickListener( this);
 
 
-                mMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + "~" + vicinity).icon(BitmapDescriptorFactory.fromResource(R.drawable.policemarker)));
+                mMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + "~" + vicinity).anchor(0.5f, .05f).icon(BitmapDescriptorFactory.fromResource(R.drawable.policemarker)));
                 mMarker.hideInfoWindow();
 
                 //move map camera
@@ -200,6 +203,7 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
             final String placeName = titlepart[0];
             String placeAddress = titlepart[1];
             String placeContact = " ";
+
 
             Log.e("clicked","marker");
 

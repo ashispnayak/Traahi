@@ -1,9 +1,12 @@
 package com.invincix.khanam;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -19,6 +22,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.victor.loading.newton.NewtonCradleLoading;
@@ -61,7 +66,9 @@ public class SafetyTips extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_safety_tips);
-
+        newtonCradleLoading = (NewtonCradleLoading) findViewById(R.id.progressBarFeed);
+        int col = Color.parseColor("#cf3025");
+        newtonCradleLoading.setLoadingColor(col);
         newtonCradleLoading.setVisibility(View.VISIBLE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarsafetytips);
@@ -82,6 +89,8 @@ public class SafetyTips extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         show();
+
+
 
 
     }
@@ -152,7 +161,7 @@ public class SafetyTips extends AppCompatActivity {
 
         ) {
             @Override
-            protected void populateViewHolder(CustomAdapter viewHolder, SafetyTipsFeed model, int position) {
+            protected void populateViewHolder(CustomAdapter viewHolder, final SafetyTipsFeed model, int position) {
                 newtonCradleLoading = (NewtonCradleLoading) findViewById(R.id.progressBarFeed);
 
                 if (newtonCradleLoading.isStart()) {
@@ -160,11 +169,32 @@ public class SafetyTips extends AppCompatActivity {
                     newtonCradleLoading.setVisibility(View.GONE);
                 }
 
+
+                final String title = model.getName();
+                final String descr = model.getDescription();
+                final String mainpic = model.getUrl();
+                final String coverpic = model.getCoverImg();
                 viewHolder.setName(model.getName());
                 viewHolder.setDescription(model.getDescription());
                 viewHolder.setUrl(getApplicationContext() , model.getUrl());
+                viewHolder.setCoverImg(getApplicationContext(), model.getCoverImg());
+                viewHolder.mview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
+
+                        Intent intent = new Intent(SafetyTips.this,SafetyTipsDetails.class);
+                        Bundle extras = new Bundle();
+                        extras.putString("title",title);
+                        extras.putString("cover",coverpic);
+                        extras.putString("description",descr);
+                        extras.putString("mainpic",mainpic);
+                        intent.putExtras(extras);
+                        startActivity(intent);
+                    }
+                });
             }
+
         };
         recyclerView.setAdapter(firebaseRecyclerAdapter);
     }
@@ -192,6 +222,12 @@ public class SafetyTips extends AppCompatActivity {
             ImageView postimage= (ImageView) mview.findViewById(R.id.safetyimage);
             postimage.setScaleType(ImageView.ScaleType.CENTER_CROP);
             Picasso.with(c).load(url).into(postimage);
+
+        }
+        public void setCoverImg(Context c, String Url){
+            RoundedImageView cover = (RoundedImageView) mview.findViewById(R.id.img_cover_d);
+            Picasso.with(c).load(Url).into(cover);
+
 
         }
 
