@@ -3,6 +3,7 @@ package com.invincix.khanam;
 
 import android.Manifest;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
-        Context context = this;
+        final Context context = this;
         permissionUtils = new PermissionUtils((Activity) context);
         ButterKnife.bind(this);
 
@@ -147,9 +148,29 @@ public class MainActivity extends AppCompatActivity
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAuth.signOut();
-                Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
-                startActivity(loginIntent);
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
+                } else {
+                    builder = new AlertDialog.Builder(context);
+                }
+                builder.setTitle("Logout User")
+                        .setMessage("Are you sure you want to logout?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                mAuth.signOut();
+                                Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
+                                startActivity(loginIntent);
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
             }
         });
 

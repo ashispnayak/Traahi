@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -90,6 +91,11 @@ public class LoginActivity extends AppCompatActivity {
         signin = (Button) findViewById(R.id.signin_button);
         createacc = (Button) findViewById(R.id.createaccbutton);
         createaccname = (Button) findViewById(R.id.createaccbuttonname);
+
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont.ttf");
+        otptext.setTypeface(typeface);
+        nametext.setTypeface(typeface);
+        phonetext.setTypeface(typeface);
         otptext.setText("\uf084");
         nametext.setText("\uf183");
         phonetext.setText("\uf10b");
@@ -106,7 +112,6 @@ public class LoginActivity extends AppCompatActivity {
                 mVerificationInProgress = false;
                 cred = credential;
                 phonecard.setVisibility(View.GONE);
-                otpcardcreate.setVisibility(View.GONE);
                 smsverify.setVisibility(View.GONE);
 
                 loginDatabase.child(phone_number).child("Name").addValueEventListener(new ValueEventListener() {
@@ -126,6 +131,8 @@ public class LoginActivity extends AppCompatActivity {
                             edittext_otp.setEnabled(false);
                             otpcardname.setVisibility(View.VISIBLE);
                             createaccname.setVisibility(View.VISIBLE);
+                            otpcardcreate.setVisibility(View.VISIBLE);
+                            createacc.setVisibility(View.GONE);
                             termstext.setVisibility(View.VISIBLE);
                             logintoolbartext.setText("Set Your Name");
 
