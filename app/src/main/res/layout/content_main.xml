@@ -25,6 +25,15 @@
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             android:layout_gravity="bottom">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:src="@drawable/signOutButton"
+                android:id="@+id/logoutButton"
+                android:layout_gravity="right"
+                android:background="@null"
+                />
 
             <TextView
                 android:id="@+id/maintoolbartext"
@@ -35,6 +44,7 @@
                 android:textSize="40sp"
                 android:layout_gravity="center"
                 />
+
 
 
         </android.support.v7.widget.Toolbar>
@@ -84,6 +94,7 @@
             android:layout_height="wrap_content"
             android:text="Traahi Items"
             android:id="@+id/horText"
+            android:paddingLeft="10dp"
             android:textColor="#808080"
             android:textStyle="bold"
             android:textSize="20sp"

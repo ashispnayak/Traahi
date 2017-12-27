@@ -72,8 +72,8 @@
         <activity android:name=".RtiProcess" />
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login" />
-        <activity android:name=".Municipality" />
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".NearestHospitals"
             android:theme="@style/AppTheme.NoActionBar" />

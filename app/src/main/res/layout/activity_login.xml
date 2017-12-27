@@ -1,51 +1,275 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
+    android:id="@+id/loginLayout"
     android:orientation="vertical"
-    android:paddingTop="360dp"
-    android:background="@drawable/loginpage"
+    android:background="#E8E8E8"
     tools:context="com.invincix.khanam.LoginActivity">
 
-    <!-- Login progress -->
-    <ProgressBar
-        android:id="@+id/login_progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone" />
-
-    <ScrollView
-        android:id="@+id/login_form"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="#E8E8E8"
+        android:id="@+id/mainappbar"
+        app:elevation="0dp"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <LinearLayout
-            android:id="@+id/email_login_form"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/logintoolbar"
             android:layout_width="match_parent"
+            android:background="#E8E8E8"
+            android:elevation="4dp"
+
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            android:layout_gravity="bottom">
+
+
+
+            <TextView
+                android:id="@+id/logintoolbartext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:layout_gravity="center"></TextView>
+
+
+
+        </android.support.v7.widget.Toolbar>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#C8C8C8" />
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <!-- Login progress -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="30dp"
+                android:id="@+id/otpcardname"
+                android:visibility="gone"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="3dp">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="N"
+                    android:textStyle="bold"
+                    android:textColor="#000"
+                    android:gravity="start"
+                    android:padding="10dp"
+                    android:id="@+id/textView_name_LogIn"
+                    android:layout_centerVertical="true"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:textColorHint="#e8dad9d9"
+                    android:fontFamily="sans-serif"
+                    android:background="@android:color/transparent"
+                    android:hint="Name"
+                    android:backgroundTint="@null"
+                    android:gravity="center"
+                    android:ems="13"
+                    android:id="@+id/editText_name"
+                    android:textColor="#000"
+                    />
+                </LinearLayout>
+
+           </android.support.v7.widget.CardView>
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="30dp"
+        android:id="@+id/phonecard"
+        android:visibility="visible"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="3dp">
+   <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="P"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:padding="10dp"
+            android:gravity="start"
+            android:id="@+id/textView_phone_LogIn"
+            android:layout_centerVertical="true"
+            android:textSize="20sp" />
+
+       <EditText
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:inputType="phone"
+           android:textColorHint="#e8dad9d9"
+           android:fontFamily="sans-serif"
+           android:background="@android:color/transparent"
+           android:hint="Phone"
+           android:gravity="center"
+           android:ems="13"
+           android:id="@+id/editText_phone"
+           android:textColor="#000"
+           />
+
+       <Button
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:text="Sign In"
+           android:textColor="#fff"
+           android:id="@+id/signin_button"
+           android:background="#339900"
+           />
+    </LinearLayout>
+    </android.support.v7.widget.CardView>
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_margin="30dp"
+        app:cardCornerRadius="15dp"
+        android:id="@+id/otpcardcreate"
+        android:visibility="gone"
+        app:cardElevation="3dp">
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <ImageButton
-                android:layout_width="308dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:id="@+id/gplusbutton"
-                android:src="@drawable/googleplus"/>
-            <ImageButton
-                android:layout_width="308dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center_horizontal"
-                android:id="@+id/fbbutton"
-                android:background="@null"
-                android:src="@drawable/fblogin"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="A verification code has been sent to your number"
+                android:textSize="18sp"
+                android:padding="10dp"
+                android:id="@+id/otphead"
+                android:textColor="#fff"
+                android:background="#cf3025" >
+                </TextView>
 
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="40dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="5dp">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="O"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:gravity="start"
+                android:padding="10dp"
+                android:id="@+id/textView_name_OTP"
+                android:layout_centerVertical="true"
+                android:textSize="20sp" />
+
+            <EditText
+                android:layout_width="192dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textColorHint="#e8dad9d9"
+                android:fontFamily="sans-serif"
+                android:hint="OTP"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:ems="13"
+                android:id="@+id/editText_otp"
+                android:textColor="#000"
+                />
 
 
         </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#33CC33"
+                android:textAlignment="center"
+                android:textColor="#fff"
+                android:layout_margin="20dp"
+                android:text="Create Traahi Account"
+                android:id="@+id/createaccbutton"/>
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#33CC33"
+                android:textAlignment="center"
+                android:textColor="#fff"
+                android:visibility="gone"
+                android:layout_margin="25dp"
+                android:text="Create Traahi Account"
+                android:id="@+id/createaccbuttonname"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:layout_margin="30dp"
+        android:visibility="visible"
+        android:textSize="16sp"
+        android:id="@+id/SMS_Verify_text"
+        android:textAlignment="center"
+        android:text="A 6-Digit Verification Code Will Be sent via SMS if the number is not verified"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:id="@+id/termstext"
+        android:textAlignment="center"
+        android:text="By Creating account in Traahi, I agree to Traahi's Terms and Conditions "/>
+
+        </LinearLayout>
+
     </ScrollView>
+    <com.victor.loading.newton.NewtonCradleLoading
+        android:id="@+id/loginProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_gravity="center"/>
+
+
 </LinearLayout>

@@ -25,7 +25,7 @@
     <!-- Alert Dialog style-->
     <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <!-- Used for the buttons -->
-        <item name="colorAccent">#00933B</item>
+        <item name="colorAccent">#000</item>
         <!-- Used for the title and text -->
         <item name="android:textColorPrimary">#000000</item>
         <!-- Used for the background -->

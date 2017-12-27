@@ -23,7 +23,7 @@ public class Welcome_activity extends AppCompatActivity {
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }finally{
-                    Intent intentc = new Intent(Welcome_activity.this,MainActivity.class);
+                    Intent intentc = new Intent(Welcome_activity.this,LoginActivity.class);
                     startActivity(intentc);
                 }
             }

@@ -4,6 +4,7 @@ package com.invincix.khanam;
 import android.Manifest;
 import android.app.Activity;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v7.app.AppCompatActivity;
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity
     private static int FATEST_INTERVAL = 5000; // 5 sec
     private static int DISPLACEMENT = 10; // 10 meters
 
-    private ImageButton addcontacts, safetybutton, policebutton, rtibutton, ambulancebutton;
+    private ImageButton addcontacts, safetybutton, policebutton, rtibutton, ambulancebutton, logoutButton;
     public String latitude;
     public String longitude;
     public static final String STORE_DATA = "MyPrefs";
@@ -140,10 +141,20 @@ public class MainActivity extends AppCompatActivity
         imageSlider.setDuration(2000);
         imageSlider.addOnPageChangeListener(this);
 
+        mAuth=FirebaseAuth.getInstance();
+
+        logoutButton = (ImageButton) findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAuth.signOut();
+                Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
+                startActivity(loginIntent);
+            }
+        });
 
 
-     /*   mAuth=FirebaseAuth.getInstance();
-        mAuthListener=new FirebaseAuth.AuthStateListener() {
+      /*  mAuthListener=new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(firebaseAuth.getCurrentUser()==null){

@@ -56,7 +56,6 @@ public class SafetyTips extends AppCompatActivity {
     private static RecyclerView recyclerView;
     private static ArrayList<SafetyTipsFeed> data;
     private DatabaseReference mDatabase;
-    private TextView textView_NetworkErrorIcon;
     private NewtonCradleLoading newtonCradleLoading;
 
 
@@ -88,14 +87,14 @@ public class SafetyTips extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.safetycontent);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        show();
+        checkInternet();
 
 
 
 
     }
 
-    public void show()
+    public void checkInternet()
     {
 
         if(isNetworkAvailable())
@@ -118,7 +117,7 @@ public class SafetyTips extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
 
-                            show();
+                            checkInternet();
 
 
                         }
@@ -135,7 +134,7 @@ public class SafetyTips extends AppCompatActivity {
 
 
 
-    public boolean isNetworkAvailable() {
+    public  boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
