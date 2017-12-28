@@ -341,7 +341,12 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences sharedPref = getSharedPreferences(STORE_DATA_NAME, Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPref.edit();
                             editor.putString("LOCAL_NAME", userName);
+                            editor.putString("LOCAL_OWN_NUMBER",phone_number);
                             editor.apply();
+                            SharedPreferences sharedPrefs = getSharedPreferences(Welcome_activity.STORE_DATABASE_CHECK, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor1 = sharedPrefs.edit();
+                            editor1.putString("DATABASE_CHECK", "1");
+                            editor1.apply();
                             startActivity(new Intent(LoginActivity.this,MainActivity.class));
                             finish();
                             Toast.makeText(LoginActivity.this,"Verification Done",Toast.LENGTH_SHORT).show();

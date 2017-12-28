@@ -25,6 +25,9 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 
 public class AddContacts extends AppCompatActivity {
@@ -34,7 +37,8 @@ public class AddContacts extends AppCompatActivity {
     public ArrayList<String> contactnumbers=new ArrayList<String>();
     private static final int PICK_CONTACT = 1;
     private Uri uriContact;
-    public String data_contact_name,data_contact_number;
+    private DatabaseReference contactDatabase;
+    public String data_contact_name,data_contact_number, ownNumber;
     private String contactID,Rcontactname,Rcontactnumber;
     int counter=0;
     public static int contactimage= R.drawable.ic_contact;
@@ -46,7 +50,11 @@ public class AddContacts extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         final SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
+        SharedPreferences sharedPrefs = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
+        ownNumber = sharedPrefs.getString("LOCAL_OWN_NUMBER", null);
+        contactDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("Contacts");
 
         counter= (sharedPref.getInt("CONTACT_NUMBER",-1));
         Log.e(String.valueOf(counter),"counter value begin");
@@ -116,6 +124,8 @@ public class AddContacts extends AppCompatActivity {
                                                                             editor.putString("LOCAL_PHONE_NUMBER_" + String.valueOf(counter), data_contact_number);
                                                                             editor.putInt("CONTACT_NUMBER", counter);
                                                                             editor.apply();
+                                                                            contactDatabase.child(data_contact_name).setValue(data_contact_number);
+
                                                                             contactnames.add(data_contact_name);
                                                                             contactnumbers.add(data_contact_number);
                                                                             //gridview
@@ -277,6 +287,7 @@ Log.e("Postition: ", String.valueOf(position));
             editor.putString("LOCAL_PHONE_NUMBER_" + String.valueOf(counter), Rcontactnumber);
             editor.putInt("CONTACT_NUMBER", counter);
             editor.apply();
+            contactDatabase.child(Rcontactname).setValue(Rcontactnumber);
             contactnames.add(Rcontactname);
             contactnumbers.add(Rcontactnumber);
             //gridview

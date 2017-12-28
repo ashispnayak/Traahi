@@ -16,7 +16,13 @@ import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
+import com.google.android.gms.nearby.connection.Strategy;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.michaldrabik.tapbarmenulib.TapBarMenu;
 
 import butterknife.Bind;
@@ -57,7 +63,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
-
+    private DatabaseReference contactDatabase;
     private Location mLastLocation;
 
     // Google client to interact with Google API
@@ -74,7 +80,7 @@ public class MainActivity extends AppCompatActivity
     private static int DISPLACEMENT = 10; // 10 meters
 
     public String latitude;
-    public String longitude;
+    public String longitude, ownNumber;
     public static final String STORE_DATA = "MyPrefs";
     private TextView toolbarText,texttag, logoutButton, addcontacts, safetybutton, policebutton, rtibutton, ambulancebutton;
     public int counter;
@@ -99,6 +105,8 @@ public class MainActivity extends AppCompatActivity
 
         imageSlider = (SliderLayout)findViewById(R.id.slider);
 
+        SharedPreferences sharedPrefContact = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
+        ownNumber = sharedPrefContact.getString("LOCAL_OWN_NUMBER", null);
 
 
         HashMap<String,String> url_maps = new HashMap<String, String>();
@@ -263,6 +271,27 @@ public class MainActivity extends AppCompatActivity
         //Retrieve Datas
 
         SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
+        SharedPreferences sharedPrefs = getSharedPreferences(Welcome_activity.STORE_DATABASE_CHECK, Context.MODE_PRIVATE);
+        Log.e(sharedPrefs.getString("DATABASE_CHECK", null),"data check");
+
+        if(sharedPrefs.getString("DATABASE_CHECK", null) == "1"){
+            contactDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("Contacts");
+            contactDatabase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String,String> value = (HashMap<String, String>) dataSnapshot.getValue();
+                    Log.e("CONTACTS: ", String.valueOf(value));
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+
+
         counter = (sharedPref.getInt("CONTACT_NUMBER", -1));
         for (int i = 0; i <= counter; i++) {
             sharedPref.getString("LOCAL_PHONE_NUMBER_" + String.valueOf(i), null);
@@ -275,7 +304,7 @@ public class MainActivity extends AppCompatActivity
         longitude = " ";
         latitude = " ";
 
-        Log.e("longitude", longitude);
+
 
 
 
@@ -286,7 +315,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
-        imageSlider.stopAutoCycle();
+        imageSlider.startAutoCycle();
         super.onStop();
     }
 
