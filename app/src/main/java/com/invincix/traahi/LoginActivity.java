@@ -154,20 +154,43 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCodeSent(String verificationId,
-                                   PhoneAuthProvider.ForceResendingToken token) {
-                 Log.d(TAG, "onCodeSent:" + verificationId);
+            public void onCodeSent(final String verificationId,
+                                   final PhoneAuthProvider.ForceResendingToken token) {
+
+
+                loginDatabase.child(phone_number).child("Name").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String value = (String) dataSnapshot.getValue();
+
+                        if (value != null) {
+                            edittext_name.setText(value);
+
+                        } else {
+
+                        }
+
+
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
                 Toast.makeText(LoginActivity.this,"Verification code has been send on your number",Toast.LENGTH_SHORT).show();
                 // Save verification ID and resending token so we can use them later
-                mVerificationId = verificationId;
-                mResendToken = token;
                 phonecard.setVisibility(View.GONE);
                 otpcardcreate.setVisibility(View.VISIBLE);
                 otpcardname.setVisibility(View.VISIBLE);
                 smsverify.setVisibility(View.GONE);
                 termstext.setVisibility(View.VISIBLE);
+                mVerificationId = verificationId;
+                mResendToken = token;
                 logintoolbartext.setText("Verify");
-                // ...
+
+
             }
         };
 
@@ -175,7 +198,7 @@ public class LoginActivity extends AppCompatActivity {
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isNetworkAvailable()){
+                if(isNetworkAvailable()) {
                     phone_number = edittext_phone.getText().toString();
                     PhoneAuthProvider.getInstance().verifyPhoneNumber(
                             edittext_phone.getText().toString(),
@@ -184,7 +207,8 @@ public class LoginActivity extends AppCompatActivity {
                             LoginActivity.this,
                             mCallbacks);
                 }
-                else{
+
+                        else{
                     Snackbar.make(findViewById(R.id.loginLayout), "No Internet Connection", Snackbar.LENGTH_LONG)
                             .setAction("OK", new View.OnClickListener() {
                                 @Override
@@ -230,7 +254,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String value = (String) dataSnapshot.getValue();
-                        if(validation_signup()){
+                        if(validation_signup_name()){
                             newtonCradleLoading.setVisibility(View.VISIBLE);
                             newtonCradleLoading.start();
                             loginDatabase.child(phone_number).child("Name").setValue(edittext_name.getText().toString());
@@ -267,7 +291,7 @@ public class LoginActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private boolean validation_signup() {
+    private boolean validation_signup_name() {
         boolean valid = true;
         String data_name = edittext_name.getText().toString();
         String data_otp = edittext_otp.getText().toString();
@@ -294,6 +318,19 @@ public class LoginActivity extends AppCompatActivity {
         return valid;
     }
 
+    private boolean validation_signup() {
+        boolean valid = true;
+        String data_otp = edittext_otp.getText().toString();
+
+        if (TextUtils.isEmpty(data_otp)) {
+            edittext_otp.setError("Required");
+            valid = false;
+        } else {
+            edittext_otp.setError(null);
+        }
+        return valid;
+    }
+
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
@@ -307,16 +344,16 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("LOCAL_NAME", userName);
                             editor.apply();
                             startActivity(new Intent(LoginActivity.this,MainActivity.class));
-                            Toast.makeText(LoginActivity.this,"Verification Done",Toast.LENGTH_SHORT).show();
                             finish();
+                            Toast.makeText(LoginActivity.this,"Verification Done",Toast.LENGTH_SHORT).show();
+
                             // ...
                         } else {
-                            // Log.w(TAG, "signInWithCredential:failure", task.getException());
+                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid
                                 newtonCradleLoading.setVisibility(View.GONE);
 
-                                Toast.makeText(LoginActivity.this,"Invalid Verification",Toast.LENGTH_SHORT).show();
                             }
                         }
                     }

@@ -5,7 +5,7 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:background="#E8E8E8"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.invincix.traahi.MainActivity"
     >
@@ -67,7 +67,8 @@
     <com.daimajia.slider.library.SliderLayout
         android:id="@+id/slider"
         android:layout_width="match_parent"
-        android:layout_height="280dp"
+        android:padding="10dp"
+        android:layout_height="250dp"
         android:layout_below="@+id/safeTag"
 
         />
@@ -94,7 +95,7 @@
             android:layout_height="wrap_content"
             android:text="Traahi Items"
             android:id="@+id/horText"
-            android:paddingLeft="10dp"
+            android:padding="10dp"
             android:textColor="#808080"
             android:textStyle="bold"
             android:textSize="20sp"

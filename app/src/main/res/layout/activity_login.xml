@@ -79,7 +79,7 @@
                     android:textStyle="bold"
                     android:textColor="#000"
                     android:gravity="start"
-                    android:padding="10dp"
+                    android:padding="16dp"
                     android:id="@+id/textView_name_LogIn"
                     android:layout_centerVertical="true"
                     android:textSize="20sp" />
@@ -123,14 +123,14 @@
             android:text="P"
             android:textStyle="bold"
             android:textColor="#000"
-            android:padding="10dp"
+            android:padding="16dp"
             android:gravity="start"
             android:id="@+id/textView_phone_LogIn"
             android:layout_centerVertical="true"
             android:textSize="20sp" />
 
        <EditText
-           android:layout_width="wrap_content"
+           android:layout_width="220dp"
            android:layout_height="wrap_content"
            android:inputType="phone"
            android:textColorHint="#e8dad9d9"
@@ -147,6 +147,8 @@
            android:layout_width="match_parent"
            android:layout_height="match_parent"
            android:text="Sign In"
+           android:singleLine="true"
+           android:layout_gravity="end"
            android:textColor="#fff"
            android:id="@+id/signin_button"
            android:background="#339900"
@@ -196,7 +198,7 @@
                 android:textStyle="bold"
                 android:textColor="#000"
                 android:gravity="start"
-                android:padding="10dp"
+                android:padding="19dp"
                 android:id="@+id/textView_name_OTP"
                 android:layout_centerVertical="true"
                 android:textSize="20sp" />

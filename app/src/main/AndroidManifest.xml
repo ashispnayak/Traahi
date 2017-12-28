@@ -18,10 +18,10 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name="com.invincix.traahi.Welcome_activity"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -73,6 +73,7 @@
         <activity
             android:name="com.invincix.traahi.LoginActivity"
             android:label="@string/title_activity_login"
+            android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name="com.invincix.traahi.NearestHospitals"

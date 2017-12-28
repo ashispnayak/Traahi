@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity
         imageSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
         imageSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
         imageSlider.setCustomAnimation(new DescriptionAnimation());
-        imageSlider.setDuration(6000);
+        imageSlider.setDuration(4000);
         imageSlider.addOnPageChangeListener(this);
 
         mAuth=FirebaseAuth.getInstance();
