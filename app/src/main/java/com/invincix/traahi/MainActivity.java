@@ -73,11 +73,10 @@ public class MainActivity extends AppCompatActivity
     private static int FATEST_INTERVAL = 5000; // 5 sec
     private static int DISPLACEMENT = 10; // 10 meters
 
-    private ImageButton addcontacts, safetybutton, policebutton, rtibutton, ambulancebutton, logoutButton;
     public String latitude;
     public String longitude;
     public static final String STORE_DATA = "MyPrefs";
-    private TextView toolbarText,texttag;
+    private TextView toolbarText,texttag, logoutButton, addcontacts, safetybutton, policebutton, rtibutton, ambulancebutton;
     public int counter;
     private SliderLayout imageSlider;
     private FirebaseAuth mAuth;
@@ -132,7 +131,10 @@ public class MainActivity extends AppCompatActivity
 
         mAuth=FirebaseAuth.getInstance();
 
-        logoutButton = (ImageButton) findViewById(R.id.logoutButton);
+        logoutButton = (TextView) findViewById(R.id.logoutButton);
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont.ttf");
+        logoutButton.setTypeface(typeface);
+        logoutButton.setText("\uf011");
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,7 +198,8 @@ public class MainActivity extends AppCompatActivity
 
 
         //add contacts
-        addcontacts = (ImageButton) findViewById(R.id.addcontacts);
+        addcontacts = (TextView) findViewById(R.id.addcontacts);
+        addcontacts.setTypeface(typeface);
         addcontacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,7 +209,8 @@ public class MainActivity extends AppCompatActivity
         });
 
         //nearest policestation
-        policebutton = (ImageButton) findViewById(R.id.policebutton);
+        policebutton = (TextView) findViewById(R.id.policebutton);
+        policebutton.setTypeface(typeface);
         policebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -218,7 +222,8 @@ public class MainActivity extends AppCompatActivity
         });
 
         //nearest ambulance
-        ambulancebutton = (ImageButton) findViewById(R.id.ambubutton);
+        ambulancebutton = (TextView) findViewById(R.id.ambubutton);
+        ambulancebutton.setTypeface(typeface);
         ambulancebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -231,7 +236,8 @@ public class MainActivity extends AppCompatActivity
 
 
         //safety
-        safetybutton = (ImageButton) findViewById(R.id.safetybutton);
+        safetybutton = (TextView) findViewById(R.id.safetybutton);
+        safetybutton.setTypeface(typeface);
         safetybutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,7 +248,8 @@ public class MainActivity extends AppCompatActivity
         });
 
         //rti process
-        rtibutton = (ImageButton) findViewById(R.id.rtibutton);
+        rtibutton = (TextView) findViewById(R.id.rtibutton);
+        rtibutton.setTypeface(typeface);
         rtibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

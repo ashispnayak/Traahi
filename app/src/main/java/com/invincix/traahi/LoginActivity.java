@@ -83,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
         nametext.setTypeface(typeface);
         phonetext.setTypeface(typeface);
         otptext.setText("\uf084");
-        nametext.setText("\uf183");
         phonetext.setText("\uf10b");
 
 
