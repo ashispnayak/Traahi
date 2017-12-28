@@ -126,7 +126,7 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
         googlePlacesUrl.append("location=" + latitude + "," + longitude);
         googlePlacesUrl.append("&radius=" + 10000);
         googlePlacesUrl.append("&type=" + nearbyPlace);
-        googlePlacesUrl.append("&key=" + "AIzaSyD484c-DRhKtVYWtOgXkrJ1gXgfsJcvpEg");
+        googlePlacesUrl.append("&key=" + "AIzaSyCMEeBmDYo4w6uh6wMyx9TgAU1nNYacIgo");
         googlePlacesUrl.append("&sensor=true");
         d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());

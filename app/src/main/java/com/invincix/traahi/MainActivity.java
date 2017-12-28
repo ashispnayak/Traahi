@@ -104,8 +104,8 @@ public class MainActivity extends AppCompatActivity
 
         HashMap<String,String> url_maps = new HashMap<String, String>();
         url_maps.put("Women Safety", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/womensafety.png?alt=media&token=cf7a2f0a-7d0d-4554-8397-2e49ff7be589");
-                url_maps.put("Emergency", "https://i.pinimg.com/originals/89/8d/70/898d70a79d51a944cd247b5fd0a1ab5a.jpg");
-                        url_maps.put("Traahi Volunteer", "http://www.topdesignmag.com/wp-content/uploads/2011/05/347.jpg");
+                url_maps.put("Emergency", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/life.png?alt=media&token=89bfb621-862d-4e44-8d07-21eebbb5b55d");
+                        url_maps.put("Traahi Volunteer", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/volunteer.png?alt=media&token=c0981e52-527d-401b-8342-7cc5026c7a48");
 
 
         for(String name : url_maps.keySet()){
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity
         imageSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
         imageSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
         imageSlider.setCustomAnimation(new DescriptionAnimation());
-        imageSlider.setDuration(2000);
+        imageSlider.setDuration(6000);
         imageSlider.addOnPageChangeListener(this);
 
         mAuth=FirebaseAuth.getInstance();
