@@ -1,4 +1,4 @@
-package com.invincix.khanam;
+package com.invincix.traahi;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,18 +19,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class AddContacts extends AppCompatActivity {
 

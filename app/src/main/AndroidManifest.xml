@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.invincix.khanam">
+    package="com.invincix.traahi">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity
-            android:name=".Welcome_activity"
+            android:name="com.invincix.traahi.Welcome_activity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,22 +29,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.invincix.traahi.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SendMessages"
+            android:name="com.invincix.traahi.SendMessages"
             android:label="Emergency!"
-            android:taskAffinity="com.invincix.khanam.SendMessages">
+            android:taskAffinity="com.invincix.traahi.SendMessages">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddContacts" />
+        <activity android:name="com.invincix.traahi.AddContacts" />
         <activity
-            android:name=".SafetyTips"
+            android:name="com.invincix.traahi.SafetyTips"
             android:theme="@style/AppTheme.NoActionBar" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -66,18 +66,18 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".NearestPolice"
+            android:name="com.invincix.traahi.NearestPolice"
             android:label="@string/title_activity_nearest_police"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RtiProcess" />
+        <activity android:name="com.invincix.traahi.RtiProcess" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.invincix.traahi.LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".NearestHospitals"
+            android:name="com.invincix.traahi.NearestHospitals"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SafetyTipsDetails"
+        <activity android:name="com.invincix.traahi.SafetyTipsDetails"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

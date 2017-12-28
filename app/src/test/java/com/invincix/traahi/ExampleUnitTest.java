@@ -1,4 +1,4 @@
-package com.invincix.khanam;
+package com.invincix.traahi;
 
 import org.junit.Test;
 

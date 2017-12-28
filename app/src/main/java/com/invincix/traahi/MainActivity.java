@@ -1,22 +1,19 @@
-package com.invincix.khanam;
+package com.invincix.traahi;
 
 
 import android.Manifest;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +26,6 @@ import butterknife.OnClick;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -46,21 +42,13 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.widget.EditText;
 import android.content.SharedPreferences;
-import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
         implements ConnectionCallbacks, OnConnectionFailedListener, OnRequestPermissionsResultCallback, PermissionResultCallback, BaseSliderView.OnSliderClickListener,
@@ -115,7 +103,7 @@ public class MainActivity extends AppCompatActivity
 
 
         HashMap<String,String> url_maps = new HashMap<String, String>();
-        url_maps.put("Women Safety", "https://firebasestorage.googleapis.com/v0/b/traahi-a9bd5.appspot.com/o/womensafety.png?alt=media&token=e126e87d-6e3a-49e9-b072-c2586f40a4b6");
+        url_maps.put("Women Safety", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/womensafety.png?alt=media&token=cf7a2f0a-7d0d-4554-8397-2e49ff7be589");
                 url_maps.put("Emergency", "https://i.pinimg.com/originals/89/8d/70/898d70a79d51a944cd247b5fd0a1ab5a.jpg");
                         url_maps.put("Traahi Volunteer", "http://www.topdesignmag.com/wp-content/uploads/2011/05/347.jpg");
 
@@ -275,7 +263,6 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        String data_name = (sharedPref.getString("LOCAL_NAME", null));
 
 
         longitude = " ";
@@ -284,38 +271,7 @@ public class MainActivity extends AppCompatActivity
         Log.e("longitude", longitude);
 
 
-        //check if name is null, if its null set its value
-        if (data_name == null) {
-            permissionUtils.check_permission(permissions, "Allow Trahi to write data?", 2);
 
-            AlertDialog.Builder namegetter = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
-
-            namegetter.setTitle("Enter Your Name");
-            final EditText input = new EditText(this);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            input.setLayoutParams(lp);
-            namegetter.setView(input);
-
-            namegetter.setIcon(R.drawable.ic_love);
-            namegetter.setPositiveButton("OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            String name = input.getText().toString();
-                            Log.e(name, " name");
-                            editor.putString("LOCAL_NAME", name);
-                            editor.apply();
-                            Intent intent = getIntent();
-                            finish();
-                            startActivity(intent);
-                        }
-                    });
-
-            namegetter.show();
-        }
      displayLocation();
 
 

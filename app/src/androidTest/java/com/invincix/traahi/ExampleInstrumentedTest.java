@@ -1,4 +1,4 @@
-package com.invincix.khanam;
+package com.invincix.traahi;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

@@ -1,17 +1,14 @@
-package com.invincix.khanam;
+package com.invincix.traahi;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -20,18 +17,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.plus.Plus;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -48,9 +36,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.victor.loading.newton.NewtonCradleLoading;
 
-
-import java.io.IOException;
-
 public class LoginActivity extends AppCompatActivity {
 
 
@@ -58,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     private CardView otpcardname,otpcardcreate,phonecard;
     private static final String TAG = "PhoneLogin";
     private boolean mVerificationInProgress = false;
-    private String mVerificationId;
+    private String mVerificationId, userName;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private FirebaseAuth mAuth;
@@ -67,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText edittext_phone, edittext_otp, edittext_name;
     private String phone_number;
     private PhoneAuthCredential cred;
+    public static final String STORE_DATA_NAME = "MyPref";
     private NewtonCradleLoading newtonCradleLoading;
 
     @Override
@@ -101,6 +87,8 @@ public class LoginActivity extends AppCompatActivity {
         phonetext.setText("\uf10b");
 
 
+
+
         int col = Color.parseColor("#339900");
         newtonCradleLoading.setLoadingColor(col);
         mAuth = FirebaseAuth.getInstance();
@@ -124,6 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                             newtonCradleLoading.setVisibility(View.VISIBLE);
                             newtonCradleLoading.start();
                             Log.e("Name: ",value);
+                            userName = value;
                             signInWithPhoneAuthCredential(cred);
                         }
                         else{
@@ -221,6 +210,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(validation_signup()) {
                     loginDatabase.child(phone_number).child("Name").setValue(edittext_name.getText().toString());
+                    userName = edittext_name.getText().toString();
                     signInWithPhoneAuthCredential(cred);
                     newtonCradleLoading.setVisibility(View.VISIBLE);
                 }
@@ -244,7 +234,8 @@ public class LoginActivity extends AppCompatActivity {
                             newtonCradleLoading.setVisibility(View.VISIBLE);
                             newtonCradleLoading.start();
                             loginDatabase.child(phone_number).child("Name").setValue(edittext_name.getText().toString());
-                                signInWithPhoneAuthCredential(credential);
+                            userName = edittext_name.getText().toString();
+                            signInWithPhoneAuthCredential(credential);
                             }
                             else{
 
@@ -311,6 +302,10 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Log.d(TAG, "signInWithCredential:success");
+                            SharedPreferences sharedPref = getSharedPreferences(STORE_DATA_NAME, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString("LOCAL_NAME", userName);
+                            editor.apply();
                             startActivity(new Intent(LoginActivity.this,MainActivity.class));
                             Toast.makeText(LoginActivity.this,"Verification Done",Toast.LENGTH_SHORT).show();
                             finish();

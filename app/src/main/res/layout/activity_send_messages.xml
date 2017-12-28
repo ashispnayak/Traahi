@@ -4,7 +4,7 @@
     android:id="@+id/activity_send_messages"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.invincix.khanam.SendMessages">
+    tools:context="com.invincix.traahi.SendMessages">
     <TextView
         android:text="Sending Messages to the following numbers...."
         android:layout_width="wrap_content"

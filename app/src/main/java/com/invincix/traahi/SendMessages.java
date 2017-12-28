@@ -1,24 +1,19 @@
-package com.invincix.khanam;
+package com.invincix.traahi;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,6 +41,7 @@ public class SendMessages extends AppCompatActivity {
         latitude = " ";
         //Retrieve Datas
         SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
+        SharedPreferences sharedPrefLogin = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
         counter= (sharedPref.getInt("CONTACT_NUMBER",-1));
         for(int i=0;i<=counter;i++) {
             data_phone_number[i]=sharedPref.getString("LOCAL_PHONE_NUMBER_"+String.valueOf(i), null);
@@ -53,7 +49,7 @@ public class SendMessages extends AppCompatActivity {
 
 
         }
-        String data_name = (sharedPref.getString("LOCAL_NAME", null));
+        String data_name = (sharedPrefLogin.getString("LOCAL_NAME", null));
         ph_1 = (TextView) findViewById(R.id.ph_1);
         ph_2 = (TextView) findViewById(R.id.ph_2);
         ph_3 = (TextView) findViewById(R.id.ph_3);

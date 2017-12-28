@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@drawable/backgroundcontact"
-    tools:context="com.invincix.khanam.AddContacts">
+    tools:context="com.invincix.traahi.AddContacts">
 
 
     <android.support.design.widget.AppBarLayout
