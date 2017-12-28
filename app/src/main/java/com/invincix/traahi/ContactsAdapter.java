@@ -5,6 +5,7 @@ package com.invincix.traahi;
  */
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,12 +23,16 @@ public class ContactsAdapter extends BaseAdapter {
     private final ArrayList<String> contactnumbers;
     private final int contactimage;
     LayoutInflater layoutInflater;
+    Typeface font;
+
 
     public ContactsAdapter(Context mContext, ArrayList<String> contactnames, ArrayList<String> contactnumbers, int contactimage) {
         this.mContext = mContext;
         this.contactnames = contactnames;
         this.contactnumbers = contactnumbers;
         this.contactimage = contactimage;
+        font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont.ttf");
+
     }
 
     // 2
@@ -73,6 +78,7 @@ public class ContactsAdapter extends BaseAdapter {
                     .findViewById(R.id.textview_contact_name);
             TextView contactnumber=(TextView) gridView.findViewById(R.id.textview_contact_number);
 
+
             Log.e(String.valueOf(position),"hiii");
             contactname.setText(contactnames.get(position));
             contactnumber.setText(contactnumbers.get(position));
@@ -80,14 +86,15 @@ public class ContactsAdapter extends BaseAdapter {
 
             // set image based on selected text
 
-            ImageView imageView = (ImageView) gridView
+            TextView textView = (TextView) gridView
                     .findViewById(R.id.imageview_contact);
+            textView.setTypeface(font);
 
             String value = contactnames.get(position);
 
             if (value!=null) {
 
-                imageView.setImageResource(R.drawable.ic_contact);
+                textView.setText("\uf007");
 
             }
         } else {
