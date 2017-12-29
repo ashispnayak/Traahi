@@ -268,8 +268,7 @@ public class MainActivity extends AppCompatActivity
         rtibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentrti = new Intent(MainActivity.this, RtiProcess.class);
-                startActivity(intentrti);
+               Toast.makeText(getApplicationContext(),"Under Development....",Toast.LENGTH_SHORT).show();
 
             }
         });

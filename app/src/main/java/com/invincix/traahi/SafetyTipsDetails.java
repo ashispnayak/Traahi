@@ -4,6 +4,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -28,6 +29,18 @@ public class SafetyTipsDetails extends AppCompatActivity {
         TextView safetitle = (TextView) findViewById(R.id.txt_safety_title);
         ImageView mainpic = (ImageView) findViewById(R.id.cover_bg_details);
         TextView details = (TextView) findViewById(R.id.txt_safety_details);
+        TextView goBackButton = (TextView) findViewById(R.id.goBackButton);
+        Typeface typeface = Typeface.createFromAsset(getAssets(),"fonts/fontawesome-webfont.ttf");
+        goBackButton.setTypeface(typeface);
+
+        goBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SafetyTipsDetails.this,SafetyTips.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
 
         //These are lines helping Details_Card To Animate

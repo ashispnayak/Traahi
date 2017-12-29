@@ -69,7 +69,6 @@
             android:name="com.invincix.traahi.NearestPolice"
             android:label="@string/title_activity_nearest_police"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="com.invincix.traahi.RtiProcess" />
         <activity
             android:name="com.invincix.traahi.LoginActivity"
             android:label="@string/title_activity_login"

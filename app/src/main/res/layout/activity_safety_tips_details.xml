@@ -7,10 +7,15 @@
     android:background="@drawable/placeholder"
     android:gravity="center">
 
+
+
+
+
     <android.support.v7.widget.CardView
         android:id="@+id/card_view"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:layout_marginTop="40dp"
         android:layout_width="match_parent"
         android:layout_height="480dp"
         android:elevation="4dp"
@@ -21,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
@@ -29,11 +35,22 @@
                 android:id="@+id/cover_bg_details"
                 />
 
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="#000000"
                 android:alpha="0.3" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fa_close"
+                android:padding="10dp"
+                android:textColor="#fdfdfd"
+                android:textStyle="bold"
+                android:id="@+id/goBackButton"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30sp"/>
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:layout_width="70dp"
@@ -60,7 +77,21 @@
                 android:layout_alignBottom="@+id/cover_bg_details"
                 android:layout_toEndOf="@+id/cover_details"
                 android:layout_marginBottom="10dp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:orientation="vertical"
+                android:layout_below="@+id/cover_bg_details"
+                android:layout_above="@+id/safeTag"
+                android:layout_toEndOf="@+id/cover_details">
 
+            <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/cover_bg_details"
+                android:layout_above="@+id/safeTag"
+                android:layout_toEndOf="@+id/cover_details"
+                >
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -71,22 +102,26 @@
                 android:paddingRight="10dp"
                 android:textSize="13sp"
                 android:layout_marginTop="5dp"
-                android:layout_below="@+id/cover_bg_details"
-                android:layout_toEndOf="@+id/cover_details"
+                android:padding="5dp"
                 />
+            </ScrollView>
 
+
+
+            </LinearLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Traahi(Safety In Your Hands)"
                 android:id="@+id/safetytag"
+                android:padding="10dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="12dp" />
 
-
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
+
 </RelativeLayout>

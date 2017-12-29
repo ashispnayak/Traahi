@@ -169,6 +169,7 @@ public class SafetyTips extends AppCompatActivity {
                         extras.putString("mainpic",mainpic);
                         intent.putExtras(extras);
                         startActivity(intent);
+                        finish();
                     }
                 });
             }
