@@ -188,9 +188,9 @@ public class AddContacts extends AppCompatActivity {
             public void onItemClick(AdapterView parent, View view, final int position, long id) {
 Log.e("Postition: ", String.valueOf(position));
 
-                final int a=position;
-                final int b=contactnames.size();
-                PopupMenu popupMenu=new PopupMenu(AddContacts.this,view);
+                final int a = position;
+                final int b = contactnames.size();
+                PopupMenu popupMenu = new PopupMenu(AddContacts.this,view);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_grid,popupMenu.getMenu());
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
@@ -217,6 +217,8 @@ Log.e("Postition: ", String.valueOf(position));
                                             editor.putString("LOCAL_CONTACT_NAME_" + String.valueOf(position), data_contact_name);
                                             editor.putString("LOCAL_PHONE_NUMBER_" + String.valueOf(position), data_contact_number);
                                             editor.apply();
+                                            contactDatabase.child(contactnames.get(position)).removeValue();
+                                            contactDatabase.child(data_contact_name).setValue(data_contact_number);
                                             contactnames.set(position,data_contact_name);
                                             contactnumbers.set(position,data_contact_number);
                                             final GridView gridView = (GridView) findViewById(R.id.grid);
@@ -231,6 +233,7 @@ Log.e("Postition: ", String.valueOf(position));
 
 
                             case R.id.action_delete:
+                                contactDatabase.child(contactnames.get(position)).removeValue();
                                 contactnames.remove(position);
                                 contactnumbers.remove(position);
                                 final GridView gridView = (GridView) findViewById(R.id.grid);
@@ -251,6 +254,7 @@ Log.e("Postition: ", String.valueOf(position));
 
                                 editor.putInt("CONTACT_NUMBER", counter);
                                 editor.apply();
+
 
                                 break;
                             default:
