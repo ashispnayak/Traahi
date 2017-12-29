@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -116,7 +119,31 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
         DataTransfer[0] = mMap;
         DataTransfer[1] = url;
         d("onClick", url);
-        new GetNearbyPoliceData().execute(DataTransfer);
+        checkInternet(DataTransfer);
+    }
+
+    private void checkInternet(final Object[] DataTransfer) {
+
+        if(isNetworkAvailable()){
+            new GetNearbyPoliceData().execute(DataTransfer);
+        }
+        else{
+            Snackbar.make(findViewById(R.id.nearestPoliceLayout), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("RETRY", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            checkInternet(DataTransfer);
+                        }
+                    })
+                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
+                    .show();
+    }
+
+    }
+    public  boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 

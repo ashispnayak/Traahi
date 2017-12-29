@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/contactPage"
     android:fitsSystemWindows="true"
     android:background="#E8E8E8"
     tools:context="com.invincix.traahi.AddContacts">

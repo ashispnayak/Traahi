@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -77,91 +80,95 @@ public class AddContacts extends AppCompatActivity {
         addcontactsbutton.setOnClickListener(new View.OnClickListener() {
                                                  @Override
                                                  public void onClick(View v) {
-                                                    if(counter==7) {
-                                                        Toast.makeText(getApplicationContext(), "Only 8 contacts Allowed", Toast.LENGTH_SHORT).show();
+                                                     if (isNetworkAvailable()) {
+                                                         if (counter == 7) {
+                                                             Toast.makeText(getApplicationContext(), "Only 8 contacts Allowed", Toast.LENGTH_SHORT).show();
+                                                         } else {
 
-                                                    }
-                                                     else {
+                                                             LayoutInflater layoutInflater = LayoutInflater.from(AddContacts.this);
+                                                             View addcontactView = layoutInflater.inflate(R.layout.add_contact_manual, null);
+                                                             final AlertDialog alertD = new AlertDialog.Builder(AddContacts.this).create();
+                                                             Button retrieve = (Button) addcontactView.findViewById(R.id.retrieveadd);
+                                                             Button manual = (Button) addcontactView.findViewById(R.id.manualadd);
+                                                             retrieve.setOnClickListener(new View.OnClickListener() {
+                                                                 @Override
+                                                                 public void onClick(View v) {
+                                                                     alertD.dismiss();
+                                                                     Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                                                                     startActivityForResult(intent, PICK_CONTACT);
+                                                                 }
+                                                             });
+                                                             manual.setOnClickListener(new View.OnClickListener() {
+                                                                 @Override
+                                                                 public void onClick(View v) {
+                                                                     AlertDialog.Builder builder = new AlertDialog.Builder(AddContacts.this);
+                                                                     LayoutInflater inflater = (LayoutInflater) AddContacts.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                                                     builder.setView(R.layout.add_contact_dialog);
+                                                                     builder.setView(inflater.inflate(R.layout.add_contact_dialog, null));
+                                                                     builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                                         @Override
+                                                                         public void onClick(DialogInterface dialog, int which) {
+                                                                             alertD.dismiss();
 
-                                                        LayoutInflater layoutInflater = LayoutInflater.from(AddContacts.this);
-                                                        View addcontactView = layoutInflater.inflate(R.layout.add_contact_manual, null);
-                                                        final AlertDialog alertD = new AlertDialog.Builder(AddContacts.this).create();
-                                                        Button retrieve=(Button) addcontactView.findViewById(R.id.retrieveadd);
-                                                        Button manual=(Button) addcontactView.findViewById(R.id.manualadd);
-                                                        retrieve.setOnClickListener(new View.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(View v) {
-                                                                alertD.dismiss();
-                                                                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                                                                startActivityForResult(intent, PICK_CONTACT);
+                                                                             AlertDialog aDialog = (AlertDialog) dialog;
+                                                                             EditText contactname = (EditText) aDialog.findViewById(R.id.contactname);
+                                                                             EditText contactnumber = (EditText) aDialog.findViewById(R.id.contactnumber);
+                                                                             counter++;
+                                                                             data_contact_name = contactname.getText().toString();
+                                                                             data_contact_number = contactnumber.getText().toString();
+                                                                             if (validation_of_data(data_contact_name, data_contact_number)) {
+                                                                                 SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
+                                                                                 SharedPreferences.Editor editor = sharedPref.edit();
+                                                                                 editor.putString("LOCAL_CONTACT_NAME_" + String.valueOf(counter), data_contact_name);
+                                                                                 editor.putString("LOCAL_PHONE_NUMBER_" + String.valueOf(counter), data_contact_number);
+                                                                                 editor.putInt("CONTACT_NUMBER", counter);
+                                                                                 editor.apply();
+                                                                                 contactDatabase.child(data_contact_name).setValue(data_contact_number);
 
-
-
-                                                            }
-                                                        });
-                                                        manual.setOnClickListener(new View.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(View v) {
-                                                                AlertDialog.Builder builder = new AlertDialog.Builder(AddContacts.this);
-                                                                LayoutInflater inflater = (LayoutInflater) AddContacts.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                                                builder.setView(R.layout.add_contact_dialog);
-                                                                builder.setView(inflater.inflate(R.layout.add_contact_dialog, null));
-                                                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                                                    @Override
-                                                                    public void onClick(DialogInterface dialog, int which) {
-                                                                        alertD.dismiss();
-
-                                                                        AlertDialog aDialog = (AlertDialog) dialog;
-                                                                        EditText contactname = (EditText) aDialog.findViewById(R.id.contactname);
-                                                                        EditText contactnumber = (EditText) aDialog.findViewById(R.id.contactnumber);
-                                                                        counter++;
-                                                                        data_contact_name = contactname.getText().toString();
-                                                                        data_contact_number = contactnumber.getText().toString();
-                                                                        if(validation_of_data(data_contact_name,data_contact_number)) {
-                                                                            SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
-                                                                            SharedPreferences.Editor editor = sharedPref.edit();
-                                                                            editor.putString("LOCAL_CONTACT_NAME_" + String.valueOf(counter), data_contact_name);
-                                                                            editor.putString("LOCAL_PHONE_NUMBER_" + String.valueOf(counter), data_contact_number);
-                                                                            editor.putInt("CONTACT_NUMBER", counter);
-                                                                            editor.apply();
-                                                                            contactDatabase.child(data_contact_name).setValue(data_contact_number);
-
-                                                                            contactnames.add(data_contact_name);
-                                                                            contactnumbers.add(data_contact_number);
-                                                                            //gridview
-                                                                            final GridView gridView = (GridView) findViewById(R.id.grid);
-                                                                            final ContactsAdapter contactsAdapter = new ContactsAdapter(AddContacts.this, contactnames, contactnumbers, contactimage);
-                                                                            gridView.setAdapter(contactsAdapter);
+                                                                                 contactnames.add(data_contact_name);
+                                                                                 contactnumbers.add(data_contact_number);
+                                                                                 //gridview
+                                                                                 final GridView gridView = (GridView) findViewById(R.id.grid);
+                                                                                 final ContactsAdapter contactsAdapter = new ContactsAdapter(AddContacts.this, contactnames, contactnumbers, contactimage);
+                                                                                 gridView.setAdapter(contactsAdapter);
 
 
+                                                                             } else {
 
-                                                                        }
-                                                                        else{
-
-                                                                        }
+                                                                             }
 
 
+                                                                             Log.e(String.valueOf(counter), "counter value");
+                                                                         }
+
+                                                                     });
+
+                                                                     Log.e("size", String.valueOf(contactnames.size()));
 
 
-                                                                        Log.e(String.valueOf(counter), "counter value");
-                                                                    }
+                                                                     builder.show();
 
-                                                                });
+                                                                 }
+                                                             });
+                                                             alertD.setView(addcontactView);
 
-                                                                Log.e("size", String.valueOf(contactnames.size()));
-
-
-                                                                builder.show();
-
-                                                            }
-                                                        });
-                                                        alertD.setView(addcontactView);
-
-                                                        alertD.show();
+                                                             alertD.show();
 
 
+                                                         }
+                                                     }
+                                                     else{
+                                                         Snackbar.make(findViewById(R.id.contactPage), "No Internet Connection", Snackbar.LENGTH_LONG)
+                                                                 .setAction("OK", new View.OnClickListener() {
+                                                                     @Override
+                                                                     public void onClick(View view) {
 
-                                                    }
+
+                                                                     }
+                                                                 })
+                                                                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                                                 .show();
+                                                     }
 
                                                  }
 
@@ -274,6 +281,13 @@ Log.e("Postition: ", String.valueOf(position));
         });
 
     }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
