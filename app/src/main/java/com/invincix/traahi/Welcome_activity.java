@@ -11,16 +11,12 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class Welcome_activity extends AppCompatActivity {
 
-    public static final String STORE_DATABASE_CHECK = "CHECK";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_activity);
 
-        SharedPreferences sharedPref = getSharedPreferences(STORE_DATABASE_CHECK, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("DATABASE_CHECK", "0");
-        editor.apply();
+
 
         Thread timerThread = new Thread(){
             public void run(){

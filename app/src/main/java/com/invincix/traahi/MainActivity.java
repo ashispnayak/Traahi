@@ -103,6 +103,8 @@ public class MainActivity extends AppCompatActivity
         permissionUtils = new PermissionUtils((Activity) context);
         ButterKnife.bind(this);
 
+        final SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
+
         imageSlider = (SliderLayout)findViewById(R.id.slider);
 
         SharedPreferences sharedPrefContact = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
@@ -156,9 +158,14 @@ public class MainActivity extends AppCompatActivity
                         .setMessage("Are you sure you want to logout?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
+                                SharedPreferences.Editor edit = sharedPref.edit();
+                                edit.clear();
+                                edit.apply();
                                 mAuth.signOut();
+
                                 Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
                                 startActivity(loginIntent);
+                                finish();
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -270,34 +277,12 @@ public class MainActivity extends AppCompatActivity
 
         //Retrieve Datas
 
-        SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
-        SharedPreferences sharedPrefs = getSharedPreferences(Welcome_activity.STORE_DATABASE_CHECK, Context.MODE_PRIVATE);
-        Log.e(sharedPrefs.getString("DATABASE_CHECK", null),"data check");
-
-        if(sharedPrefs.getString("DATABASE_CHECK", null) == "1"){
-            contactDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("Contacts");
-            contactDatabase.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    HashMap<String,String> value = (HashMap<String, String>) dataSnapshot.getValue();
-                    Log.e("CONTACTS: ", String.valueOf(value));
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
 
 
 
-        counter = (sharedPref.getInt("CONTACT_NUMBER", -1));
-        for (int i = 0; i <= counter; i++) {
-            sharedPref.getString("LOCAL_PHONE_NUMBER_" + String.valueOf(i), null);
-            sharedPref.getString("LOCAL_CONTACT_NAME_" + String.valueOf(i), null);
 
-        }
+
+
 
 
 

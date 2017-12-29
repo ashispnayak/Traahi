@@ -36,6 +36,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.victor.loading.newton.NewtonCradleLoading;
 
+import java.util.HashMap;
+
 public class LoginActivity extends AppCompatActivity {
 
 
@@ -48,12 +50,13 @@ public class LoginActivity extends AppCompatActivity {
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private FirebaseAuth mAuth;
     private Button signin,createacc,createaccname;
-    private DatabaseReference loginDatabase;
+    private DatabaseReference loginDatabase, contactDatabase;
     private EditText edittext_phone, edittext_otp, edittext_name;
     private String phone_number;
     private PhoneAuthCredential cred;
     public static final String STORE_DATA_NAME = "MyPref";
     private NewtonCradleLoading newtonCradleLoading;
+    private int counter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -343,10 +346,41 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("LOCAL_NAME", userName);
                             editor.putString("LOCAL_OWN_NUMBER",phone_number);
                             editor.apply();
-                            SharedPreferences sharedPrefs = getSharedPreferences(Welcome_activity.STORE_DATABASE_CHECK, Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor1 = sharedPrefs.edit();
-                            editor1.putString("DATABASE_CHECK", "1");
-                            editor1.apply();
+
+                            final SharedPreferences sharedPrefContact = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
+
+                                counter = -1;
+                                contactDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(phone_number).child("Contacts");
+                                contactDatabase.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                        HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
+                                        if (value != null) {
+                                            for (HashMap.Entry<String, String> entry : value.entrySet()) {
+                                                counter++;
+                                                Log.e(entry.getKey(), "Names");
+                                                Log.e(entry.getValue(), "Numbers");
+                                                SharedPreferences.Editor editor = sharedPrefContact.edit();
+                                                editor.putString("LOCAL_CONTACT_NAME_" + String.valueOf(counter), entry.getKey());
+                                                editor.putString("LOCAL_PHONE_NUMBER_" + String.valueOf(counter), entry.getValue());
+
+                                                editor.apply();
+
+                                            }
+                                            SharedPreferences.Editor editorCount = sharedPrefContact.edit();
+                                            editorCount.putInt("CONTACT_NUMBER", counter);
+                                            editorCount.apply();
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+
                             startActivity(new Intent(LoginActivity.this,MainActivity.class));
                             finish();
                             Toast.makeText(LoginActivity.this,"Verification Done",Toast.LENGTH_SHORT).show();
