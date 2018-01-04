@@ -4,14 +4,18 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +33,8 @@ public class SendMessages extends AppCompatActivity {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 2;
     int counter;
     String[] data_phone_number=new String[8];
-    private TextView ph_1, ph_2, ph_3, ph_4, ph_5,ph_6,ph_7,ph_8,sendingmessages;
+    public TextView sentMessage, emergencyToolbarText;
+    public ImageView sent, notSent;
 
 
     @Override
@@ -43,6 +48,7 @@ public class SendMessages extends AppCompatActivity {
         SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
         SharedPreferences sharedPrefLogin = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
         counter= (sharedPref.getInt("CONTACT_NUMBER",-1));
+        Log.e("COunter",String.valueOf(counter));
         for(int i=0;i<=counter;i++) {
             data_phone_number[i]=sharedPref.getString("LOCAL_PHONE_NUMBER_"+String.valueOf(i), null);
 
@@ -50,26 +56,15 @@ public class SendMessages extends AppCompatActivity {
 
         }
         String data_name = (sharedPrefLogin.getString("LOCAL_NAME", null));
-        ph_1 = (TextView) findViewById(R.id.ph_1);
-        ph_2 = (TextView) findViewById(R.id.ph_2);
-        ph_3 = (TextView) findViewById(R.id.ph_3);
-        ph_4 = (TextView) findViewById(R.id.ph_4);
-        ph_5 = (TextView) findViewById(R.id.ph_5);
-        ph_6 = (TextView) findViewById(R.id.ph_6);
-        ph_7 = (TextView) findViewById(R.id.ph_7);
-        ph_8 = (TextView) findViewById(R.id.ph_8);
 
-        sendingmessages = (TextView) findViewById(R.id.sendingmessage);
-        ph_1.setText(data_phone_number[0]);
-        ph_2.setText(data_phone_number[1]);
-        ph_3.setText(data_phone_number[2]);
-        ph_4.setText(data_phone_number[3]);
-        ph_5.setText(data_phone_number[4]);
-        ph_6.setText(data_phone_number[5]);
-        ph_7.setText(data_phone_number[6]);
-        ph_8.setText(data_phone_number[7]);
+        sentMessage = (TextView) findViewById(R.id.sentMessageText);
+        emergencyToolbarText = (TextView) findViewById(R.id.emergencytoolbartext);
+        sent = (ImageView) findViewById(R.id.sent) ;
+        notSent = (ImageView) findViewById(R.id.notSent) ;
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
+        emergencyToolbarText.setTypeface(typeface);
 
-        sendingmessages.setText("Hii " + data_name + " sending messages");
+
 
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -106,6 +101,9 @@ public class SendMessages extends AppCompatActivity {
         });
             Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (myLocation == null) {
+                sent.setVisibility(View.GONE);
+                notSent.setVisibility(View.VISIBLE);
+                sentMessage.setText("Messages Not sent, Please Try again!");
                 Toast.makeText(getApplicationContext(), "Please Turn On Your Location", Toast.LENGTH_LONG).show();
 
             } else {
@@ -128,6 +126,9 @@ public class SendMessages extends AppCompatActivity {
 
                     }
                     else{
+                        sent.setVisibility(View.GONE);
+                        notSent.setVisibility(View.VISIBLE);
+                        sentMessage.setText("Provide atleast 4 numbers");
                         Toast.makeText(getApplicationContext(), "Provide atleast 4 numbers", Toast.LENGTH_LONG).show();
 
                     }
@@ -237,6 +238,7 @@ class SendMessageWithTouch extends AsyncTask<String, Void, String> {
 
         //android.util.Log.i(TAG, "no return");
         if (data == null) {
+
             android.util.Log.e(TAG, "Error Null");
         }
 

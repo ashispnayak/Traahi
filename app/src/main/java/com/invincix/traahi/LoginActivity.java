@@ -398,7 +398,7 @@ public class LoginActivity extends AppCompatActivity {
                             finish();
                             Toast.makeText(LoginActivity.this,"Verification Done",Toast.LENGTH_SHORT).show();
 
-                            // ...
+
                         } else {
                              Log.w(TAG, "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {

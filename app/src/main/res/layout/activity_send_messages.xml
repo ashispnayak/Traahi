@@ -1,89 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_send_messages"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#E8E8E8"
     tools:context="com.invincix.traahi.SendMessages">
-    <TextView
-        android:text="Sending Messages to the following numbers...."
-        android:layout_width="wrap_content"
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:id="@+id/sendingmessage"
-        android:layout_marginBottom="84dp"
-        android:layout_alignParentStart="true" />
+        android:background="#cf3025"
+        android:id="@+id/emergencyappbar"
+        app:elevation="0dp"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="84dp"
-        android:id="@+id/ph_1" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/emergencytoolbar"
+            android:layout_width="match_parent"
+            android:background="#cf3025"
+            android:elevation="4dp"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            android:layout_gravity="bottom">
 
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ph_1"
-        android:layout_alignEnd="@+id/ph_1"
-        android:layout_marginTop="17dp"
-        android:id="@+id/ph_2" />
 
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/sendingmessage"
-        android:layout_alignStart="@+id/ph_2"
-        android:id="@+id/ph_3" />
+            <TextView
+                android:id="@+id/emergencytoolbartext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Traahi"
+                android:textColor="#fdfdfd"
+                android:textSize="40sp"
+                android:layout_gravity="center"
+                />
 
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ph_3"
-        android:layout_alignStart="@+id/ph_3"
-        android:layout_marginTop="16dp"
-        android:id="@+id/ph_4" />
 
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ph_4"
-        android:layout_alignStart="@+id/ph_4"
-        android:layout_marginTop="19dp"
-        android:id="@+id/ph_5" />
 
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ph_5"
-        android:layout_alignStart="@+id/ph_5"
-        android:layout_marginTop="23dp"
-        android:id="@+id/ph_6" />
+        </android.support.v7.widget.Toolbar>
 
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ph_6"
-        android:layout_alignStart="@+id/ph_6"
-        android:layout_marginTop="22dp"
-        android:id="@+id/ph_7" />
 
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ph_7"
-        android:layout_alignStart="@+id/ph_7"
-        android:layout_marginTop="21dp"
-        android:id="@+id/ph_8" />
+    </android.support.design.widget.AppBarLayout>
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@+id/emergencyappbar"
+            android:padding="20dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="3dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/tick"
+                android:visibility="visible"
+                android:layout_margin="20dp"
+                android:id="@+id/sent"
+                android:layout_gravity="center"
+
+                />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/cross"
+                    android:id="@+id/notSent"
+                    android:layout_margin="20dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Emergency Messages Have Been Sent..."
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    android:layout_margin="15dp"
+                    android:id="@+id/sentMessageText"
+                    android:textSize="22sp"/>
+
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
 
 
 </RelativeLayout>

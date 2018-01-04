@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
-    private DatabaseReference contactDatabase;
+    private DatabaseReference locationDatabase;
     private Location mLastLocation;
 
     // Google client to interact with Google API
@@ -381,6 +381,11 @@ public class MainActivity extends AppCompatActivity
            editor.putString("LATITUDE_SAVE", latitude);
            editor.putString("LONGITUDE_SAVE", longitude);
            editor.apply();
+           locationDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("Location");
+           locationDatabase.child("Lat").setValue(latitude);
+           locationDatabase.child("Long").setValue(longitude);
+
+
 
 
        } else {

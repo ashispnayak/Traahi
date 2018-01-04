@@ -95,10 +95,7 @@ public class SafetyTips extends AppCompatActivity {
                     .setAction("RETRY", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-
                             checkInternet();
-
-
                         }
                     })
                     .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
@@ -107,10 +104,6 @@ public class SafetyTips extends AppCompatActivity {
         }
 
     }
-
-
-
-
 
 
     public  boolean isNetworkAvailable() {
