@@ -146,57 +146,60 @@ public class SendMessages extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
+                try {
+                    String jsonResponse;
+
+                    URL url = new URL("https://onesignal.com/api/v1/notifications");
+                    HttpURLConnection con = (HttpURLConnection)url.openConnection();
+                    con.setUseCaches(false);
+                    con.setDoOutput(true);
+                    con.setDoInput(true);
+
+                    con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                    con.setRequestProperty("Authorization", "Basic MzQ1MzhlMTgtMDVlNS00Y2YyLTlkNjAtZjBjMTM3ODViYmNi");
+                    con.setRequestMethod("POST");
+
+                    String strJsonBody = "{"
+                            +   "\"app_id\": \"833c1a76-5059-44ad-9cff-2a7909cc027d\","
+                            +   "\"filters\": [{\"field\": \"tag\", \"key\": \"isaVolunteer\", \"relation\": \"=\", \"value\": \"Yes\"},{\"field\": \"location\", \"radius\": \"10000\",\"lat\": \"" +latitude+ "\",\"long\": \"" +longitude+"\"}],"
+                            +   "\"data\": {\"foo\": \"bar\"},"
+                            +   "\"contents\": {\"en\": \"Help! Someone is in danger. Get the location\"}"
+                            + "}";
+
+
+                    System.out.println("strJsonBody:\n" + strJsonBody);
+
+                    byte[] sendBytes = strJsonBody.getBytes("UTF-8");
+                    con.setFixedLengthStreamingMode(sendBytes.length);
+
+                    OutputStream outputStream = con.getOutputStream();
+                    outputStream.write(sendBytes);
+
+                    int httpResponse = con.getResponseCode();
+                    System.out.println("httpResponse: " + httpResponse);
+
+                    if (  httpResponse >= HttpURLConnection.HTTP_OK
+                            && httpResponse < HttpURLConnection.HTTP_BAD_REQUEST) {
+                        Log.e("Notifications","Sent");
+                        Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
+                        jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                        scanner.close();
+                    }
+                    else {
+                        Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
+                        jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                        Log.e("Notifications","NOT Sent");
+                        scanner.close();
+                    }
+                    System.out.println("jsonResponse:\n" + jsonResponse);
+
+                } catch(Throwable t) {
+                    t.printStackTrace();
+                }
 
             }
         });
-        try {
-            String jsonResponse;
 
-            URL url = new URL("https://onesignal.com/api/v1/notifications");
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
-            con.setUseCaches(false);
-            con.setDoOutput(true);
-            con.setDoInput(true);
-
-            con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            con.setRequestProperty("Authorization", "Basic MzQ1MzhlMTgtMDVlNS00Y2YyLTlkNjAtZjBjMTM3ODViYmNi");
-            con.setRequestMethod("POST");
-
-            String strJsonBody = "{"
-                    +   "\"app_id\": \"833c1a76-5059-44ad-9cff-2a7909cc027d\","
-                    +   "\"filters\": [{\"field\": \"tag\", \"key\": \"level\", \"relation\": \">\", \"value\": \"10\"},{\"operator\": \"OR\"},{\"field\": \"amount_spent\", \"relation\": \">\",\"value\": \"0\"}],"
-                    +   "\"data\": {\"foo\": \"bar\"},"
-                    +   "\"contents\": {\"en\": \"English Message\"}"
-                    + "}";
-
-
-            System.out.println("strJsonBody:\n" + strJsonBody);
-
-            byte[] sendBytes = strJsonBody.getBytes("UTF-8");
-            con.setFixedLengthStreamingMode(sendBytes.length);
-
-            OutputStream outputStream = con.getOutputStream();
-            outputStream.write(sendBytes);
-
-            int httpResponse = con.getResponseCode();
-            System.out.println("httpResponse: " + httpResponse);
-
-            if (  httpResponse >= HttpURLConnection.HTTP_OK
-                    && httpResponse < HttpURLConnection.HTTP_BAD_REQUEST) {
-                Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
-                jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
-                scanner.close();
-            }
-            else {
-                Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
-                jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
-                scanner.close();
-            }
-            System.out.println("jsonResponse:\n" + jsonResponse);
-
-        } catch(Throwable t) {
-            t.printStackTrace();
-        }
     }
 
 

@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
-    private DatabaseReference locationDatabase, volunteerDatabase;
+    private DatabaseReference locationDatabase, volunteerDatabase, volMainDatabase;
     private Location mLastLocation;
 
     // Google client to interact with Google API
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     ArrayList<String> permissions = new ArrayList<>();
-    
+
 
     PermissionUtils permissionUtils;
     @Bind(R.id.tapBarMenu)
@@ -111,6 +111,14 @@ public class MainActivity extends AppCompatActivity
                 .init();
 
 
+        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+            @Override
+            public void idsAvailable(String userId, String registrationId) {
+                Log.d("debug", "User:" + userId);
+
+
+            }
+        });
 
 
 
@@ -120,13 +128,26 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         final SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
-       volunteerStatus = sharedPref.getString("LOCAL_VOLUNTEER",null);
+        SharedPreferences sharedPrefContact = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
+        ownNumber = sharedPrefContact.getString("LOCAL_OWN_NUMBER", null);
+
+        volunteerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("isaVolunteer");
+        volMainDatabase = FirebaseDatabase.getInstance().getReference().child("Volunteers");
+         volunteerDatabase.addValueEventListener(new ValueEventListener() {
+             @Override
+             public void onDataChange(DataSnapshot dataSnapshot) {
+                 volunteerStatus = (String) dataSnapshot.getValue();
+             }
+
+             @Override
+             public void onCancelled(DatabaseError databaseError) {
+
+             }
+         });
 
         imageSlider = (SliderLayout)findViewById(R.id.slider);
 
-        SharedPreferences sharedPrefContact = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
-        ownNumber = sharedPrefContact.getString("LOCAL_OWN_NUMBER", null);
-        OneSignal.sendTag("user_number", ownNumber);
+
 
 
         HashMap<String,String> url_maps = new HashMap<String, String>();
@@ -157,7 +178,7 @@ public class MainActivity extends AppCompatActivity
         imageSlider.setDuration(4000);
         imageSlider.addOnPageChangeListener(this);
 
-
+        mAuth = FirebaseAuth.getInstance();
 
         logoutButton = (TextView) findViewById(R.id.logoutButton);
         final Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont.ttf");
@@ -231,7 +252,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        volunteerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("isaVolunteer");
+
 
         //be a Traahi Volunteer
         traahiVolunteer = (TextView) findViewById(R.id.traahiVolunteer) ;
@@ -246,7 +267,7 @@ public class MainActivity extends AppCompatActivity
                 final TextView closeButton = (TextView) traahiVolunteerView.findViewById(R.id.volCloseButton);
                 closeButton.setTypeface(typeface);
                 final Button opt = (Button) traahiVolunteerView.findViewById(R.id.optInOut);
-                if(volunteerStatus.equals("Yes")){
+                if(volunteerStatus == "Yes"){
                     Log.e("Volunteer Status",volunteerStatus);
                     opt.setText("Opt Out From Traahi Volunteer");
                     int col = Color.parseColor("#cd0000");
@@ -275,17 +296,17 @@ public class MainActivity extends AppCompatActivity
                         if(volunteerStatus.equals("Yes"))
                         {
                             volunteerDatabase.setValue("No");
+                            volMainDatabase.child(ownNumber).removeValue();
                             volunteerStatus = "No";
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.putString("LOCAL_VOLUNTEER","No");
-                            editor.apply();
+                            OneSignal.sendTag("isaVolunteer", "No");
+
                         }
                         else{
                             volunteerDatabase.setValue("Yes");
                             volunteerStatus = "Yes";
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.putString("LOCAL_VOLUNTEER","Yes");
-                            editor.apply();
+                            volMainDatabase.child(ownNumber).setValue("");
+                            OneSignal.sendTag("isaVolunteer", "Yes");
+
                         }
 
                     }
@@ -348,25 +369,10 @@ public class MainActivity extends AppCompatActivity
 
 
         //Retrieve Datas
-
-
-
-
-
-
-
-
-
-
         longitude = " ";
         latitude = " ";
 
-
-
-
-
      displayLocation();
-
 
     }
 

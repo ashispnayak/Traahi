@@ -354,7 +354,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             newtonCradleLoading.setVisibility(View.VISIBLE);
                             // Log.d(TAG, "signInWithCredential:success");
-                            SharedPreferences sharedPref = getSharedPreferences(STORE_DATA_NAME, Context.MODE_PRIVATE);
+                            final SharedPreferences sharedPref = getSharedPreferences(STORE_DATA_NAME, Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPref.edit();
                             editor.putString("LOCAL_NAME", userName);
                             editor.putString("LOCAL_OWN_NUMBER",phone_number);
@@ -397,16 +397,9 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     String value = (String) dataSnapshot.getValue();
-                                    if(value != null){
-                                        SharedPreferences.Editor editor = sharedPrefContact.edit();
-                                        editor.putString("LOCAL_VOLUNTEER" , value);
-                                        editor.apply();
-                                    }
-                                    else{
-                                        SharedPreferences.Editor editor = sharedPrefContact.edit();
+                                    if(value == null){
                                         loginDatabase.child(phone_number).child("isaVolunteer").setValue("No");
-                                        editor.putString("LOCAL_VOLUNTEER" , "No");
-                                        editor.apply();
+
                                     }
 
                                 }
