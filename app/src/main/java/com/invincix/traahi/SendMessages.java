@@ -23,9 +23,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Scanner;
 
 public class SendMessages extends AppCompatActivity {
     public String latitude;
@@ -121,6 +123,7 @@ public class SendMessages extends AppCompatActivity {
 
 
                     if (data_name != null && data_phone_number[0] != null && data_phone_number[1] != null && data_phone_number[2] != null && data_phone_number[3] != null) {
+                        sendNotifications();
                         new SendMessageWithTouch().execute(data_phone_number[0], data_phone_number[1],data_phone_number[2],data_phone_number[3],data_phone_number[4],data_phone_number[5],data_phone_number[6],data_phone_number[7],data_name, latitude, longitude);
                         Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();
 
@@ -138,8 +141,66 @@ public class SendMessages extends AppCompatActivity {
 
         }
 
+    private void sendNotifications() {
 
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+        try {
+            String jsonResponse;
+
+            URL url = new URL("https://onesignal.com/api/v1/notifications");
+            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+            con.setUseCaches(false);
+            con.setDoOutput(true);
+            con.setDoInput(true);
+
+            con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            con.setRequestProperty("Authorization", "Basic MzQ1MzhlMTgtMDVlNS00Y2YyLTlkNjAtZjBjMTM3ODViYmNi");
+            con.setRequestMethod("POST");
+
+            String strJsonBody = "{"
+                    +   "\"app_id\": \"833c1a76-5059-44ad-9cff-2a7909cc027d\","
+                    +   "\"filters\": [{\"field\": \"tag\", \"key\": \"level\", \"relation\": \">\", \"value\": \"10\"},{\"operator\": \"OR\"},{\"field\": \"amount_spent\", \"relation\": \">\",\"value\": \"0\"}],"
+                    +   "\"data\": {\"foo\": \"bar\"},"
+                    +   "\"contents\": {\"en\": \"English Message\"}"
+                    + "}";
+
+
+            System.out.println("strJsonBody:\n" + strJsonBody);
+
+            byte[] sendBytes = strJsonBody.getBytes("UTF-8");
+            con.setFixedLengthStreamingMode(sendBytes.length);
+
+            OutputStream outputStream = con.getOutputStream();
+            outputStream.write(sendBytes);
+
+            int httpResponse = con.getResponseCode();
+            System.out.println("httpResponse: " + httpResponse);
+
+            if (  httpResponse >= HttpURLConnection.HTTP_OK
+                    && httpResponse < HttpURLConnection.HTTP_BAD_REQUEST) {
+                Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
+                jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                scanner.close();
+            }
+            else {
+                Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
+                jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                scanner.close();
+            }
+            System.out.println("jsonResponse:\n" + jsonResponse);
+
+        } catch(Throwable t) {
+            t.printStackTrace();
         }
+    }
+
+
+}
 
 
 

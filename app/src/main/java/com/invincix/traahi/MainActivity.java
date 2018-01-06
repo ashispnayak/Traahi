@@ -3,12 +3,14 @@ package com.invincix.traahi;
 
 import android.Manifest;
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
@@ -54,6 +56,7 @@ import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
-    private DatabaseReference locationDatabase;
+    private DatabaseReference locationDatabase, volunteerDatabase;
     private Location mLastLocation;
 
     // Google client to interact with Google API
@@ -81,10 +84,9 @@ public class MainActivity extends AppCompatActivity
     private static int FATEST_INTERVAL = 5000; // 5 sec
     private static int DISPLACEMENT = 10; // 10 meters
 
-    public String latitude;
-    public String longitude, ownNumber;
+    public String latitude, longitude, ownNumber, volunteerStatus;
     public static final String STORE_DATA = "MyPrefs";
-    private TextView toolbarText,texttag, logoutButton, addcontacts, safetybutton, policebutton, rtibutton, ambulancebutton;
+    private TextView toolbarText,texttag, logoutButton, addcontacts, safetybutton, policebutton, rtibutton, ambulancebutton, traahiVolunteer;
     public int counter;
     private SliderLayout imageSlider;
     private FirebaseAuth mAuth;
@@ -120,6 +122,7 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         final SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
+       volunteerStatus = sharedPref.getString("LOCAL_VOLUNTEER",null);
 
         imageSlider = (SliderLayout)findViewById(R.id.slider);
 
@@ -196,17 +199,7 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-      /*  mAuthListener=new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser()==null){
-                    Intent loginIntent=new Intent(MainActivity.this,LoginActivity.class);
-                    loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(loginIntent);
-                }
 
-            }
-        };*/
         TextView horText = (TextView) findViewById(R.id.horText);
         toolbarText = (TextView)  findViewById(R.id.maintoolbartext);
         texttag = (TextView) findViewById(R.id.safeTag) ;
@@ -236,6 +229,56 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AddContacts.class);
                 startActivity(intent);
+            }
+        });
+
+        volunteerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("isaVolunteer");
+
+        //be a Traahi Volunteer
+        traahiVolunteer = (TextView) findViewById(R.id.traahiVolunteer) ;
+        traahiVolunteer.setTypeface(typeface);
+        traahiVolunteer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+                View traahiVolunteerView = layoutInflater.inflate(R.layout.traahi_volunteer, null);
+                final AlertDialog alertD = new AlertDialog.Builder(MainActivity.this).create();
+                alertD.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                TextView closeButton = (TextView) traahiVolunteerView.findViewById(R.id.volCloseButton);
+                Button opt = (Button) traahiVolunteerView.findViewById(R.id.optInOut);
+                if(volunteerStatus == "Yes"){
+                    opt.setText("Opt Out From Traahi Volunteer");
+                    int col = Color.parseColor("#cd0000");
+                    opt.setBackgroundColor(col);
+                }
+                closeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertD.dismiss();
+                    }
+                });
+                opt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(volunteerStatus == "Yes")
+                        {
+                            volunteerDatabase.setValue("No");
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString("LOCAL_VOLUNTEER","No");
+                            editor.apply();
+                        }
+                        else{
+                            volunteerDatabase.setValue("Yes");
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString("LOCAL_VOLUNTEER","Yes");
+                            editor.apply();
+                        }
+
+                    }
+                });
+                alertD.setView(traahiVolunteerView);
+
+                alertD.show();
             }
         });
 

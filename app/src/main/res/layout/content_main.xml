@@ -131,6 +131,7 @@
                      android:textColor="#fdfdfd"
                 android:id="@+id/addcontacts"
              />
+
             <TextView
                 android:layout_width="85dp"
                 android:layout_height="wrap_content"
@@ -139,6 +140,34 @@
                 android:textColor="#808080"/>
 
             </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="@drawable/hor_icon_back"
+                android:text="@string/fa_volunteer"
+                android:paddingTop="8sp"
+                android:textSize="30sp"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textColor="#fdfdfd"
+                android:id="@+id/traahiVolunteer"
+                />
+
+            <TextView
+                android:layout_width="85dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:textAlignment="center"
+                android:text="Traahi Volunteer"
+                android:textColor="#808080"/>
+
+        </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
