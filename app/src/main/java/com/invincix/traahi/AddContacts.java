@@ -88,6 +88,7 @@ public class AddContacts extends AppCompatActivity {
                                                              LayoutInflater layoutInflater = LayoutInflater.from(AddContacts.this);
                                                              View addcontactView = layoutInflater.inflate(R.layout.add_contact_manual, null);
                                                              final AlertDialog alertD = new AlertDialog.Builder(AddContacts.this).create();
+                                                             alertD.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                                                              Button retrieve = (Button) addcontactView.findViewById(R.id.retrieveadd);
                                                              Button manual = (Button) addcontactView.findViewById(R.id.manualadd);
                                                              retrieve.setOnClickListener(new View.OnClickListener() {
@@ -207,7 +208,6 @@ Log.e("Postition: ", String.valueOf(position));
 
                                 AlertDialog.Builder builder = new AlertDialog.Builder(AddContacts.this);
                                 LayoutInflater inflater = (LayoutInflater) AddContacts.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                builder.setView(R.layout.edit_contact_dialog);
                                 builder.setView(inflater.inflate(R.layout.edit_contact_dialog, null));
                                 builder.setPositiveButton("Save Edit", new DialogInterface.OnClickListener() {
                                     @Override

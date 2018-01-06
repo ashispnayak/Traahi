@@ -18,6 +18,7 @@ import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.google.android.gms.nearby.connection.Strategy;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,6 +47,7 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.onesignal.OneSignal;
 
 import android.location.Location;
 
@@ -88,7 +90,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     ArrayList<String> permissions = new ArrayList<>();
-
+    private FirebaseUser user;
 
     PermissionUtils permissionUtils;
     @Bind(R.id.tapBarMenu)
@@ -99,6 +101,20 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
+
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        mAuth=FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        Log.e("Hii",String.valueOf(user));
+        String phone_number = user.getPhoneNumber();
+        OneSignal.sendTag("user_number", phone_number);
+
+
+
         final Context context = this;
         permissionUtils = new PermissionUtils((Activity) context);
         ButterKnife.bind(this);
@@ -139,7 +155,7 @@ public class MainActivity extends AppCompatActivity
         imageSlider.setDuration(4000);
         imageSlider.addOnPageChangeListener(this);
 
-        mAuth=FirebaseAuth.getInstance();
+
 
         logoutButton = (TextView) findViewById(R.id.logoutButton);
         Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont.ttf");

@@ -27,6 +27,7 @@ import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +35,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.onesignal.OneSignal;
 import com.victor.loading.newton.NewtonCradleLoading;
 
 import java.util.HashMap;
@@ -88,6 +90,9 @@ public class LoginActivity extends AppCompatActivity {
         phonetext.setTypeface(typeface);
         otptext.setText("\uf084");
         phonetext.setText("\uf10b");
+
+
+
 
 
 
@@ -241,6 +246,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(validation_signup(edittext_name.getText().toString())) {
 
                     loginDatabase.child(phone_number).child("Name").setValue(edittext_name.getText().toString());
+
                     userName = edittext_name.getText().toString();
                     signInWithPhoneAuthCredential(cred);
                 }
@@ -262,6 +268,7 @@ public class LoginActivity extends AppCompatActivity {
                     final PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, edittext_otp.getText().toString());
 
                             loginDatabase.child(phone_number).child("Name").setValue(edittext_name.getText().toString());
+
                             userName = edittext_name.getText().toString();
                             signInWithPhoneAuthCredential(credential);
 
