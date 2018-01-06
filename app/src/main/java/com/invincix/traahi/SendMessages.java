@@ -124,7 +124,7 @@ public class SendMessages extends AppCompatActivity {
 
                     if (data_name != null && data_phone_number[0] != null && data_phone_number[1] != null && data_phone_number[2] != null && data_phone_number[3] != null) {
                         sendNotifications();
-                        new SendMessageWithTouch().execute(data_phone_number[0], data_phone_number[1],data_phone_number[2],data_phone_number[3],data_phone_number[4],data_phone_number[5],data_phone_number[6],data_phone_number[7],data_name, latitude, longitude);
+                       // new SendMessageWithTouch().execute(data_phone_number[0], data_phone_number[1],data_phone_number[2],data_phone_number[3],data_phone_number[4],data_phone_number[5],data_phone_number[6],data_phone_number[7],data_name, latitude, longitude);
                         Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();
 
                     }
