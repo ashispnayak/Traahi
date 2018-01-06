@@ -14,9 +14,9 @@
         >
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="450dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/volunteer"/>
+            android:src="@drawable/traahi_volunteer"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
             android:layout_below="@+id/volunteerTitle"
             android:layout_margin="5dp"
             android:id="@+id/volunteerDescription"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textColor="#fdfdfd"
             android:text="Being a Traahi Volunteer is nothing less than being a hero! Whenever someone will be in trouble you will get a notification with the real time location of the victim where you can go, help and be a hero.\nJoin the Traahi Volunteer's Community Today and save the world because A TRAAHI VOLUNTEER TODAY IS A HERO TOMORROW."/>
         <Button

@@ -56,6 +56,7 @@ import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     ArrayList<String> permissions = new ArrayList<>();
-    private FirebaseUser user;
+    
 
     PermissionUtils permissionUtils;
     @Bind(R.id.tapBarMenu)
@@ -109,11 +110,8 @@ public class MainActivity extends AppCompatActivity
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
 
-        mAuth=FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        Log.e("Hii",String.valueOf(user));
-        String phone_number = user.getPhoneNumber();
-        OneSignal.sendTag("user_number", phone_number);
+
+
 
 
 
@@ -128,6 +126,7 @@ public class MainActivity extends AppCompatActivity
 
         SharedPreferences sharedPrefContact = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
         ownNumber = sharedPrefContact.getString("LOCAL_OWN_NUMBER", null);
+        OneSignal.sendTag("user_number", ownNumber);
 
 
         HashMap<String,String> url_maps = new HashMap<String, String>();
@@ -161,7 +160,7 @@ public class MainActivity extends AppCompatActivity
 
 
         logoutButton = (TextView) findViewById(R.id.logoutButton);
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont.ttf");
+        final Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont.ttf");
         logoutButton.setTypeface(typeface);
         logoutButton.setText("\uf011");
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -237,38 +236,53 @@ public class MainActivity extends AppCompatActivity
         //be a Traahi Volunteer
         traahiVolunteer = (TextView) findViewById(R.id.traahiVolunteer) ;
         traahiVolunteer.setTypeface(typeface);
+
+
         traahiVolunteer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-                View traahiVolunteerView = layoutInflater.inflate(R.layout.traahi_volunteer, null);
-                final AlertDialog alertD = new AlertDialog.Builder(MainActivity.this).create();
-                alertD.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                TextView closeButton = (TextView) traahiVolunteerView.findViewById(R.id.volCloseButton);
-                Button opt = (Button) traahiVolunteerView.findViewById(R.id.optInOut);
-                if(volunteerStatus == "Yes"){
+                final LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+                final View traahiVolunteerView = layoutInflater.inflate(R.layout.traahi_volunteer, null);
+                final TextView closeButton = (TextView) traahiVolunteerView.findViewById(R.id.volCloseButton);
+                closeButton.setTypeface(typeface);
+                final Button opt = (Button) traahiVolunteerView.findViewById(R.id.optInOut);
+                if(volunteerStatus.equals("Yes")){
+                    Log.e("Volunteer Status",volunteerStatus);
                     opt.setText("Opt Out From Traahi Volunteer");
                     int col = Color.parseColor("#cd0000");
                     opt.setBackgroundColor(col);
                 }
+                else{
+                    opt.setText("Opt in for Traahi Volunteer");
+                    int col1 = Color.parseColor("#339900");
+                    opt.setBackgroundColor(col1);
+                }
+                final AlertDialog alertD = new AlertDialog.Builder(MainActivity.this).create();
+                alertD.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
                 closeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         alertD.dismiss();
+                        ((ViewGroup)traahiVolunteerView.getParent()).removeView(traahiVolunteerView);
                     }
                 });
                 opt.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(volunteerStatus == "Yes")
+                        ((ViewGroup)traahiVolunteerView.getParent()).removeView(traahiVolunteerView);
+                        alertD.dismiss();
+                        if(volunteerStatus.equals("Yes"))
                         {
                             volunteerDatabase.setValue("No");
+                            volunteerStatus = "No";
                             SharedPreferences.Editor editor = sharedPref.edit();
                             editor.putString("LOCAL_VOLUNTEER","No");
                             editor.apply();
                         }
                         else{
                             volunteerDatabase.setValue("Yes");
+                            volunteerStatus = "Yes";
                             SharedPreferences.Editor editor = sharedPref.edit();
                             editor.putString("LOCAL_VOLUNTEER","Yes");
                             editor.apply();
