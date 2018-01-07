@@ -1,10 +1,12 @@
 package com.invincix.traahi;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
@@ -20,6 +22,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +58,8 @@ public class SendMessages extends AppCompatActivity {
     public TextView sentMessage, emergencyToolbarText;
     public ImageView sent, notSent;
     public String data_name;
+    public ProgressBar progBar;
+    public View view;
 
 
 
@@ -66,6 +71,15 @@ public class SendMessages extends AppCompatActivity {
 
         longitude = " ";
         latitude = " ";
+
+        view = findViewById(R.id.view_messageProgress);
+        progBar = (ProgressBar)findViewById(R.id.messageProgress);
+        if (progBar != null) {
+            progBar.setVisibility(View.VISIBLE);
+            view.setVisibility(View.VISIBLE);
+            progBar.setIndeterminate(true);
+            progBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#f73103"), android.graphics.PorterDuff.Mode.SRC_ATOP);
+        }
 
         //Retrieve Datas
         SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
@@ -115,6 +129,8 @@ public class SendMessages extends AppCompatActivity {
                 return;
             }
             if (isNetworkAvailable()) {
+                progBar.setVisibility(View.VISIBLE);
+                view.setVisibility(View.VISIBLE);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
                     @Override
                     public void onStatusChanged(String s, int i, Bundle bundle) {
@@ -154,9 +170,12 @@ public class SendMessages extends AppCompatActivity {
                                 sent.setVisibility(View.VISIBLE);
                                 notSent.setVisibility(View.GONE);
                                 sentMessage.setText("Emergency Messages Have Been Sent...");
+                                progBar.setVisibility(View.GONE);
+                                view.setVisibility(View.GONE);
                                 sendNotifications();
                                // new SendMessageWithTouch().execute(data_phone_number[0], data_phone_number[1], data_phone_number[2], data_phone_number[3], data_phone_number[4], data_phone_number[5], data_phone_number[6], data_phone_number[7], data_name, latitude, longitude);
                                 Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();
+
 
                             } else {
                                 sent.setVisibility(View.GONE);
@@ -179,6 +198,8 @@ public class SendMessages extends AppCompatActivity {
             }
         }
         else{
+            progBar.setVisibility(View.GONE);
+            view.setVisibility(View.GONE);
             displayLocationSettingRequest(getApplicationContext());
 
         }
@@ -186,11 +207,12 @@ public class SendMessages extends AppCompatActivity {
 
     }
     private void produceSnackBar(){
+        progBar.setVisibility(View.VISIBLE);
+        view.setVisibility(View.VISIBLE);
         Snackbar.make(findViewById(R.id.activity_send_messages), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Retry", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
                     displayLocation();
                     }
                 })

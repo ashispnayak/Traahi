@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:background="#E8E8E8"
     tools:context="com.invincix.traahi.SendMessages">
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,6 +43,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
+
+
         <android.support.v7.widget.CardView
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -53,6 +56,7 @@
             android:padding="20dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="3dp"
+            android:id="@+id/infoCard"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp">
             <LinearLayout
@@ -92,8 +96,29 @@
                     android:textSize="22sp"/>
 
 
+
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#000000"
+                android:visibility="gone"
+                android:alpha=".4"
+                android:id="@+id/view_messageProgress" />
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                style="@style/Base.TextAppearance.AppCompat.Large"
+                android:layout_gravity="center"
+                android:id="@+id/messageProgress"
+                android:visibility="gone"
+                />
         </android.support.v7.widget.CardView>
+
+
+
+
+
 
 
 
