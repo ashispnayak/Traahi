@@ -29,7 +29,7 @@ public class OnNotificationsRecieved extends NotificationExtenderService {
             @Override
             public NotificationCompat.Builder extend(NotificationCompat.Builder builder) {
                 // Sets the background notification color to Green on Android 5.0+ devices.
-                builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.large_notification));
+                builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.large_notification)).setContentTitle("Traahi Volunteer");
                 return builder.setColor(new BigInteger("FF00FF00", 16).intValue());
             }
         };

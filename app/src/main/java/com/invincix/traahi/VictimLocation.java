@@ -46,7 +46,7 @@ public class VictimLocation extends AppCompatActivity implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 String uriBegin = "geo:" + latitude + "," + longitude;
-                String query = latitude + "," + longitude ;
+                String query = latitude + "," + longitude  ;
                 String encodedQuery = Uri.encode(query);
                 String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
                 Uri uri = Uri.parse(uriString);

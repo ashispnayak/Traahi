@@ -5,9 +5,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -123,17 +126,7 @@ public class MainActivity extends AppCompatActivity
 
         volunteerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("isaVolunteer");
         volMainDatabase = FirebaseDatabase.getInstance().getReference().child("Volunteers");
-         volunteerDatabase.addValueEventListener(new ValueEventListener() {
-             @Override
-             public void onDataChange(DataSnapshot dataSnapshot) {
-                 volunteerStatus = (String) dataSnapshot.getValue();
-             }
 
-             @Override
-             public void onCancelled(DatabaseError databaseError) {
-
-             }
-         });
 
         imageSlider = (SliderLayout)findViewById(R.id.slider);
 
@@ -252,58 +245,69 @@ public class MainActivity extends AppCompatActivity
         traahiVolunteer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-                final View traahiVolunteerView = layoutInflater.inflate(R.layout.traahi_volunteer, null);
-                final TextView closeButton = (TextView) traahiVolunteerView.findViewById(R.id.volCloseButton);
-                closeButton.setTypeface(typeface);
-                final Button opt = (Button) traahiVolunteerView.findViewById(R.id.optInOut);
-                if(volunteerStatus == "Yes"){
-                    Log.e("Volunteer Status",volunteerStatus);
-                    opt.setText("Opt Out From Traahi Volunteer");
-                    int col = Color.parseColor("#cd0000");
-                    opt.setBackgroundColor(col);
-                }
-                else{
-                    opt.setText("Opt in for Traahi Volunteer");
-                    int col1 = Color.parseColor("#339900");
-                    opt.setBackgroundColor(col1);
-                }
-                final AlertDialog alertD = new AlertDialog.Builder(MainActivity.this).create();
-                alertD.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
-                closeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertD.dismiss();
-                        ((ViewGroup)traahiVolunteerView.getParent()).removeView(traahiVolunteerView);
+                if(isNetworkAvailable() && volunteerStatus != null) {
+                    final LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+                    final View traahiVolunteerView = layoutInflater.inflate(R.layout.traahi_volunteer, null);
+                    final TextView closeButton = (TextView) traahiVolunteerView.findViewById(R.id.volCloseButton);
+                    closeButton.setTypeface(typeface);
+                    final Button opt = (Button) traahiVolunteerView.findViewById(R.id.optInOut);
+                    if (volunteerStatus == "Yes") {
+                        Log.e("Volunteer Status", volunteerStatus);
+                        opt.setText("Opt Out From Traahi Volunteer");
+                        int col = Color.parseColor("#cd0000");
+                        opt.setBackgroundColor(col);
+                    } else {
+                        opt.setText("Opt in for Traahi Volunteer");
+                        int col1 = Color.parseColor("#339900");
+                        opt.setBackgroundColor(col1);
                     }
-                });
-                opt.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((ViewGroup)traahiVolunteerView.getParent()).removeView(traahiVolunteerView);
-                        alertD.dismiss();
-                        if(volunteerStatus.equals("Yes"))
-                        {
-                            volunteerDatabase.setValue("No");
-                            volMainDatabase.child(ownNumber).removeValue();
-                            volunteerStatus = "No";
-                            OneSignal.sendTag("isaVolunteer", "No");
+                    final AlertDialog alertD = new AlertDialog.Builder(MainActivity.this).create();
+                    alertD.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+                    closeButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            alertD.dismiss();
+                            ((ViewGroup) traahiVolunteerView.getParent()).removeView(traahiVolunteerView);
+                        }
+                    });
+                    opt.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((ViewGroup) traahiVolunteerView.getParent()).removeView(traahiVolunteerView);
+                            alertD.dismiss();
+                            if (volunteerStatus.equals("Yes")) {
+                                volunteerDatabase.setValue("No");
+                                volMainDatabase.child(ownNumber).removeValue();
+                                volunteerStatus = "No";
+                                OneSignal.sendTag("isaVolunteer", "No");
+
+                            } else {
+                                volunteerDatabase.setValue("Yes");
+                                volunteerStatus = "Yes";
+                                volMainDatabase.child(ownNumber).setValue("");
+                                OneSignal.sendTag("isaVolunteer", "Yes");
+
+                            }
 
                         }
-                        else{
-                            volunteerDatabase.setValue("Yes");
-                            volunteerStatus = "Yes";
-                            volMainDatabase.child(ownNumber).setValue("");
-                            OneSignal.sendTag("isaVolunteer", "Yes");
+                    });
+                    alertD.setView(traahiVolunteerView);
 
-                        }
+                    alertD.show();
+                }
+                else {
+                    Snackbar.make(findViewById(R.id.content_main), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("RETRY", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
 
-                    }
-                });
-                alertD.setView(traahiVolunteerView);
+                                }
+                            })
+                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
+                            .show();
+                }
 
-                alertD.show();
             }
         });
 
@@ -364,6 +368,23 @@ public class MainActivity extends AppCompatActivity
 
      displayLocation();
 
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        volunteerDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                volunteerStatus = (String) dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override
