@@ -11,22 +11,15 @@ import com.onesignal.OneSignal;
 
 
 public class Welcome_activity extends AppCompatActivity {
-    private static Context context;
-    public static Context getContext() {
-        return context;
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_activity);
-        context = getApplicationContext();
 
-        OneSignal.startInit(this)
-                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
-                .setNotificationOpenedHandler(new OnNotificationOpened())
-                .unsubscribeWhenNotificationsAreDisabled(true)
-                .init();
+
+
 
         Thread timerThread = new Thread(){
             public void run(){

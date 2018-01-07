@@ -17,6 +17,17 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_height="match_parent"
             tools:context="com.invincix.traahi.VictimLocation" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_margin="5dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/victimDirections"
+            android:text="Get Directions"
+            android:textColor="#fff"
+            android:background="#cf3025"
+            android:layout_alignParentBottom="true"
+            android:textStyle="bold"
+            android:textSize="20dp" />
     </RelativeLayout>
 
     <android.support.design.widget.AppBarLayout
@@ -52,5 +63,6 @@
 
 
     </android.support.design.widget.AppBarLayout>
+
 
 </RelativeLayout>

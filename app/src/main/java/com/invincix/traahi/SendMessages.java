@@ -162,7 +162,7 @@ public class SendMessages extends AppCompatActivity {
                     String strJsonBody = "{"
                             +   "\"app_id\": \"833c1a76-5059-44ad-9cff-2a7909cc027d\","
                             +   "\"filters\": [{\"field\": \"tag\", \"key\": \"isaVolunteer\", \"relation\": \"=\", \"value\": \"Yes\"},{\"field\": \"location\", \"radius\": \"10000\",\"lat\": \"" +latitude+ "\",\"long\": \"" +longitude+"\"}],"
-                            +   "\"data\": {\"foo\": \"bar\"},"
+                            +   "\"data\": {\"lat\": \""+latitude+"\",\"long\": \""+longitude+"\",\"activity\":\"VictimLocation\"},"
                             +   "\"contents\": {\"en\": \"Help! Someone is in danger. Get the location\"}"
                             + "}";
 

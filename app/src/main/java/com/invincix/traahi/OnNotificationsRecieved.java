@@ -13,11 +13,17 @@ import com.onesignal.OSNotificationPayload;
 import com.onesignal.NotificationExtenderService;
 import com.onesignal.OSNotificationReceivedResult;
 
+import org.json.JSONObject;
+
 import java.math.BigInteger;
 
 public class OnNotificationsRecieved extends NotificationExtenderService {
     @Override
     protected boolean onNotificationProcessing(OSNotificationReceivedResult receivedResult) {
+        JSONObject data = receivedResult.payload.additionalData;
+        if(data!=null){
+            Log.e("ADDITIONAL DATA",String.valueOf(data));
+        }
         OverrideSettings overrideSettings = new OverrideSettings();
         overrideSettings.extender = new NotificationCompat.Extender() {
             @Override

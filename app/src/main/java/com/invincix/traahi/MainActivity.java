@@ -3,6 +3,7 @@ package com.invincix.traahi;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity
         implements ConnectionCallbacks, OnConnectionFailedListener, OnRequestPermissionsResultCallback, PermissionResultCallback, BaseSliderView.OnSliderClickListener,
         ViewPagerEx.OnPageChangeListener {
 
+
+
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
@@ -106,6 +109,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
+
 
 
 
