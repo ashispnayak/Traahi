@@ -18,10 +18,6 @@ import com.onesignal.OneSignal;
 import org.json.JSONObject;
 
 
-/**
- * Created by Ashis on 1/6/2018.
- */
-
 public class OnNotificationOpened implements OneSignal.NotificationOpenedHandler {
     // This fires when a notification is opened by tapping on it.
     private Application context;

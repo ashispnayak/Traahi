@@ -35,6 +35,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -101,10 +102,13 @@ public class SendMessages extends AppCompatActivity {
         Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
         emergencyToolbarText.setTypeface(typeface);
 
-        displayLocation();
+        if(FirebaseAuth.getInstance().getCurrentUser() == null){
+            sentMessage.setText("Please Login to use this feature..")
+        }
+        else {
+            displayLocation();
 
-
-
+        }
 
 
 
@@ -173,13 +177,15 @@ public class SendMessages extends AppCompatActivity {
                                 progBar.setVisibility(View.GONE);
                                 view.setVisibility(View.GONE);
                                 sendNotifications();
-                               // new SendMessageWithTouch().execute(data_phone_number[0], data_phone_number[1], data_phone_number[2], data_phone_number[3], data_phone_number[4], data_phone_number[5], data_phone_number[6], data_phone_number[7], data_name, latitude, longitude);
+                                new SendMessageWithTouch().execute(data_phone_number[0], data_phone_number[1], data_phone_number[2], data_phone_number[3], data_phone_number[4], data_phone_number[5], data_phone_number[6], data_phone_number[7], data_name, latitude, longitude);
                                 Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();
 
 
                             } else {
                                 sent.setVisibility(View.GONE);
                                 notSent.setVisibility(View.VISIBLE);
+                                progBar.setVisibility(View.GONE);
+                                view.setVisibility(View.GONE);
                                 sentMessage.setText("Provide atleast 4 numbers");
                                 Toast.makeText(getApplicationContext(), "Provide atleast 4 numbers", Toast.LENGTH_LONG).show();
 

@@ -237,9 +237,9 @@ public class LoginActivity extends AppCompatActivity {
         createaccname.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newtonCradleLoading.setVisibility(View.VISIBLE);
-                if(validation_signup(edittext_name.getText().toString())) {
 
+                if(validation_signup(edittext_name.getText().toString())) {
+                    newtonCradleLoading.setVisibility(View.VISIBLE);
                     loginDatabase.child(phone_number).child("Name").setValue(edittext_name.getText().toString());
                     userName = edittext_name.getText().toString();
                     signInWithPhoneAuthCredential(cred);
@@ -332,15 +332,15 @@ public class LoginActivity extends AppCompatActivity {
         return valid;
     }
 
-    private boolean validation_signup(String otp) {
+    private boolean validation_signup(String name) {
         boolean valid = true;
 
 
-        if (otp.length() != 6) {
-            edittext_otp.setError("Atleast 6 digits");
+        if (name.length() < 4) {
+            edittext_name.setError("Atleast 4 digits");
             valid = false;
         } else {
-            edittext_otp.setError(null);
+            edittext_name.setError(null);
         }
         return valid;
     }

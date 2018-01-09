@@ -255,17 +255,19 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if(isNetworkAvailable() && volunteerStatus != null) {
+                    Log.e("Volunteer Status",volunteerStatus);
                     final LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
                     final View traahiVolunteerView = layoutInflater.inflate(R.layout.traahi_volunteer, null);
                     final TextView closeButton = (TextView) traahiVolunteerView.findViewById(R.id.volCloseButton);
                     closeButton.setTypeface(typeface);
                     final Button opt = (Button) traahiVolunteerView.findViewById(R.id.optInOut);
-                    if (volunteerStatus == "Yes") {
-                        Log.e("Volunteer Status", volunteerStatus);
+                    if (volunteerStatus.equals("Yes")) {
+                        Log.e("Inside YEs", volunteerStatus);
                         opt.setText("Opt Out From Traahi Volunteer");
                         int col = Color.parseColor("#cd0000");
                         opt.setBackgroundColor(col);
                     } else {
+                        Log.e("Inside No",volunteerStatus);
                         opt.setText("Opt in for Traahi Volunteer");
                         int col1 = Color.parseColor("#339900");
                         opt.setBackgroundColor(col1);
