@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import android.graphics.Color;
-import android.graphics.Interpolator;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -39,16 +38,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Handler;
 
 import static android.util.Log.d;
 
 
-public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCallback {
+public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private String latitude, longitude, searchType;
-    private TextView placename, placeaddress, placenumber, policetoolbar;
+    private TextView placename, placeaddress, placenumber, policetoolbar, markerIcon;
     private Button policeDirection;
     private ImageButton closeButton;
     private BottomSheetBehavior mBottomSheetBehaviour;
@@ -60,7 +58,7 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nearest_police);
+        setContentView(R.layout.activity_nearest);
 
         //Retrieve Datas
         Intent intent = getIntent();
@@ -112,8 +110,12 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
         placename = (TextView) findViewById(R.id.policestationname);
         placeaddress = (TextView) findViewById(R.id.policestationaddress);
         placenumber = (TextView) findViewById(R.id.policestationnumber);
+        markerIcon = (TextView) findViewById(R.id.markerIcon);
         policeDirection = (Button) findViewById(R.id.policedirection);
         closeButton = (ImageButton) findViewById(R.id.closebutton);
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont.ttf");
+        markerIcon.setTypeface(typeface);
+        markerIcon.setDrawingCacheEnabled(true);
 
 
 
@@ -278,12 +280,15 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
                 mMarker = null;
 
                 mMap.setOnMarkerClickListener( this);
+                markerIcon.buildDrawingCache();
+
 
                 if(searchType.equals("police")) {
-                    mMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + "~" + vicinity).anchor(0.5f, .05f).icon(BitmapDescriptorFactory.fromResource(R.drawable.policemarker)));
+                    mMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + "~" + vicinity).anchor(0.5f, .05f).icon(BitmapDescriptorFactory.fromBitmap(markerIcon.getDrawingCache())));
                 }
                 else if(searchType.equals("hospital")){
-                    mMarker = mMap.addMarker(new MarkerOptions().position(latLng).anchor(0.5f, .05f).title(placeName + "~" + vicinity).icon(BitmapDescriptorFactory.fromResource(R.drawable.doctormarker)));
+                    markerIcon.setTextColor(Color.parseColor("#ffb6c1"));
+                    mMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + "~" + vicinity).anchor(0.5f, .05f).icon(BitmapDescriptorFactory.fromBitmap(markerIcon.getDrawingCache())));
                 }
                 dropPinEffect(mMarker);
                 mMarker.hideInfoWindow();

@@ -71,7 +71,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".NearestPolice"
+            android:name=".NearestActivity"
             android:label="@string/title_activity_nearest_police"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

@@ -7,11 +7,21 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
     android:id="@+id/nearestPoliceLayout"
     android:fitsSystemWindows="true"
-    tools:context="com.invincix.traahi.NearestPolice">
+    tools:context="com.invincix.traahi.NearestActivity">
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fa_marker"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:visibility="visible"
+            android:textColor="#000080"
+            android:id="@+id/markerIcon"
+            />
 
         <fragment
             android:id="@+id/mappolice"
@@ -19,7 +29,7 @@ android:layout_height="match_parent"
             android:layout_width="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_height="match_parent"
-            tools:context="com.invincix.traahi.NearestPolice" />
+            tools:context="com.invincix.traahi.NearestActivity" />
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -60,7 +70,7 @@ android:layout_height="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Traahi"
                     android:textColor="#fdfdfd"
-                    android:textSize="50sp"
+                    android:textSize="40sp"
                     android:textStyle="bold"
                     android:layout_gravity="center"
                     />

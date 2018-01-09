@@ -3,7 +3,6 @@ package com.invincix.traahi;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Application;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.LocationManager;
@@ -30,9 +29,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.nearby.connection.Strategy;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -70,7 +67,6 @@ import android.support.v7.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -144,8 +140,8 @@ public class MainActivity extends AppCompatActivity
 
         HashMap<String,String> url_maps = new HashMap<String, String>();
         url_maps.put("Women Safety", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/womensafety.png?alt=media&token=cf7a2f0a-7d0d-4554-8397-2e49ff7be589");
-                url_maps.put("Emergency", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/life.png?alt=media&token=89bfb621-862d-4e44-8d07-21eebbb5b55d");
-                        url_maps.put("Traahi Volunteer", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/volunteer.png?alt=media&token=c0981e52-527d-401b-8342-7cc5026c7a48");
+        url_maps.put("Emergency", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/life.png?alt=media&token=89bfb621-862d-4e44-8d07-21eebbb5b55d");
+        url_maps.put("Traahi Volunteer", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/volunteer.png?alt=media&token=c0981e52-527d-401b-8342-7cc5026c7a48");
 
 
         for(String name : url_maps.keySet()){
@@ -329,7 +325,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
 
-                Intent intentp = new Intent(MainActivity.this, NearestPolice.class);
+                Intent intentp = new Intent(MainActivity.this, NearestActivity.class);
                 Bundle extras = new Bundle();
                 extras.putString("searchType","police");
                 intentp.putExtras(extras);
@@ -345,7 +341,7 @@ public class MainActivity extends AppCompatActivity
         ambulancebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intenth = new Intent(MainActivity.this, NearestPolice.class);
+                Intent intenth = new Intent(MainActivity.this, NearestActivity.class);
                 Bundle extras = new Bundle();
                 extras.putString("searchType","hospital");
                 intenth.putExtras(extras);
