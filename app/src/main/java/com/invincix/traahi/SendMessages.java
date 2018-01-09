@@ -103,7 +103,9 @@ public class SendMessages extends AppCompatActivity {
         emergencyToolbarText.setTypeface(typeface);
 
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
-            sentMessage.setText("Please Login to use this feature..")
+            sentMessage.setText("Please Login to use this feature..");
+            progBar.setVisibility(View.GONE);
+            view.setVisibility(View.GONE);
         }
         else {
             displayLocation();
@@ -168,9 +170,7 @@ public class SendMessages extends AppCompatActivity {
                     latitude = String.valueOf(myLocation.getLatitude());
                     Log.e("longitude", longitude);
 
-                    if (isNetworkAvailable()) {
-                        if (longitude != " " && latitude != " ") {
-                            if (data_name != null && data_phone_number[0] != null && data_phone_number[1] != null && data_phone_number[2] != null && data_phone_number[3] != null) {
+                    if (isNetworkAvailable() && longitude != " " && latitude != " " && data_name != null ) {
                                 sent.setVisibility(View.VISIBLE);
                                 notSent.setVisibility(View.GONE);
                                 sentMessage.setText("Emergency Messages Have Been Sent...");
@@ -180,18 +180,6 @@ public class SendMessages extends AppCompatActivity {
                                 new SendMessageWithTouch().execute(data_phone_number[0], data_phone_number[1], data_phone_number[2], data_phone_number[3], data_phone_number[4], data_phone_number[5], data_phone_number[6], data_phone_number[7], data_name, latitude, longitude);
                                 Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();
 
-
-                            } else {
-                                sent.setVisibility(View.GONE);
-                                notSent.setVisibility(View.VISIBLE);
-                                progBar.setVisibility(View.GONE);
-                                view.setVisibility(View.GONE);
-                                sentMessage.setText("Provide atleast 4 numbers");
-                                Toast.makeText(getApplicationContext(), "Provide atleast 4 numbers", Toast.LENGTH_LONG).show();
-
-                            }
-
-                        }
                     } else {
                         produceSnackBar();
 

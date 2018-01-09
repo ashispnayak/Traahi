@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import android.graphics.Color;
+import android.graphics.Interpolator;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,12 +14,14 @@ import android.net.Uri;
 import android.os.AsyncTask;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.support.design.widget.BottomSheetBehavior;
 import android.view.View;
+import android.view.animation.BounceInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -30,11 +33,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Handler;
 
 import static android.util.Log.d;
 
@@ -42,7 +47,7 @@ import static android.util.Log.d;
 public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private String latitude, longitude;
+    private String latitude, longitude, searchType;
     private TextView placename, placeaddress, placenumber, policetoolbar;
     private Button policeDirection;
     private ImageButton closeButton;
@@ -51,10 +56,17 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
     public View view;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearest_police);
+
+        //Retrieve Datas
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        searchType = extras.getString("searchType");
+
 
         view = findViewById(R.id.view_policeProgress);
         progBar = (ProgressBar)findViewById(R.id.policeProgress);
@@ -125,9 +137,15 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        boolean success = googleMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                        this, R.raw.mapstyle));
+
+        if (!success) {
+            Log.e("", "Style parsing failed.");
+        }
         mMap.clear();
-        String Police = "police";
-        String url = getUrl(latitude, longitude, Police);
+        String url = getUrl(latitude, longitude, searchType);
         Object[] DataTransfer = new Object[2];
         DataTransfer[0] = mMap;
         DataTransfer[1] = url;
@@ -176,6 +194,7 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
 
 
 
+
     class GetNearbyPoliceData extends AsyncTask<Object, String, String> implements GoogleMap.OnMarkerClickListener {
 
         String googlePlacesData;
@@ -212,10 +231,43 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
             d("GooglePlacesReadTask", "onPostExecute Exit");
         }
 
+
+
+        private void dropPinEffect(final Marker marker) {
+            // Handler allows us to repeat a code block after a specified delay
+            final android.os.Handler handler = new android.os.Handler();
+            final long start = SystemClock.uptimeMillis();
+            final long duration = 1500;
+
+            // Use the bounce interpolator
+            final android.view.animation.Interpolator interpolator =
+                    new BounceInterpolator();
+
+            // Animate marker with a bounce updating its position every 15ms
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    long elapsed = SystemClock.uptimeMillis() - start;
+                    // Calculate t for bounce based on elapsed time
+                    float t = Math.max(
+                            1 - interpolator.getInterpolation((float) elapsed
+                                    / duration), 0);
+                    // Set the anchor
+                    marker.setAnchor(0.5f, 1.0f + 14 * t);
+
+                    if (t > 0.0) {
+                        // Post this event again 15ms from now.
+                        handler.postDelayed(this, 15);
+                    } else { // done elapsing, show window
+
+                    }
+                }
+            });
+        }
+
         private void ShowNearbyPlaces(List<HashMap<String, String>> nearbyPlacesList) {
             for (int i = 0; i < nearbyPlacesList.size(); i++) {
                 d("onPostExecute", "Entered into showing locations");
-                MarkerOptions markerOptions = new MarkerOptions();
                 HashMap<String, String> googlePlace = nearbyPlacesList.get(i);
                 double lat = Double.parseDouble(googlePlace.get("lat"));
                 double lng = Double.parseDouble(googlePlace.get("lng"));
@@ -227,8 +279,13 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
 
                 mMap.setOnMarkerClickListener( this);
 
-
-                mMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + "~" + vicinity).anchor(0.5f, .05f).icon(BitmapDescriptorFactory.fromResource(R.drawable.policemarker)));
+                if(searchType.equals("police")) {
+                    mMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + "~" + vicinity).anchor(0.5f, .05f).icon(BitmapDescriptorFactory.fromResource(R.drawable.policemarker)));
+                }
+                else if(searchType.equals("hospital")){
+                    mMarker = mMap.addMarker(new MarkerOptions().position(latLng).anchor(0.5f, .05f).title(placeName + "~" + vicinity).icon(BitmapDescriptorFactory.fromResource(R.drawable.doctormarker)));
+                }
+                dropPinEffect(mMarker);
                 mMarker.hideInfoWindow();
 
                 //move map camera
@@ -238,6 +295,7 @@ public class NearestPolice extends  AppCompatActivity  implements OnMapReadyCall
             progBar.setVisibility(View.GONE);
             view.setVisibility(View.GONE);
         }
+
         @Override
         public boolean onMarkerClick(Marker marker) {
             mMarker.hideInfoWindow();

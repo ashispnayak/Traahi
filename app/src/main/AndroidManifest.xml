@@ -80,9 +80,6 @@
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".NearestHospitals"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".SafetyTipsDetails"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

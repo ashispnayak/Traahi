@@ -328,7 +328,11 @@ public class MainActivity extends AppCompatActivity
         policebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intentp = new Intent(MainActivity.this, NearestPolice.class);
+                Bundle extras = new Bundle();
+                extras.putString("searchType","police");
+                intentp.putExtras(extras);
                 startActivity(intentp);
 
 
@@ -341,7 +345,10 @@ public class MainActivity extends AppCompatActivity
         ambulancebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intenth = new Intent(MainActivity.this, NearestHospitals.class);
+                Intent intenth = new Intent(MainActivity.this, NearestPolice.class);
+                Bundle extras = new Bundle();
+                extras.putString("searchType","hospital");
+                intenth.putExtras(extras);
                 startActivity(intenth);
 
             }
