@@ -88,7 +88,6 @@ android:layout_height="match_parent"
         android:id="@+id/police_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="true"
         android:visibility="visible"
         android:orientation="vertical"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
@@ -105,13 +104,19 @@ android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#cf3025"
-                android:layout_gravity="end"
-                android:id="@+id/closebutton"
-                android:src="@drawable/ic_action_name"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:id="@+id/closebutton"
+                    android:textSize="20sp"
+                    android:paddingLeft="10dp"
+                    android:textStyle="bold"
+                    android:layout_gravity="end"
+                    android:paddingRight="10dp"
+                    android:text="@string/fa_close"
+                    android:textColor="#fff"
+                    />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -138,25 +143,32 @@ android:layout_height="match_parent"
                 android:textAlignment="center"
                 android:text=""
                 android:id="@+id/policestationname"
-                android:textColor="#000"
+                android:textColor="#fff"
                 />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+
                 android:orientation="horizontal">
 
-                <ImageView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/placeholder2"/>
+                    android:paddingBottom="5dp"
+                    android:id="@+id/locationNearest"
+                    android:textSize="40sp"
+                    android:paddingLeft="10dp"
+                    android:textStyle="bold"
+                    android:text="@string/fa_marker"
+                    android:textColor="#fff"
+                    />
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:text=""
                     android:id="@+id/policestationaddress"
                     android:paddingLeft="20dp"
-                    android:textColor="#000"
+                    android:textColor="#fff"
                     android:textSize="20sp"
                     />
 
@@ -168,21 +180,28 @@ android:layout_height="match_parent"
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:padding="5dp"
                 android:orientation="horizontal">
-                <ImageView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="5dp"
-                    android:src="@drawable/phone"/>
+                    android:id="@+id/phoneNearest"
+                    android:textSize="40sp"
+                    android:paddingLeft="10dp"
+                    android:textStyle="bold"
+                    android:text="@string/fa_phone"
+                    android:textColor="#fff"
+                    />
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:text=""
                     android:id="@+id/policestationnumber"
                     android:paddingLeft="20dp"
-                    android:textColor="#000"
+                    android:textColor="#fff"
                     android:textSize="20sp"
                     />
             </LinearLayout>
@@ -190,12 +209,15 @@ android:layout_height="match_parent"
         </LinearLayout>
         </LinearLayout>
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Get Directions"
             android:padding="6dp"
+            android:textColor="#fff"
             android:layout_marginBottom="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
             android:background="@drawable/border_background"
             android:id="@+id/policedirection"
             android:textSize="20sp"

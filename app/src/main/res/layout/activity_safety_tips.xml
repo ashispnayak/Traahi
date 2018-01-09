@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:text="Traahi"
             android:textColor="#fdfdfd"
-            android:textSize="50sp"
+            android:textSize="40sp"
             android:textStyle="bold"
             android:layout_gravity="center"
             />

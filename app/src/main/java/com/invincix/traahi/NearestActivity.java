@@ -46,9 +46,9 @@ public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCa
 
     private GoogleMap mMap;
     private String latitude, longitude, searchType;
-    private TextView placename, placeaddress, placenumber, policetoolbar, markerIcon;
+    private TextView placename, placeaddress, placenumber, policetoolbar, markerIcon, closeButton, locationNearest, phoneNearest;
     private Button policeDirection;
-    private ImageButton closeButton;
+
     private BottomSheetBehavior mBottomSheetBehaviour;
     public ProgressBar progBar;
     public View view;
@@ -111,10 +111,15 @@ public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCa
         placeaddress = (TextView) findViewById(R.id.policestationaddress);
         placenumber = (TextView) findViewById(R.id.policestationnumber);
         markerIcon = (TextView) findViewById(R.id.markerIcon);
+        locationNearest = (TextView) findViewById(R.id.locationNearest);
+        phoneNearest = (TextView) findViewById(R.id.phoneNearest);
         policeDirection = (Button) findViewById(R.id.policedirection);
-        closeButton = (ImageButton) findViewById(R.id.closebutton);
+        closeButton = (TextView) findViewById(R.id.closebutton);
         Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont.ttf");
         markerIcon.setTypeface(typeface);
+        phoneNearest.setTypeface(typeface);
+        locationNearest.setTypeface(typeface);
+        closeButton.setTypeface(typeface);
         markerIcon.setDrawingCacheEnabled(true);
 
 

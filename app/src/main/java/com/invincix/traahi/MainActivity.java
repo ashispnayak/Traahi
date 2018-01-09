@@ -35,11 +35,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.michaldrabik.tapbarmenulib.TapBarMenu;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
+
 
 
 import java.util.ArrayList;
@@ -107,8 +105,8 @@ public class MainActivity extends AppCompatActivity
 
 
     PermissionUtils permissionUtils;
-    @Bind(R.id.tapBarMenu)
-    TapBarMenu tapBarMenu;
+
+
 
 
 
@@ -123,7 +121,7 @@ public class MainActivity extends AppCompatActivity
 
         final Context context = this;
         permissionUtils = new PermissionUtils((Activity) context);
-        ButterKnife.bind(this);
+
 
         final SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
         SharedPreferences sharedPrefContact = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
@@ -616,33 +614,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    @OnClick(R.id.tapBarMenu) public void onMenuButtonClick() {
-        Log.e("Menu","Clicked");
-        tapBarMenu.toggle();
-    }
 
-    @OnClick({ R.id.share, R.id.credits, R.id.aboutus, R.id.options}) public void onMenuItemClick(View view) {
-        tapBarMenu.close();
-        switch (view.getId()) {
-            case R.id.share:
-                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                sharingIntent.setType("text/plain");
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message));
-                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Traahi");
-                startActivity(Intent.createChooser(sharingIntent, "Share via "));
-                break;
-            case R.id.credits:
-                Log.i("TAG", "Item 2 selected");
-                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.aboutus:
-                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.options:
-                Toast.makeText(getApplicationContext(), "Under Development...", Toast.LENGTH_SHORT).show();
-                break;
-        }
-    }
 
 
 }
