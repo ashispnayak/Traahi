@@ -58,8 +58,8 @@ public class VictimLocation extends AppCompatActivity implements OnMapReadyCallb
         //Setting the Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.victimtoolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         assert toolbar != null;
         toolbar.bringToFront();
