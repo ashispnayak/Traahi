@@ -246,6 +246,8 @@ public class MainActivity extends AppCompatActivity
             buildGoogleApiClient();
         }
 
+        isNetworkAvailable();
+
         //Request for permissions for api level 23 and higher
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -275,61 +277,15 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if(isNetworkAvailable() && volunteerStatus != null) {
-                    Log.e("Volunteer Status",volunteerStatus);
-                    final LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-                    final View traahiVolunteerView = layoutInflater.inflate(R.layout.traahi_volunteer, null);
-                    final TextView closeButton = (TextView) traahiVolunteerView.findViewById(R.id.volCloseButton);
-                    closeButton.setTypeface(typeface);
-                    final Button opt = (Button) traahiVolunteerView.findViewById(R.id.optInOut);
-                    if (volunteerStatus.equals("Yes")) {
-                        Log.e("Inside YEs", volunteerStatus);
-                        opt.setText("Opt Out From Traahi Volunteer");
-                        int col = Color.parseColor("#cd0000");
-                        opt.setBackgroundColor(col);
-                    } else {
-                        Log.e("Inside No",volunteerStatus);
-                        opt.setText("Opt in for Traahi Volunteer");
-                        int col1 = Color.parseColor("#339900");
-                        opt.setBackgroundColor(col1);
-                    }
-                    final AlertDialog alertD = new AlertDialog.Builder(MainActivity.this).create();
-                    alertD.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
-                    closeButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            alertD.dismiss();
-                            ((ViewGroup) traahiVolunteerView.getParent()).removeView(traahiVolunteerView);
-                        }
-                    });
-                    opt.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            ((ViewGroup) traahiVolunteerView.getParent()).removeView(traahiVolunteerView);
-                            alertD.dismiss();
-                            if (volunteerStatus.equals("Yes")) {
-                                volunteerDatabase.setValue("No");
-                                volMainDatabase.child(ownNumber).removeValue();
-                                volunteerStatus = "No";
-                                OneSignal.sendTag("isaVolunteer", "No");
-
-                            } else {
-                                volunteerDatabase.setValue("Yes");
-                                volunteerStatus = "Yes";
-                                volMainDatabase.child(ownNumber).setValue("");
-                                OneSignal.sendTag("isaVolunteer", "Yes");
-
-                            }
-
-                        }
-                    });
-                    alertD.setView(traahiVolunteerView);
-
-                    alertD.show();
+                    Intent intent = new Intent(MainActivity.this,TraahiVolunteer.class);
+                    Bundle extras = new Bundle();
+                    extras.putString("volunteerStatus",volunteerStatus);
+                    intent.putExtras(extras);
+                    startActivity(intent);
                 }
-                else {
-                    Snackbar.make(findViewById(R.id.content_main), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("RETRY", new View.OnClickListener() {
+                else{
+                    Snackbar.make(findViewById(R.id.content_main), "No Internet Connection", Snackbar.LENGTH_LONG)
+                            .setAction("Ok", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
 
@@ -338,6 +294,7 @@ public class MainActivity extends AppCompatActivity
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
                             .show();
                 }
+
 
             }
         });
