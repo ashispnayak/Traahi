@@ -9,5 +9,6 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowExitTransition">@transition/card_exit</item>
+        <item name="android:statusBarColor">#cf3025</item>
     </style>
 </resources>

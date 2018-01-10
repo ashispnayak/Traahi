@@ -13,9 +13,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
@@ -42,6 +47,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -57,6 +63,10 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.onesignal.OneSignal;
+import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
+import com.yalantis.contextmenu.lib.MenuObject;
+import com.yalantis.contextmenu.lib.MenuParams;
+import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 
 import android.location.Location;
 
@@ -69,7 +79,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
-        implements ConnectionCallbacks, OnConnectionFailedListener, OnRequestPermissionsResultCallback, PermissionResultCallback, BaseSliderView.OnSliderClickListener,
+        implements ConnectionCallbacks, OnConnectionFailedListener, OnRequestPermissionsResultCallback, PermissionResultCallback, BaseSliderView.OnSliderClickListener, OnMenuItemClickListener,
         ViewPagerEx.OnPageChangeListener {
 
 
@@ -101,6 +111,8 @@ public class MainActivity extends AppCompatActivity
     private SliderLayout imageSlider;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private ContextMenuDialogFragment  mMenuDialogFragment;
+    private FragmentManager fragmentManager;
     ArrayList<String> permissions = new ArrayList<>();
 
 
@@ -122,6 +134,15 @@ public class MainActivity extends AppCompatActivity
         final Context context = this;
         permissionUtils = new PermissionUtils((Activity) context);
 
+        fragmentManager = getSupportFragmentManager();
+        initMenuFragment();
+        mMenuDialogFragment.setItemClickListener(this);
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.maintoolbar);
+        toolbar.showOverflowMenu();
+
+        setSupportActionBar(toolbar);
 
         final SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
         SharedPreferences sharedPrefContact = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
@@ -166,11 +187,16 @@ public class MainActivity extends AppCompatActivity
 
         mAuth = FirebaseAuth.getInstance();
 
-        logoutButton = (TextView) findViewById(R.id.logoutButton);
         final Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont.ttf");
-        logoutButton.setTypeface(typeface);
-        logoutButton.setText("\uf011");
-        logoutButton.setOnClickListener(new View.OnClickListener() {
+
+
+
+
+
+
+
+
+       /* logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder;
@@ -202,7 +228,7 @@ public class MainActivity extends AppCompatActivity
                         .show();
 
             }
-        });
+        });*/
 
 
 
@@ -382,6 +408,41 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void initMenuFragment(){
+        Log.e("Inside","Init Menu");
+        MenuParams menuParams = new MenuParams();
+        menuParams.setActionBarSize((int) getResources().getDimension(R.dimen.tool_bar_height));
+        menuParams.setMenuObjects(getMenuObjects());
+        menuParams.setClosableOutside(false);
+        // set other settings to meet your needs
+        mMenuDialogFragment = ContextMenuDialogFragment.newInstance(menuParams);
+    }
+    private List<MenuObject> getMenuObjects (){
+
+        List<MenuObject> menuObjects = new ArrayList<>();
+        MenuObject close = new MenuObject();
+        close.setResource(R.drawable.cancel);
+        close.setBgColor(Color.parseColor("#f73103"));
+        MenuObject profile = new MenuObject("Profile");
+        profile.setResource(R.drawable.users);
+        profile.setBgColor(Color.parseColor("#f73103"));
+        MenuObject share = new MenuObject("Share");
+        share.setResource(R.drawable.ic_share);
+        share.setBgColor(Color.parseColor("#f73103"));
+        MenuObject credits = new MenuObject("Credits");
+        credits.setResource(R.drawable.ic_credits);
+        credits.setBgColor(Color.parseColor("#f73103"));
+
+        menuObjects.add(close);
+        menuObjects.add(profile);
+        menuObjects.add(share);
+        menuObjects.add(credits);
+
+        return menuObjects;
+
+    }
+
+
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -403,6 +464,26 @@ public class MainActivity extends AppCompatActivity
     protected void onStop() {
         imageSlider.startAutoCycle();
         super.onStop();
+    }
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mainmenu, menu);
+        Log.e("Menu Created","");
+
+        return (super.onCreateOptionsMenu(menu));
+
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.context_menu:
+                if(fragmentManager.findFragmentByTag(ContextMenuDialogFragment.TAG) == null) {
+                    mMenuDialogFragment.show(fragmentManager, "ContextMenuDialogFragment");
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -613,10 +694,20 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public void onMenuItemClick(View clickedView, int position) {
+        if(position == 2){
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                          sharingIntent.setType("text/plain");
+                           sharingIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message));
+                           sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Traahi");
+             startActivity(Intent.createChooser(sharingIntent, "Share via "));
+        }
+        if(position == 1 && position == 3){
+            Toast.makeText(getApplicationContext(),"Under Development...",Toast.LENGTH_SHORT);
+        }
 
-
-
-
+    }
 }
 
 

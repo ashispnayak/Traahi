@@ -11,5 +11,5 @@
         android:id="@+id/action_delete"
         android:title="Delete"
         android:state_enabled="true"
-       />
+        />
 </menu>

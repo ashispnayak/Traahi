@@ -1,41 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E8E8E8"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.invincix.traahi.MainActivity"
     >
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#cf3025"
-        android:id="@+id/mainappbar"
-        app:elevation="0dp"
-        android:theme="@style/AppTheme.AppBarOverlay">
+
+
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/maintoolbar"
             android:layout_width="match_parent"
             android:background="@drawable/backround_bottom_sheet"
-            android:elevation="4dp"
-            android:layout_height="?attr/actionBarSize"
+            android:elevation="0dp"
+            android:layout_height="wrap_content"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             android:layout_gravity="bottom">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="15dp"
-                android:text="L"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:textColor="#fdfdfd"
-                android:id="@+id/logoutButton"
-                android:layout_gravity="right"
-                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
 
             <TextView
                 android:id="@+id/maintoolbartext"
@@ -46,26 +36,28 @@
                 android:textSize="40sp"
                 android:layout_gravity="center"
                 />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-be safe anytime,anywhere"
+                android:id="@+id/safeTag"
+                android:paddingBottom="6dp"
+                android:textSize="14sp"
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
 
+                />
+            </LinearLayout>
 
 
         </android.support.v7.widget.Toolbar>
 
 
-    </android.support.design.widget.AppBarLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="-be safe anytime,anywhere"
-        android:id="@+id/safeTag"
-        android:padding="7dp"
-        android:textAlignment="center"
-        android:textColor="#ffffff"
-        android:background="#f73103"
-        android:textStyle="bold"
-        android:layout_below="@+id/mainappbar"
-        />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
@@ -313,4 +305,4 @@
     </LinearLayout>
 
 
-</RelativeLayout>
+</LinearLayout>
