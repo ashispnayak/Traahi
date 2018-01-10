@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
-        HashMap<String,String> url_maps = new HashMap<String, String>();
+        HashMap<String,String> url_maps = new HashMap<>();
         url_maps.put("Women Safety", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/womensafety.png?alt=media&token=cf7a2f0a-7d0d-4554-8397-2e49ff7be589");
         url_maps.put("Emergency", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/life.png?alt=media&token=89bfb621-862d-4e44-8d07-21eebbb5b55d");
         url_maps.put("Traahi Volunteer", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/volunteer.png?alt=media&token=c0981e52-527d-401b-8342-7cc5026c7a48");
@@ -272,19 +272,20 @@ public class MainActivity extends AppCompatActivity
         traahiVolunteer = (TextView) findViewById(R.id.traahiVolunteer) ;
         traahiVolunteer.setTypeface(typeface);
 
-
         traahiVolunteer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isNetworkAvailable() && volunteerStatus != null) {
                     Intent intent = new Intent(MainActivity.this,TraahiVolunteer.class);
                     Bundle extras = new Bundle();
+                    Log.e("volunteerStatusIn",volunteerStatus);
                     extras.putString("volunteerStatus",volunteerStatus);
                     intent.putExtras(extras);
                     startActivity(intent);
+
                 }
                 else{
-                    Snackbar.make(findViewById(R.id.content_main), "No Internet Connection", Snackbar.LENGTH_LONG)
+                    Snackbar.make(findViewById(R.id.content_main), "No Internet Connection", Snackbar.LENGTH_SHORT)
                             .setAction("Ok", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -660,8 +661,8 @@ public class MainActivity extends AppCompatActivity
                            sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Traahi");
              startActivity(Intent.createChooser(sharingIntent, "Share via "));
         }
-        if(position == 1 && position == 3){
-            Toast.makeText(getApplicationContext(),"Under Development...",Toast.LENGTH_SHORT);
+        else if(position == 1 || position == 3){
+            Toast.makeText(getApplicationContext(),"Under Development...",Toast.LENGTH_SHORT).show();
         }
 
     }

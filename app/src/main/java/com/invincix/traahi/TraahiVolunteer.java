@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -51,6 +52,7 @@ public class TraahiVolunteer extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         volunteerStat = extras.getString("volunteerStatus");
+        volunteerStatusButton = (Button) findViewById(R.id.volunteerStatusButton);
         if(volunteerStat.equals("Yes")){
             volunteerStatusShow.setText("You are a volunteer");
             volunteerStatusShow.setBackgroundColor(Color.parseColor("#339900"));
@@ -69,6 +71,7 @@ public class TraahiVolunteer extends AppCompatActivity {
         SharedPreferences sharedPrefContact = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
         ownNumber = sharedPrefContact.getString("LOCAL_OWN_NUMBER", null);
 
+
         volunteerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("isaVolunteer");
         volMainDatabase = FirebaseDatabase.getInstance().getReference().child("Volunteers");
 
@@ -76,11 +79,13 @@ public class TraahiVolunteer extends AppCompatActivity {
 
 
 
-        volunteerStatusButton = (Button) findViewById(R.id.volunteerStatusButton);
+
         volunteerStatusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isNetworkAvailable() && volunteerStat != null) {
+                Log.e("Hey",volunteerStat);
+
+                if (isNetworkAvailable() ) {
                     if (volunteerStat.equals("Yes")) {
                         volunteerDatabase.setValue("No");
                         volMainDatabase.child(ownNumber).removeValue();
@@ -90,18 +95,17 @@ public class TraahiVolunteer extends AppCompatActivity {
                         volunteerStatusShow.setBackgroundColor(Color.parseColor("#cf3025"));
                         volunteerStatusButton.setText("Opt In for Traahi Volunteer");
                     } else if (volunteerStat.equals("No")) {
-                        volMainDatabase.setValue("Yes");
+                        volunteerDatabase.setValue("Yes");
                         volunteerStat = "Yes";
-                        volMainDatabase.child(ownNumber).setValue("");
+                        volMainDatabase.child(ownNumber).setValue("Profile");
                         OneSignal.sendTag("isaVolunteer", "Yes");
                         volunteerStatusShow.setText("You are a volunteer");
                         volunteerStatusShow.setBackgroundColor(Color.parseColor("#339900"));
                         volunteerStatusButton.setText("Opt out from Traahi Volunteer");
                     }
-
                 }
                 else{
-                    Snackbar.make(findViewById(R.id.activity_traahi_volunteer), "No Internet Connection", Snackbar.LENGTH_LONG)
+                    Snackbar.make(findViewById(R.id.activity_traahi_volunteer), "No Internet Connection", Snackbar.LENGTH_SHORT)
                             .setAction("Ok", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -117,11 +121,17 @@ public class TraahiVolunteer extends AppCompatActivity {
 
 
     }
-    private void getVolunteerStatus(){
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         volunteerDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 volunteerStat = (String) dataSnapshot.getValue();
+                if(volunteerStat!=null){
+                    Log.e("data",volunteerStat);
+                }
             }
 
             @Override
@@ -129,11 +139,6 @@ public class TraahiVolunteer extends AppCompatActivity {
 
             }
         });
-    }
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-       getVolunteerStatus();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 

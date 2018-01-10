@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/context_menu"
-        android:title="Context Menu"
+        android:title="Traahi Menu"
         android:icon="@drawable/hammenu"
         android:orderInCategory="100"
         app:showAsAction="always"
