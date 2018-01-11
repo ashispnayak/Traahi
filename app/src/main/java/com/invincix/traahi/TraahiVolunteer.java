@@ -117,6 +117,14 @@ public class TraahiVolunteer extends AppCompatActivity {
                 }
             }
         });
+        nearbyVolunteers = (Button) findViewById(R.id.nearbyVolunteers);
+        nearbyVolunteers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TraahiVolunteer.this, NearestVolunteers.class);
+                startActivity(intent);
+            }
+        });
 
 
 

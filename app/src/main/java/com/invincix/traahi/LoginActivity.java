@@ -1,15 +1,19 @@
 package com.invincix.traahi;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
@@ -34,9 +38,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.victor.loading.newton.NewtonCradleLoading;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -204,29 +216,9 @@ public class LoginActivity extends AppCompatActivity {
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validation_number(edittext_phone.getText().toString())) {
-                    if (isNetworkAvailable()) {
-                        newtonCradleLoading.setVisibility(View.VISIBLE);
-                        phone_number = edittext_phone.getText().toString();
-                        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                                edittext_phone.getText().toString(),
-                                60,
-                                java.util.concurrent.TimeUnit.SECONDS,
-                                LoginActivity.this,
-                                mCallbacks);
-                    } else {
-                        Snackbar.make(findViewById(R.id.loginLayout), "No Internet Connection", Snackbar.LENGTH_LONG)
-                                .setAction("OK", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
+                checkPermissions();
 
 
-                                    }
-                                })
-                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                                .show();
-                    }
-                }
 
 
                 }
@@ -278,6 +270,96 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+    }
+
+    private  void checkPermissions() {
+
+        Dexter.withActivity(this)
+                .withPermissions(
+                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        android.Manifest.permission.READ_CONTACTS,
+                        android.Manifest.permission.CAMERA)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+                            if(validation_number(edittext_phone.getText().toString())) {
+                                if (isNetworkAvailable()) {
+                                    newtonCradleLoading.setVisibility(View.VISIBLE);
+                                    phone_number = edittext_phone.getText().toString();
+                                    PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                                            edittext_phone.getText().toString(),
+                                            60,
+                                            java.util.concurrent.TimeUnit.SECONDS,
+                                            LoginActivity.this,
+                                            mCallbacks);
+                                } else {
+                                    Snackbar.make(findViewById(R.id.loginLayout), "No Internet Connection", Snackbar.LENGTH_LONG)
+                                            .setAction("OK", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+
+
+                                                }
+                                            })
+                                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                            .show();
+                                }
+                            }
+                            Toast.makeText(getApplicationContext(), "All permissions are granted!", Toast.LENGTH_SHORT).show();
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // show alert dialog navigating to Settings
+                            showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).
+                withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        Toast.makeText(getApplicationContext(), "Error occurred! ", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .onSameThread()
+                .check();
+    }
+
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+        builder.setTitle("Need Permissions for Traahi");
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
+        builder.setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                openSettings();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
+    }
+
+    // navigating user to app settings
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
     }
 
     private boolean validation_number(String data_valid_number) {

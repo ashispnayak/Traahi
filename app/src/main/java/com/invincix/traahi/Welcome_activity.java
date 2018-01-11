@@ -1,13 +1,15 @@
 package com.invincix.traahi;
 
-import android.content.Context;
+
 import android.content.Intent;
-import android.content.SharedPreferences;
+
 import android.os.Bundle;
+
 import android.support.v7.app.AppCompatActivity;
 
+
 import com.google.firebase.auth.FirebaseAuth;
-import com.onesignal.OneSignal;
+
 
 
 public class Welcome_activity extends AppCompatActivity {
@@ -42,6 +44,8 @@ public class Welcome_activity extends AppCompatActivity {
         };
         timerThread.start();
     }
+
+
 
     @Override
     protected void onPause() {

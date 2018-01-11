@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_nearest_volunteers"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.invincix.traahi.NearestVolunteers">
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fa_marker"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:visibility="visible"
+            android:textColor="#000080"
+            android:id="@+id/markerIconNearest"
+            />
+
+        <fragment
+            android:id="@+id/nearestVolunteersMap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_height="match_parent"
+            tools:context="com.invincix.traahi.NearestVolunteers" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#000000"
+            android:visibility="gone"
+            android:alpha=".4"
+            android:id="@+id/view_nearestVolProgress" />
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            style="@style/Base.TextAppearance.AppCompat.Large"
+            android:layout_gravity="center"
+            android:layout_centerInParent="true"
+            android:id="@+id/nearestVolProgress"
+            android:visibility="gone"
+            />
+    </RelativeLayout>
+
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#cf3025"
+        app:elevation="0dp"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/nearestVoltoolbar"
+            android:layout_width="match_parent"
+            android:background="@drawable/backround_bottom_sheet"
+            android:elevation="4dp"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            android:layout_gravity="bottom">
+
+            <TextView
+                android:id="@+id/nearestVolToolbartext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Traahi"
+                android:textColor="#fdfdfd"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                />
+
+
+        </android.support.v7.widget.Toolbar>
+
+
+    </android.support.design.widget.AppBarLayout>
+
+</android.support.design.widget.CoordinatorLayout>

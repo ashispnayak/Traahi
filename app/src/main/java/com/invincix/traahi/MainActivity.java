@@ -2,22 +2,19 @@ package com.invincix.traahi;
 
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
+
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -50,7 +47,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
@@ -62,7 +58,7 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.onesignal.OneSignal;
+
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
 import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
@@ -71,15 +67,14 @@ import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 import android.location.Location;
 
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
+
 import android.content.SharedPreferences;
-import android.view.ViewGroup;
-import android.widget.Button;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
-        implements ConnectionCallbacks, OnConnectionFailedListener, OnRequestPermissionsResultCallback, PermissionResultCallback, BaseSliderView.OnSliderClickListener, OnMenuItemClickListener,
+        implements ConnectionCallbacks, OnConnectionFailedListener, BaseSliderView.OnSliderClickListener, OnMenuItemClickListener,
         ViewPagerEx.OnPageChangeListener {
 
 
@@ -99,10 +94,8 @@ public class MainActivity extends AppCompatActivity
     private LocationRequest mLocationRequest;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
-    // Location updates intervals in sec
-    private static int UPDATE_INTERVAL = 10000; // 10 sec
-    private static int FATEST_INTERVAL = 5000; // 5 sec
-    private static int DISPLACEMENT = 10; // 10 meters
+
+
 
     public String latitude, longitude, ownNumber, volunteerStatus;
     public static final String STORE_DATA = "MyPrefs";
@@ -113,10 +106,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ContextMenuDialogFragment  mMenuDialogFragment;
     private FragmentManager fragmentManager;
-    ArrayList<String> permissions = new ArrayList<>();
 
-
-    PermissionUtils permissionUtils;
 
 
 
@@ -131,8 +121,9 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
         final Context context = this;
-        permissionUtils = new PermissionUtils((Activity) context);
+
 
         fragmentManager = getSupportFragmentManager();
         initMenuFragment();
@@ -248,11 +239,8 @@ public class MainActivity extends AppCompatActivity
 
         isNetworkAvailable();
 
-        //Request for permissions for api level 23 and higher
-        permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        permissions.add(Manifest.permission.READ_CONTACTS);
-        permissionUtils.check_permission(permissions, "Allow Trahi to access your location and storage?", 1);
+
+
 
 
         //add contacts
@@ -366,6 +354,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
     private void initMenuFragment(){
         Log.e("Inside","Init Menu");
         MenuParams menuParams = new MenuParams();
@@ -462,42 +451,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPageScrollStateChanged(int state) {}
 
-
-
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-
-        // redirects to utils
-
-        permissionUtils.onRequestPermissionsResult(requestCode,permissions,grantResults);
-
-    }
-
-    // Callback functions
-
-
-    @Override
-    public void PermissionGranted(int request_code) {
-        Log.i("PERMISSION","GRANTED");
-    }
-
-    @Override
-    public void PartialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
-        Log.i("PERMISSION PARTIALLY","GRANTED");
-    }
-
-    @Override
-    public void PermissionDenied(int request_code) {
-        Log.i("PERMISSION","DENIED");
-    }
-
-    @Override
-    public void NeverAskAgain(int request_code) {
-        Log.i("PERMISSION","NEVER ASK AGAIN");
-    }
 
     private void displayLocation() {
         LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
