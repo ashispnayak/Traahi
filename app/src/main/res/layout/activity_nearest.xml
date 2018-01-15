@@ -30,22 +30,8 @@ android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_height="match_parent"
             tools:context="com.invincix.traahi.NearestActivity" />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#000000"
-            android:visibility="gone"
-            android:alpha=".4"
-            android:id="@+id/view_policeProgress" />
-        <ProgressBar
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            style="@style/Base.TextAppearance.AppCompat.Large"
-            android:layout_gravity="center"
-            android:layout_centerInParent="true"
-            android:id="@+id/policeProgress"
-            android:visibility="gone"
-            />
+
+
     </RelativeLayout>
 
         <android.support.design.widget.AppBarLayout

@@ -96,7 +96,8 @@
         </service>
 
         <activity android:name=".TraahiVolunteer" />
-        <activity android:name=".NearestVolunteers"></activity>
+        <activity android:name=".NearestVolunteers" />
+        <activity android:name=".ProfileActivity"></activity>
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package com.invincix.traahi;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -50,8 +51,8 @@ public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCa
     private Button policeDirection;
 
     private BottomSheetBehavior mBottomSheetBehaviour;
-    public ProgressBar progBar;
-    public View view;
+    private ProgressDialog loader;
+
 
 
 
@@ -65,15 +66,11 @@ public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCa
         Bundle extras = intent.getExtras();
         searchType = extras.getString("searchType");
 
+        loader = new ProgressDialog(this);
+        loader.setMessage("Searching...");
 
-        view = findViewById(R.id.view_policeProgress);
-        progBar = (ProgressBar)findViewById(R.id.policeProgress);
-        if (progBar != null) {
-            progBar.setVisibility(View.GONE);
-            view.setVisibility(View.GONE);
-            progBar.setIndeterminate(true);
-            progBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#f73103"), android.graphics.PorterDuff.Mode.SRC_ATOP);
-        }
+
+
 
         //Setting the Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.policetoolbar);
@@ -163,8 +160,7 @@ public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCa
     private void checkInternet(final Object[] DataTransfer) {
 
         if(isNetworkAvailable()){
-            progBar.setVisibility(View.VISIBLE);
-            view.setVisibility(View.VISIBLE);
+            loader.show();
             new GetNearbyPoliceData().execute(DataTransfer);
         }
         else{
@@ -302,8 +298,7 @@ public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCa
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
             }
-            progBar.setVisibility(View.GONE);
-            view.setVisibility(View.GONE);
+            loader.dismiss();
         }
 
         @Override

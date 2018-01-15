@@ -101,7 +101,7 @@ public class TraahiVolunteer extends AppCompatActivity {
 
         volunteerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("isaVolunteer");
         volMainDatabase = FirebaseDatabase.getInstance().getReference().child("Volunteers");
-        userDB = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("Profile");
+        userDB = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber);
 
         mStorage = FirebaseStorage.getInstance().getReference().child("Profile Pictures").child(ownNumber);
 
@@ -237,8 +237,8 @@ public class TraahiVolunteer extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"Upload Success",Toast.LENGTH_LONG).show();
                         uploadProgress.dismiss();
                         String url = taskSnapshot.getDownloadUrl().toString();
-                        volMainDatabase.child(ownNumber).child("Profile").child("picUrl").setValue(url);
-                        userDB.child("picUrl").setValue(url);
+                        volMainDatabase.child(ownNumber).child("Profile").child("Profile").child("picUrl").setValue(url);
+                        userDB.child("Profile").child("picUrl").setValue(url);
 
 
                     }
@@ -276,7 +276,7 @@ public class TraahiVolunteer extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"Upload Success",Toast.LENGTH_LONG).show();
                         uploadProgress.dismiss();
                         String url = taskSnapshot.getDownloadUrl().toString();
-                        volMainDatabase.child(ownNumber).child("Profile").child("picUrl").setValue(url);
+                        volMainDatabase.child(ownNumber).child("Profile").child("Profile").child("picUrl").setValue(url);
                         userDB.child("picUrl").setValue(url);
 
 
@@ -323,7 +323,7 @@ public class TraahiVolunteer extends AppCompatActivity {
 
             }
         });
-        DatabaseReference db = userDB.child("picUrl");
+        DatabaseReference db = userDB.child("Profile").child("picUrl");
         db.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

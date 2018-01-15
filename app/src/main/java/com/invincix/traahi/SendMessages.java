@@ -59,8 +59,7 @@ public class SendMessages extends AppCompatActivity {
     public TextView sentMessage, emergencyToolbarText;
     public ImageView sent, notSent;
     public String data_name;
-    public ProgressBar progBar;
-    public View view;
+    public ProgressDialog load;
 
 
 
@@ -73,14 +72,9 @@ public class SendMessages extends AppCompatActivity {
         longitude = " ";
         latitude = " ";
 
-        view = findViewById(R.id.view_messageProgress);
-        progBar = (ProgressBar)findViewById(R.id.messageProgress);
-        if (progBar != null) {
-            progBar.setVisibility(View.VISIBLE);
-            view.setVisibility(View.VISIBLE);
-            progBar.setIndeterminate(true);
-            progBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#f73103"), android.graphics.PorterDuff.Mode.SRC_ATOP);
-        }
+       load = new ProgressDialog(this);
+        load.setMessage("Sending Messages...");
+        load.show();
 
         //Retrieve Datas
         SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
@@ -104,8 +98,7 @@ public class SendMessages extends AppCompatActivity {
 
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
             sentMessage.setText("Please Login to use this feature..");
-            progBar.setVisibility(View.GONE);
-            view.setVisibility(View.GONE);
+            load.dismiss();
         }
         else {
             displayLocation();
@@ -135,8 +128,7 @@ public class SendMessages extends AppCompatActivity {
                 return;
             }
             if (isNetworkAvailable()) {
-                progBar.setVisibility(View.VISIBLE);
-                view.setVisibility(View.VISIBLE);
+               load.show();
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
                     @Override
                     public void onStatusChanged(String s, int i, Bundle bundle) {
@@ -174,8 +166,7 @@ public class SendMessages extends AppCompatActivity {
                                 sent.setVisibility(View.VISIBLE);
                                 notSent.setVisibility(View.GONE);
                                 sentMessage.setText("Emergency Messages Have Been Sent...");
-                                progBar.setVisibility(View.GONE);
-                                view.setVisibility(View.GONE);
+                               load.dismiss();
                                 sendNotifications();
                                 new SendMessageWithTouch().execute(data_phone_number[0], data_phone_number[1], data_phone_number[2], data_phone_number[3], data_phone_number[4], data_phone_number[5], data_phone_number[6], data_phone_number[7], data_name, latitude, longitude);
                                 Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();
@@ -192,8 +183,7 @@ public class SendMessages extends AppCompatActivity {
             }
         }
         else{
-            progBar.setVisibility(View.GONE);
-            view.setVisibility(View.GONE);
+            load.dismiss();
             displayLocationSettingRequest(getApplicationContext());
 
         }
@@ -201,8 +191,7 @@ public class SendMessages extends AppCompatActivity {
 
     }
     private void produceSnackBar(){
-        progBar.setVisibility(View.VISIBLE);
-        view.setVisibility(View.VISIBLE);
+      
         Snackbar.make(findViewById(R.id.activity_send_messages), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Retry", new View.OnClickListener() {
                     @Override

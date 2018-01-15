@@ -98,21 +98,7 @@
 
 
             </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#000000"
-                android:visibility="gone"
-                android:alpha=".4"
-                android:id="@+id/view_messageProgress" />
-            <ProgressBar
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                style="@style/Base.TextAppearance.AppCompat.Large"
-                android:layout_gravity="center"
-                android:id="@+id/messageProgress"
-                android:visibility="gone"
-                />
+
         </android.support.v7.widget.CardView>
 
 
