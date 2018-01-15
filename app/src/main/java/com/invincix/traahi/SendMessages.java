@@ -360,7 +360,7 @@ class SendMessageWithTouch extends AsyncTask<String, Void, String> {
         String data_latitude = params[9];
         String data_longitude = params[10];
         String mobiles = data_phone_number_1 + "," + data_phone_number_2 + "," + data_phone_number_3 + "," + data_phone_number_4 + "," + data_phone_number_5 + "," + data_phone_number_6 + "," + data_phone_number_7 + "," + data_phone_number_8;
-        String message = "I " + data_name + " in trouble at https://maps.google.com/?ie=UTF8&ll=" + data_latitude + "," + data_longitude + " Need urgent help and attention.";
+        String message = "I " + data_name + " in trouble at https://maps.google.com/maps?q=" + data_latitude + "," + data_longitude + " Need urgent help and attention.";
         String authkey = "175066AfkBDqjLjK6e59be06c7";
         String encoded_message = URLEncoder.encode(message);
 

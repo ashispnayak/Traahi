@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                 phonecard.setVisibility(View.GONE);
                 smsverify.setVisibility(View.GONE);
 
-                loginDatabase.child(phone_number).child("Name").addValueEventListener(new ValueEventListener() {
+                loginDatabase.child(phone_number).child("Profile").child("userName").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String value = (String) dataSnapshot.getValue();
@@ -174,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
                                    final PhoneAuthProvider.ForceResendingToken token) {
 
 
-                loginDatabase.child(phone_number).child("Name").addValueEventListener(new ValueEventListener() {
+                loginDatabase.child(phone_number).child("Profile").child("userName").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String value = (String) dataSnapshot.getValue();
@@ -232,7 +232,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(validation_signup(edittext_name.getText().toString())) {
                     newtonCradleLoading.setVisibility(View.VISIBLE);
-                    loginDatabase.child(phone_number).child("Name").setValue(edittext_name.getText().toString());
+                    loginDatabase.child(phone_number).child("Profile").child("Name").setValue(edittext_name.getText().toString());
                     userName = edittext_name.getText().toString();
                     signInWithPhoneAuthCredential(cred);
                 }
@@ -253,7 +253,7 @@ public class LoginActivity extends AppCompatActivity {
                     newtonCradleLoading.setVisibility(View.VISIBLE);
                     final PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, edittext_otp.getText().toString());
 
-                            loginDatabase.child(phone_number).child("Name").setValue(edittext_name.getText().toString());
+                            loginDatabase.child(phone_number).child("Profile").child("userName").setValue(edittext_name.getText().toString());
                             userName = edittext_name.getText().toString();
                             signInWithPhoneAuthCredential(credential);
 

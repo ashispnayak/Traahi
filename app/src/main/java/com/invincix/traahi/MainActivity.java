@@ -2,16 +2,19 @@ package com.invincix.traahi;
 
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -106,6 +109,8 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ContextMenuDialogFragment  mMenuDialogFragment;
     private FragmentManager fragmentManager;
+    final Context context = this;
+     SharedPreferences sharedPref;
 
 
 
@@ -122,7 +127,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
-        final Context context = this;
+
 
 
         fragmentManager = getSupportFragmentManager();
@@ -135,7 +140,7 @@ public class MainActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
 
-        final SharedPreferences sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
+        sharedPref = getSharedPreferences(STORE_DATA, Context.MODE_PRIVATE);
         SharedPreferences sharedPrefContact = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
         ownNumber = sharedPrefContact.getString("LOCAL_OWN_NUMBER", null);
 
@@ -184,42 +189,6 @@ public class MainActivity extends AppCompatActivity
 
 
 
-
-
-
-       /* logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
-                } else {
-                    builder = new AlertDialog.Builder(context);
-                }
-                builder.setTitle("Logout User")
-                        .setMessage("Are you sure you want to logout?")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                SharedPreferences.Editor edit = sharedPref.edit();
-                                edit.clear();
-                                edit.apply();
-                                mAuth.signOut();
-
-                                Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
-                                startActivity(loginIntent);
-                                finish();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-
-            }
-        });*/
 
 
 
@@ -379,11 +348,15 @@ public class MainActivity extends AppCompatActivity
         MenuObject credits = new MenuObject("Credits");
         credits.setResource(R.drawable.ic_credits);
         credits.setBgColor(Color.parseColor("#f73103"));
+        MenuObject logOut = new MenuObject("Sign Out");
+        logOut.setResource(R.drawable.ic_credits);
+        logOut.setBgColor(Color.parseColor("#f73103"));
 
         menuObjects.add(close);
         menuObjects.add(profile);
         menuObjects.add(share);
         menuObjects.add(credits);
+        menuObjects.add(logOut);
 
         return menuObjects;
 
@@ -616,6 +589,35 @@ public class MainActivity extends AppCompatActivity
         }
         else if(position == 1 || position == 3){
             Toast.makeText(getApplicationContext(),"Under Development...",Toast.LENGTH_SHORT).show();
+        }
+        else if(position == 4){
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(context);
+            }
+            builder.setTitle("Logout User")
+                    .setMessage("Are you sure you want to logout?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            SharedPreferences.Editor edit = sharedPref.edit();
+                            edit.clear();
+                            edit.apply();
+                            mAuth.signOut();
+
+                            Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
+                            startActivity(loginIntent);
+                            finish();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
         }
 
     }
