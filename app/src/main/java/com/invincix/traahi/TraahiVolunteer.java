@@ -62,6 +62,8 @@ public class TraahiVolunteer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_traahi_volunteer);
 
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.volunteertoolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -114,9 +116,9 @@ public class TraahiVolunteer extends AppCompatActivity {
         volunteerStatusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("Hey",volunteerStat);
 
-                if (isNetworkAvailable() ) {
+
+                if (isNetworkAvailable() && volunteer != null ) {
                     if (volunteerStat.equals("Yes")) {
                         volunteerDatabase.setValue("No");
                         volMainDatabase.child(ownNumber).removeValue();
@@ -226,8 +228,8 @@ public class TraahiVolunteer extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if ( requestCode == 0) {
+        if (resultCode == Activity.RESULT_OK && requestCode == 0) {
+
                 uploadProgress.setMessage("Uploading File...");
                 uploadProgress.show();
                 Uri uri = data.getData();
@@ -250,14 +252,14 @@ public class TraahiVolunteer extends AppCompatActivity {
                     }
                 });
             }
-            if(requestCode == 1){
+            else if(resultCode == Activity.RESULT_OK && requestCode == 1){
                 uploadProgress.setMessage("Uploading File...");
                 uploadProgress.show();
                 Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                thumbnail.compress(Bitmap.CompressFormat.PNG, 90, bytes);
+                thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
                 File destination = new File(Environment.getExternalStorageDirectory(),
-                        System.currentTimeMillis() + ".png");
+                        System.currentTimeMillis() + ".jpeg");
                 Uri thumbNail = Uri.fromFile(destination);
                 FileOutputStream fo;
                 try {
@@ -277,7 +279,7 @@ public class TraahiVolunteer extends AppCompatActivity {
                         uploadProgress.dismiss();
                         String url = taskSnapshot.getDownloadUrl().toString();
                         volMainDatabase.child(ownNumber).child("Profile").child("Profile").child("picUrl").setValue(url);
-                        userDB.child("picUrl").setValue(url);
+                        userDB.child("Profile").child("picUrl").setValue(url);
 
 
                     }
@@ -291,7 +293,7 @@ public class TraahiVolunteer extends AppCompatActivity {
 
             }
         }
-    }
+
 
 
 

@@ -94,7 +94,7 @@
                     android:textColorHint="#e8dad9d9"
                     android:fontFamily="sans-serif"
                     android:background="@android:color/transparent"
-                    android:hint="Name"
+                    android:hint="First Name"
                     android:backgroundTint="@null"
                     android:gravity="center"
                     android:ems="13"

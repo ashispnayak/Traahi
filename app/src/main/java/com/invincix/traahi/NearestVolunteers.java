@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -50,6 +51,7 @@ public class NearestVolunteers extends AppCompatActivity implements OnMapReadyCa
     private Marker mMarker;
     private  Transformation transformation;
     private ProgressDialog loader;
+    android.os.Handler UI_HANDLER;
 
 
     @Override
@@ -85,6 +87,7 @@ public class NearestVolunteers extends AppCompatActivity implements OnMapReadyCa
     }
     @Override
     public boolean onSupportNavigateUp() {
+        UI_HANDLER.removeCallbacksAndMessages(null);
         onBackPressed();
         return true;
     }
@@ -101,15 +104,29 @@ public class NearestVolunteers extends AppCompatActivity implements OnMapReadyCa
         }
         mMap.clear();
 
-        plotPoints();
-        android.os.Handler UI_HANDLER = new android.os.Handler();
-        UI_HANDLER.postDelayed(UI_UPDATE_RUNNABLE, 3000);
+        if(isNetworkAvailable()) {
+            plotPoints();
+             UI_HANDLER = new android.os.Handler();
+            UI_HANDLER.postDelayed(UI_UPDATE_RUNNABLE, 3000);
+        }
+        else{
+            Snackbar.make(findViewById(R.id.activity_nearest_volunteers), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("OK", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                        }
+                    })
+                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
+                    .show();
+        }
 
 
     }
 
     private void plotPoints() {
         mMarker = null;
+        mMap.clear();
         loader.setMessage("Searching...");
         loader.show();
 
@@ -129,7 +146,7 @@ public class NearestVolunteers extends AppCompatActivity implements OnMapReadyCa
                                 Double Lat = Double.parseDouble((String) dataSnapshot.child("Profile").child("Location").child("Lat").getValue());
                                 Double Long = Double.parseDouble((String) dataSnapshot.child("Profile").child("Location").child("Long").getValue());
                                 String picUrl = (String) dataSnapshot.child("Profile").child("Profile").child("picUrl").getValue();
-                                String userName = (String) dataSnapshot.child("Profile").child("Profile").child("Name").getValue();
+                                String userName = (String) dataSnapshot.child("Profile").child("Profile").child("firstName").getValue();
 
                                 LatLng latlng = new LatLng(Lat, Long);
 
@@ -148,6 +165,7 @@ public class NearestVolunteers extends AppCompatActivity implements OnMapReadyCa
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
                                 mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
                             }
+
 
                         }
 

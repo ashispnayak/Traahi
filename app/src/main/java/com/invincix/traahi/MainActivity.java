@@ -2,6 +2,7 @@ package com.invincix.traahi;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.graphics.Color;
@@ -33,6 +34,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -110,8 +112,9 @@ public class MainActivity extends AppCompatActivity
     private ContextMenuDialogFragment  mMenuDialogFragment;
     private FragmentManager fragmentManager;
     final Context context = this;
-     SharedPreferences sharedPref;
-
+    private HashMap location;
+    SharedPreferences sharedPref;
+    private LocationSettingsRequest mLocationSettingsRequest;
 
 
 
@@ -125,10 +128,11 @@ public class MainActivity extends AppCompatActivity
 
 
 
+        if (checkPlayServices()) {
 
-
-
-
+            // Building the GoogleApi client
+            buildGoogleApiClient();
+        }
 
         fragmentManager = getSupportFragmentManager();
         initMenuFragment();
@@ -149,7 +153,6 @@ public class MainActivity extends AppCompatActivity
 
 
         imageSlider = (SliderLayout)findViewById(R.id.slider);
-
 
 
 
@@ -188,6 +191,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
+        locationDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("Location");
 
 
 
@@ -200,13 +204,12 @@ public class MainActivity extends AppCompatActivity
         toolbarText.setTypeface(custom);
         texttag.setTypeface(custom);
 
-        if (checkPlayServices()) {
 
-            // Building the GoogleApi client
-            buildGoogleApiClient();
-        }
+        displayLocation();
 
         isNetworkAvailable();
+
+
 
 
 
@@ -232,7 +235,7 @@ public class MainActivity extends AppCompatActivity
         traahiVolunteer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isNetworkAvailable() && volunteerStatus != null) {
+                if(isNetworkAvailable() && volunteerStatus != null && location != null) {
                     Intent intent = new Intent(MainActivity.this,TraahiVolunteer.class);
                     Bundle extras = new Bundle();
                     Log.e("volunteerStatusIn",volunteerStatus);
@@ -319,7 +322,7 @@ public class MainActivity extends AppCompatActivity
         longitude = " ";
         latitude = " ";
 
-     displayLocation();
+
 
     }
 
@@ -348,15 +351,13 @@ public class MainActivity extends AppCompatActivity
         MenuObject credits = new MenuObject("Credits");
         credits.setResource(R.drawable.ic_credits);
         credits.setBgColor(Color.parseColor("#f73103"));
-        MenuObject logOut = new MenuObject("Sign Out");
-        logOut.setResource(R.drawable.ic_credits);
-        logOut.setBgColor(Color.parseColor("#f73103"));
+
 
         menuObjects.add(close);
         menuObjects.add(profile);
         menuObjects.add(share);
         menuObjects.add(credits);
-        menuObjects.add(logOut);
+
 
         return menuObjects;
 
@@ -370,6 +371,19 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 volunteerStatus = (String) dataSnapshot.getValue();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        locationDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                location = (HashMap) dataSnapshot.getValue();
             }
 
             @Override
@@ -451,9 +465,10 @@ public class MainActivity extends AppCompatActivity
                 editor.putString("LATITUDE_SAVE", latitude);
                 editor.putString("LONGITUDE_SAVE", longitude);
                 editor.apply();
-                locationDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("Location");
                 locationDatabase.child("Lat").setValue(latitude);
                 locationDatabase.child("Long").setValue(longitude);
+
+
 
 
             } else {
@@ -463,51 +478,68 @@ public class MainActivity extends AppCompatActivity
             }
         }
         else{
-            displayLocationSettingsRequest(getApplicationContext());
+            displayLocationSettingsRequest(mGoogleApiClient);
         }
+
    }
 
-    public  void  displayLocationSettingsRequest(Context context) {
-        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(LocationServices.API).build();
-        googleApiClient.connect();
+
+    public  void  displayLocationSettingsRequest(GoogleApiClient mGoogleApiClient) {
 
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(10000 / 2);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true); //this is the key ingredient
 
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
-        builder.setAlwaysShow(true);
-
-        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
             @Override
             public void onResult(LocationSettingsResult result) {
                 final Status status = result.getStatus();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
-                        Log.i(TAG, "All location settings are satisfied.");
                         displayLocation();
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
-
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
                         try {
-                            // Show the dialog by calling startResolutionForResult(), and check the result
-                            // in onActivityResult().
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
                             status.startResolutionForResult(MainActivity.this, REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException e) {
-                            Log.i(TAG, "PendingIntent unable to execute request.");
+                            // Ignore the error.
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
                         break;
                 }
             }
         });
-
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+// Check for the integer request code originally supplied to startResolutionForResult().
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        displayLocation();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        displayLocationSettingsRequest(mGoogleApiClient);//keep asking if imp or do whatever
+                        break;
+                }
+                break;
+        }
     }
 
     /**
@@ -518,6 +550,7 @@ public class MainActivity extends AppCompatActivity
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API).build();
+        mGoogleApiClient.connect();
     }
 
     /**
@@ -552,7 +585,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-
         checkPlayServices();
     }
 
@@ -587,37 +619,26 @@ public class MainActivity extends AppCompatActivity
                            sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Traahi");
              startActivity(Intent.createChooser(sharingIntent, "Share via "));
         }
-        else if(position == 1 || position == 3){
+        else if( position == 3){
             Toast.makeText(getApplicationContext(),"Under Development...",Toast.LENGTH_SHORT).show();
         }
-        else if(position == 4){
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
-            } else {
-                builder = new AlertDialog.Builder(context);
+        else if(position  == 1){
+            if(isNetworkAvailable()) {
+                Intent intent = new Intent(MainActivity.this,ProfileActivity.class);
+                startActivity(intent);
+
             }
-            builder.setTitle("Logout User")
-                    .setMessage("Are you sure you want to logout?")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            SharedPreferences.Editor edit = sharedPref.edit();
-                            edit.clear();
-                            edit.apply();
-                            mAuth.signOut();
+            else{
+                Snackbar.make(findViewById(R.id.content_main), "No Internet Connection", Snackbar.LENGTH_SHORT)
+                        .setAction("Ok", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
 
-                            Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
-                            startActivity(loginIntent);
-                            finish();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
+                            }
+                        })
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
+                        .show();
+            }
         }
 
     }
