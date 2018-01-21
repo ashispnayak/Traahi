@@ -37,7 +37,7 @@
                 android:id="@+id/volunteertoolbartext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Traahi Volunteer"
+                android:text="Traahi Sevak"
                 android:textColor="#fdfdfd"
                 android:textSize="30sp"
                 android:textStyle="bold"
@@ -134,7 +134,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Traahi Volunteer Status"
+            android:text="Traahi Sevak Status"
             android:textAlignment="center"
             android:textColor="#fff"
             android:id="@+id/volunteerStatus"
@@ -144,7 +144,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="You are a volunteer"
+                android:text="You are a Sevak"
                 android:background="#339900"
                 android:textColor="#ffffff"
                 android:textAlignment="center"
@@ -154,7 +154,7 @@
             <Button
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:text="Opt Out from Traahi Volunteer"
+           android:text="Opt Out from Traahi Sevak"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
            android:background="@drawable/border_background"

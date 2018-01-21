@@ -83,14 +83,14 @@ public class TraahiVolunteer extends AppCompatActivity {
         volunteerStat = extras.getString("volunteerStatus");
         volunteerStatusButton = (Button) findViewById(R.id.volunteerStatusButton);
         if(volunteerStat.equals("Yes")){
-            volunteerStatusShow.setText("You are a volunteer");
+            volunteerStatusShow.setText("You are a Sevak");
             volunteerStatusShow.setBackgroundColor(Color.parseColor("#339900"));
-            volunteerStatusButton.setText("Opt out from Traahi Volunteer");
+            volunteerStatusButton.setText("Opt out from Traahi Sevak");
         }
         else{
-            volunteerStatusShow.setText("You are not a volunteer");
+            volunteerStatusShow.setText("You are not a Sevak");
             volunteerStatusShow.setBackgroundColor(Color.parseColor("#cf3025"));
-            volunteerStatusButton.setText("Opt In for Traahi Volunteer");
+            volunteerStatusButton.setText("Opt In for Traahi Sevak");
         }
 
 
@@ -120,25 +120,11 @@ public class TraahiVolunteer extends AppCompatActivity {
 
                 if (isNetworkAvailable() && volunteer != null && picData != null ) {
                     if (volunteerStat.equals("Yes")) {
-                        volunteerDatabase.setValue("No");
-                        volMainDatabase.child(ownNumber).removeValue();
-                        volunteerStat = "No";
-                        OneSignal.sendTag("isaVolunteer", "No");
-                        volunteerStatusShow.setText("You are not a volunteer");
-                        volunteerStatusShow.setBackgroundColor(Color.parseColor("#cf3025"));
-                        volunteerStatusButton.setText("Opt In for Traahi Volunteer");
+                        createDialogforOptOut();
+
                     } else if (volunteerStat.equals("No")) {
-                        volunteerDatabase.setValue("Yes");
-                        volunteerStat = "Yes";
-                        volMainDatabase.child(ownNumber).child("Profile").setValue(volunteer);
-                        OneSignal.sendTag("isaVolunteer", "Yes");
-                        volunteerStatusShow.setText("You are a volunteer");
-                        if(picData == null){
-                            Log.e("Pic Data","Null");
-                            createDialogforProfilePic();
-                        }
-                        volunteerStatusShow.setBackgroundColor(Color.parseColor("#339900"));
-                        volunteerStatusButton.setText("Opt out from Traahi Volunteer");
+                        createDialogforOptIn();
+
                     }
                 }
                 else{
@@ -165,6 +151,68 @@ public class TraahiVolunteer extends AppCompatActivity {
 
 
 
+    }
+
+    private void createDialogforOptIn() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(TraahiVolunteer.this);
+        builder.setTitle("Traahi Sevak");
+        builder.setMessage("Are you sure you want to be a Traahi Sevak? You will recieve notifications whenever someone is in danger!");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                volunteerDatabase.setValue("Yes");
+                volunteerStat = "Yes";
+                volMainDatabase.child(ownNumber).child("Profile").setValue(volunteer);
+                OneSignal.sendTag("isaVolunteer", "Yes");
+                volunteerStatusShow.setText("You are a Sevak");
+                if(picData == null){
+                    Log.e("Pic Data","Null");
+                    createDialogforProfilePic();
+                }
+                volunteerStatusShow.setBackgroundColor(Color.parseColor("#339900"));
+                volunteerStatusButton.setText("Opt out from Traahi Sevak");
+
+                dialog.cancel();
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    private void createDialogforOptOut() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(TraahiVolunteer.this);
+        builder.setTitle("Traahi Sevak");
+        builder.setMessage("Are You sure you want to Opt Out from being a Traahi Sevak?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                volunteerDatabase.setValue("No");
+                volMainDatabase.child(ownNumber).removeValue();
+                volunteerStat = "No";
+                OneSignal.sendTag("isaVolunteer", "No");
+                volunteerStatusShow.setText("You are not a Sevak");
+                volunteerStatusShow.setBackgroundColor(Color.parseColor("#cf3025"));
+                volunteerStatusButton.setText("Opt In for Traahi Sevak");
+
+                dialog.cancel();
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 
     private void createDialogforProfilePic() {

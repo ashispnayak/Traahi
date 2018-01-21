@@ -1,8 +1,10 @@
 package com.invincix.traahi;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -15,6 +17,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +30,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -49,7 +55,7 @@ import java.util.Scanner;
 
 import static com.invincix.traahi.MainActivity.REQUEST_CHECK_SETTINGS;
 
-public class SendMessages extends AppCompatActivity {
+public class SendMessages extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public String latitude;
     public String longitude;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 2;
@@ -60,6 +66,10 @@ public class SendMessages extends AppCompatActivity {
     public ImageView sent, notSent;
     public String data_name;
     public ProgressDialog load;
+    private GoogleApiClient mGoogleApiClient;
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
+
+
 
 
 
@@ -72,9 +82,16 @@ public class SendMessages extends AppCompatActivity {
         longitude = " ";
         latitude = " ";
 
+        if (checkPlayServices()) {
+
+            // Building the GoogleApi client
+            buildGoogleApiClient();
+        }
+
        load = new ProgressDialog(this);
         load.setMessage("Sending Messages...");
         load.show();
+
 
         //Retrieve Datas
         SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
@@ -109,6 +126,47 @@ public class SendMessages extends AppCompatActivity {
 
 
         }
+
+
+        protected synchronized void buildGoogleApiClient() {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API).build();
+            mGoogleApiClient.connect();
+        }
+
+
+
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil
+                .isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "This device is not supported.", Toast.LENGTH_LONG)
+                        .show();
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPlayServices();
+    }
 
     private void displayLocation() {
         Log.e("Inside","Display Location");
@@ -184,7 +242,7 @@ public class SendMessages extends AppCompatActivity {
         }
         else{
             load.dismiss();
-            displayLocationSettingRequest(getApplicationContext());
+            displayLocationSettingsRequest(mGoogleApiClient);
 
         }
 
@@ -203,50 +261,62 @@ public class SendMessages extends AppCompatActivity {
                 .show();
     }
 
-    private void displayLocationSettingRequest(Context context) {
-        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(LocationServices.API).build();
-        googleApiClient.connect();
+    public  void  displayLocationSettingsRequest(GoogleApiClient mGoogleApiClient) {
 
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(10000 / 2);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true); //this is the key ingredient
 
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
-        builder.setAlwaysShow(true);
-
-        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
             @Override
             public void onResult(LocationSettingsResult result) {
                 final Status status = result.getStatus();
-
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
-                        Log.e("Success","");
                         displayLocation();
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-
-
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
                         try {
-                            // Show the dialog by calling startResolutionForResult(), and check the result
-                            // in onActivityResult().
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
                             status.startResolutionForResult(SendMessages.this, REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        Log.e("Not Success","");
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
                         break;
                 }
             }
-
         });
-       produceSnackBar();
-
-
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+// Check for the integer request code originally supplied to startResolutionForResult().
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        displayLocation();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        displayLocationSettingsRequest(mGoogleApiClient);//keep asking if imp or do whatever
+                        break;
+                }
+                break;
+        }
     }
 
     public  boolean isNetworkAvailable() {
@@ -317,6 +387,21 @@ public class SendMessages extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        displayLocation();
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
 }
 
 

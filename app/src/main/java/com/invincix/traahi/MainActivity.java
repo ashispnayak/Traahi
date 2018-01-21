@@ -463,6 +463,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 volunteerStatus = (String) dataSnapshot.getValue();
+                if(volunteerStatus == "Yes" && latitude !=null && longitude != null){
+                    volMainDatabase.child("Profile").child("Location").child("Lat").setValue(latitude);
+                    volMainDatabase.child("Profile").child("Location").child("Long").setValue(longitude);
+                }
 
             }
 

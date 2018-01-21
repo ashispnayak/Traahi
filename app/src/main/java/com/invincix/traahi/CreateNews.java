@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -87,7 +88,8 @@ public class CreateNews extends AppCompatActivity {
         submitPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (postImg.getDrawable() != null && postDesc.getText() != null) {
+                final String post = postDesc.getText().toString();
+                if (mainUri != null && !post.equals("")) {
                     uploadProg.setMessage("Uploading...");
                     uploadProg.show();
 
@@ -96,7 +98,7 @@ public class CreateNews extends AppCompatActivity {
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             String url = taskSnapshot.getDownloadUrl().toString();
                             submissionDB.child("picUrl").setValue(url);
-                            submissionDB.child("postDesc").setValue(postDesc.getText().toString());
+                            submissionDB.child("postDesc").setValue(post);
 
                             Toast.makeText(getApplicationContext(), "Upload Success", Toast.LENGTH_LONG).show();
                             uploadProg.dismiss();
@@ -112,11 +114,11 @@ public class CreateNews extends AppCompatActivity {
                     });
                 }
                 else{
-                    if(postImg.getDrawable() == null){
+                    if(mainUri == null){
                         Toast.makeText(getApplicationContext(),"No image provided...",Toast.LENGTH_SHORT).show();
                     }
-                    else if(postDesc.getText() == null){
-                        postDesc.setError("Required");
+                    else if(TextUtils.isEmpty(post)){
+                        Toast.makeText(getApplicationContext(),"Post Descripton can't be empty!",Toast.LENGTH_SHORT).show();
                     }
                 }
             }
