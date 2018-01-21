@@ -73,7 +73,31 @@
         android:id="@+id/sliderLayout"
         android:layout_below="@+id/safeTag"
         android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="#808080"
+            android:id="@+id/newsText"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:text="Traahi News"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:id="@+id/addNews"
+                android:textSize="13sp"
+                android:textColor="#fff"
+                android:text="Add News"
+                android:background="@drawable/border_background"/>
+        </LinearLayout>
 
     <com.daimajia.slider.library.SliderLayout
         android:id="@+id/slider"
@@ -176,7 +200,7 @@
                             android:layout_height="wrap_content"
                             android:paddingTop="5dp"
                             android:textAlignment="center"
-                            android:text="Traahi Volunteer"
+                            android:text="Traahi Sevak"
                             android:textColor="#808080"/>
 
                     </LinearLayout>

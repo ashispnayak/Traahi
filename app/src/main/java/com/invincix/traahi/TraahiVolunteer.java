@@ -118,7 +118,7 @@ public class TraahiVolunteer extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                if (isNetworkAvailable() && volunteer != null ) {
+                if (isNetworkAvailable() && volunteer != null && picData != null ) {
                     if (volunteerStat.equals("Yes")) {
                         volunteerDatabase.setValue("No");
                         volMainDatabase.child(ownNumber).removeValue();

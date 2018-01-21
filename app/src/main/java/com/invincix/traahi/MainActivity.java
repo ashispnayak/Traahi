@@ -36,6 +36,10 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -64,6 +68,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import com.squareup.picasso.Picasso;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
 import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
@@ -75,6 +80,7 @@ import android.support.v4.app.ActivityCompat;
 
 import android.content.SharedPreferences;
 
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,7 +93,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
-    private DatabaseReference locationDatabase, volunteerDatabase, volMainDatabase;
+    private DatabaseReference locationDatabase, volunteerDatabase, volMainDatabase, newsDatabase;
     private Location mLastLocation;
 
     // Google client to interact with Google API
@@ -104,17 +110,16 @@ public class MainActivity extends AppCompatActivity
 
     public String latitude, longitude, ownNumber, volunteerStatus;
     public static final String STORE_DATA = "MyPrefs";
-    private TextView toolbarText,texttag, logoutButton, addcontacts, safetybutton, policebutton, rtibutton, ambulancebutton, traahiVolunteer;
-    public int counter;
+    private TextView toolbarText,texttag, newsText, addcontacts, safetybutton, policebutton, rtibutton, ambulancebutton, traahiVolunteer;
     private SliderLayout imageSlider;
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private ContextMenuDialogFragment  mMenuDialogFragment;
     private FragmentManager fragmentManager;
     final Context context = this;
     private HashMap location;
     SharedPreferences sharedPref;
-    private LocationSettingsRequest mLocationSettingsRequest;
+    HashMap<String,String> url_maps;
+    private Button addNews;
 
 
 
@@ -126,7 +131,14 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
 
+        newsDatabase = FirebaseDatabase.getInstance().getReference().child("News");
 
+
+        url_maps = new HashMap<>();
+        imageSlider = (SliderLayout)findViewById(R.id.slider);
+
+
+        addNews();
 
         if (checkPlayServices()) {
 
@@ -152,37 +164,13 @@ public class MainActivity extends AppCompatActivity
         volMainDatabase = FirebaseDatabase.getInstance().getReference().child("Volunteers");
 
 
-        imageSlider = (SliderLayout)findViewById(R.id.slider);
 
 
 
-        HashMap<String,String> url_maps = new HashMap<>();
-        url_maps.put("Women Safety", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/womensafety.png?alt=media&token=cf7a2f0a-7d0d-4554-8397-2e49ff7be589");
-        url_maps.put("Emergency", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/life.png?alt=media&token=89bfb621-862d-4e44-8d07-21eebbb5b55d");
-        url_maps.put("Traahi Volunteer", "https://firebasestorage.googleapis.com/v0/b/traahiinvincix.appspot.com/o/volunteer.png?alt=media&token=c0981e52-527d-401b-8342-7cc5026c7a48");
 
 
-        for(String name : url_maps.keySet()){
-            TextSliderView textSliderView = new TextSliderView(this);
-            // initialize a SliderLayout
-            textSliderView
-                    .description(name)
-                    .image(url_maps.get(name))
-                    .setScaleType(BaseSliderView.ScaleType.Fit)
-                    .setOnSliderClickListener(this);
 
-            //add your extra information
-            textSliderView.bundle(new Bundle());
-            textSliderView.getBundle()
-                    .putString("extra",name);
 
-            imageSlider.addSlider(textSliderView);
-        }
-        imageSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
-        imageSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
-        imageSlider.setCustomAnimation(new DescriptionAnimation());
-        imageSlider.setDuration(4000);
-        imageSlider.addOnPageChangeListener(this);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -199,10 +187,12 @@ public class MainActivity extends AppCompatActivity
         TextView horText = (TextView) findViewById(R.id.horText);
         toolbarText = (TextView)  findViewById(R.id.maintoolbartext);
         texttag = (TextView) findViewById(R.id.safeTag) ;
+        newsText = (TextView) findViewById(R.id.newsText);
         Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
         horText.setTypeface(custom);
         toolbarText.setTypeface(custom);
         texttag.setTypeface(custom);
+        newsText.setTypeface(custom);
 
 
         displayLocation();
@@ -213,7 +203,14 @@ public class MainActivity extends AppCompatActivity
 
 
 
-
+        //add News
+        addNews = (Button) findViewById(R.id.addNews);
+        addNews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createDialogForNews();
+            }
+        });
 
         //add contacts
         addcontacts = (TextView) findViewById(R.id.addcontacts);
@@ -324,6 +321,101 @@ public class MainActivity extends AppCompatActivity
 
 
 
+    }
+
+    private void createDialogForNews() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Traahi News");
+        builder.setMessage("Traahi News is a way to showcase any of your heroic deeds. A post after creation will go through admin check. The best posts will be featured in the app. ");
+        builder.setPositiveButton("Create a post", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Intent intent = new Intent(MainActivity.this, CreateNews.class);
+                Bundle extras = new Bundle();
+                extras.putString("Number",ownNumber);
+                intent.putExtras(extras);
+                startActivity(intent);
+
+                dialog.cancel();
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    private void addNews() {
+        newsDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    String key =  ds.getKey();
+
+                    DatabaseReference keyReference = FirebaseDatabase.getInstance().getReference().child("News").child(key);
+                    keyReference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            HashMap value = (HashMap) dataSnapshot.getValue();
+                            if (value != null) {
+                                String title = (String) dataSnapshot.child("Title").getValue();
+                                String picUrl = (String) dataSnapshot.child("picUrl").getValue();
+                                url_maps.put(title,picUrl);
+                                loadNews();
+                            }
+
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.d("", "Read failed");
+                        }
+                    });
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+
+        });
+
+    }
+
+    private void loadNews() {
+        imageSlider.removeAllSliders();
+        for(String name : url_maps.keySet()){
+            TextSliderView textSliderView = new TextSliderView(this);
+            // initialize a SliderLayout
+            textSliderView
+                    .description(name)
+                    .image(url_maps.get(name))
+                    .setScaleType(BaseSliderView.ScaleType.Fit)
+                    .setOnSliderClickListener(this);
+
+            //add your extra information
+            textSliderView.bundle(new Bundle());
+            textSliderView.getBundle()
+                    .putString("extra",name);
+
+            imageSlider.addSlider(textSliderView);
+        }
+        imageSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
+        imageSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+        imageSlider.setCustomAnimation(new DescriptionAnimation());
+        imageSlider.setDuration(4000);
+        imageSlider.addOnPageChangeListener(this);
     }
 
 

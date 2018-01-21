@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/activity_create_news"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="#E8E8E8"
+    tools:context="com.invincix.traahi.CreateNews">
+
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/newsToolbar"
+            android:layout_width="match_parent"
+            android:background="@drawable/backround_bottom_sheet"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <TextView
+                android:id="@+id/newstoolbartext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Traahi"
+                android:textColor="#fdfdfd"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                />
+
+
+        </android.support.v7.widget.Toolbar>
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="250dp"
+            android:id="@+id/imngLayout"
+            >
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:src="@drawable/pchold"
+            android:layout_margin="10dp"
+            android:id="@+id/postImg"
+            android:scaleType="centerCrop"
+            android:layout_weight="1"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Change Image"
+                android:background="#B0B0B0"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/changePostImg" />
+        </RelativeLayout>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_margin="10dp"
+            android:layout_height="150dp"
+            android:id="@+id/pstDescription"
+            android:hint="Write Something about your post..."
+            android:background="#fff"
+            android:textColor="#000"
+            />
+        </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Submit"
+        android:textColor="#fff"
+        android:id="@+id/submitPost"
+        android:layout_margin="10dp"
+        android:background="@drawable/border_background"/>
+    </LinearLayout>
