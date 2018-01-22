@@ -66,6 +66,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     public ImageView sent, notSent;
     public String data_name;
     public ProgressDialog load;
+    private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
@@ -88,7 +89,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
             buildGoogleApiClient();
         }
 
-       load = new ProgressDialog(this);
+        load = new ProgressDialog(this);
         load.setMessage("Sending Messages...");
         load.show();
 
@@ -104,7 +105,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
 
 
         }
-         data_name = (sharedPrefLogin.getString("LOCAL_NAME", null));
+        data_name = (sharedPrefLogin.getString("LOCAL_NAME", null));
 
         sentMessage = (TextView) findViewById(R.id.sentMessageText);
         emergencyToolbarText = (TextView) findViewById(R.id.emergencytoolbartext);
@@ -125,16 +126,16 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
 
 
 
-        }
+    }
 
 
-        protected synchronized void buildGoogleApiClient() {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API).build();
-            mGoogleApiClient.connect();
-        }
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+        mGoogleApiClient.connect();
+    }
 
 
 
@@ -169,11 +170,8 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void displayLocation() {
-        Log.e("Inside","Display Location");
-
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        boolean gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if(gps_enabled) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -185,81 +183,45 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                 // for ActivityCompat#requestPermissions for more details.
                 return;
             }
-            if (isNetworkAvailable()) {
-               load.show();
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
-                    @Override
-                    public void onStatusChanged(String s, int i, Bundle bundle) {
-                    }
+            mLastLocation = LocationServices.FusedLocationApi
+                    .getLastLocation(mGoogleApiClient);
 
-                    @Override
-                    public void onProviderEnabled(String s) {
-                    }
+            if (mLastLocation != null) {
+                latitude = String.valueOf(mLastLocation.getLatitude());
+                longitude = String.valueOf(mLastLocation.getLongitude());
+                Log.e("Latitude", String.valueOf(latitude));
+                SharedPreferences sharedPref = getSharedPreferences(MainActivity.STORE_DATA, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("LATITUDE_SAVE", latitude);
+                editor.putString("LONGITUDE_SAVE", longitude);
+                editor.apply();
 
-                    @Override
-                    public void onProviderDisabled(String s) {
+                if (isNetworkAvailable() && longitude != " " && latitude != " " && data_name != null ) {
 
-                    }
-
-                    @Override
-                    public void onLocationChanged(final Location location) {
-
-                    }
-                });
-                Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (myLocation == null) {
-
-                    sent.setVisibility(View.GONE);
-                    notSent.setVisibility(View.VISIBLE);
-                    displayLocation();
-
+                    new SendMessageWithTouch().execute(data_phone_number[0], data_phone_number[1], data_phone_number[2], data_phone_number[3], data_phone_number[4], data_phone_number[5], data_phone_number[6], data_phone_number[7], data_name, latitude, longitude);
 
                 } else {
-                    myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    longitude = String.valueOf(myLocation.getLongitude());
-                    latitude = String.valueOf(myLocation.getLatitude());
-                    Log.e("longitude", longitude);
-
-                    if (isNetworkAvailable() && longitude != " " && latitude != " " && data_name != null ) {
-                                sent.setVisibility(View.VISIBLE);
-                                notSent.setVisibility(View.GONE);
-                                sentMessage.setText("Emergency Messages Have Been Sent...");
-                               load.dismiss();
-                                sendNotifications();
-                                new SendMessageWithTouch().execute(data_phone_number[0], data_phone_number[1], data_phone_number[2], data_phone_number[3], data_phone_number[4], data_phone_number[5], data_phone_number[6], data_phone_number[7], data_name, latitude, longitude);
-                                Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();
-
-                    } else {
-                        produceSnackBar();
-
-                    }
-
+                    produceSnackBar();
 
                 }
+
+
+
+
+
+
             } else {
-                produceSnackBar();
+                //  displayLocationSettingsRequest(getApplicationContext());
+
+                Log.e("Location not retrieved", "Turn on your location");
             }
         }
         else{
-            load.dismiss();
             displayLocationSettingsRequest(mGoogleApiClient);
-
         }
 
+    }
 
-    }
-    private void produceSnackBar(){
-      
-        Snackbar.make(findViewById(R.id.activity_send_messages), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Retry", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                    displayLocation();
-                    }
-                })
-                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                .show();
-    }
 
     public  void  displayLocationSettingsRequest(GoogleApiClient mGoogleApiClient) {
 
@@ -318,6 +280,20 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                 break;
         }
     }
+    private void produceSnackBar(){
+        load.dismiss();
+
+        Snackbar.make(findViewById(R.id.activity_send_messages), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Retry", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        displayLocation();
+                    }
+                })
+                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                .show();
+    }
+
 
     public  boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -368,6 +344,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                         Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
                         jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
                         scanner.close();
+                        Toast.makeText(getApplicationContext(),"Notifications Sent",Toast.LENGTH_SHORT).show();
                     }
                     else {
                         Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
@@ -402,120 +379,128 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-}
+
+    class SendMessageWithTouch extends AsyncTask<String, Void, String> {
 
 
+        private static final String TAG = "PhoneNumbers";
+        int responseCode;
+        String responseBody;
+        private String JsonResponse;
 
-class SendMessageWithTouch extends AsyncTask<String, Void, String> {
-
-
-    private static final String TAG = "PhoneNumbers";
-    int responseCode;
-    String responseBody;
-    private String JsonResponse;
-
-    protected void onPreExecute() {
+        protected void onPreExecute() {
 
 
-    }
+        }
 
-    @Override
-    protected String doInBackground(String... params) {
-        String data_phone_number_1 = params[0];
-        String data_phone_number_2 = params[1];
-        String data_phone_number_3 = params[2];
-        String data_phone_number_4 = params[3];
-        String data_phone_number_5 = params[4];
-        String data_phone_number_6 = params[5];
-        String data_phone_number_7 = params[6];
-        String data_phone_number_8 = params[7];
+        @Override
+        protected String doInBackground(String... params) {
+            String data_phone_number_1 = params[0];
+            String data_phone_number_2 = params[1];
+            String data_phone_number_3 = params[2];
+            String data_phone_number_4 = params[3];
+            String data_phone_number_5 = params[4];
+            String data_phone_number_6 = params[5];
+            String data_phone_number_7 = params[6];
+            String data_phone_number_8 = params[7];
 
-        String data_name = params[8];
-        String data_latitude = params[9];
-        String data_longitude = params[10];
-        String mobiles = data_phone_number_1 + "," + data_phone_number_2 + "," + data_phone_number_3 + "," + data_phone_number_4 + "," + data_phone_number_5 + "," + data_phone_number_6 + "," + data_phone_number_7 + "," + data_phone_number_8;
-        String message = "I " + data_name + " in trouble at https://maps.google.com/maps?q=" + data_latitude + "," + data_longitude + " Need urgent help and attention.";
-        String authkey = "175066AfkBDqjLjK6e59be06c7";
-        String encoded_message = URLEncoder.encode(message);
+            String data_name = params[8];
+            String data_latitude = params[9];
+            String data_longitude = params[10];
+            String mobiles = data_phone_number_1 + "," + data_phone_number_2 + "," + data_phone_number_3 + "," + data_phone_number_4 + "," + data_phone_number_5 + "," + data_phone_number_6 + "," + data_phone_number_7 + "," + data_phone_number_8;
+            String message = "I " + data_name + " in trouble at https://maps.google.com/maps?q=" + data_latitude + "," + data_longitude + " Need urgent help and attention.";
+            String authkey = "175066AfkBDqjLjK6e59be06c7";
+            String encoded_message = URLEncoder.encode(message);
 
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
 
-        try {
-            URL url = new URL("https://control.msg91.com/api/sendhttp.php?authkey=" + authkey + "&mobiles=" + mobiles + "&message=" + encoded_message + "&sender=SAVEME&route=4&country=0");
-            urlConnection = (HttpURLConnection) url.openConnection();
+            try {
+                URL url = new URL("https://control.msg91.com/api/sendhttp.php?authkey=" + authkey + "&mobiles=" + mobiles + "&message=" + encoded_message + "&sender=SAVEME&route=4&country=0");
+                urlConnection = (HttpURLConnection) url.openConnection();
 
 //set headers
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Content-Type", "application/json");
-            urlConnection.connect();
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setRequestProperty("Content-Type", "application/json");
+                urlConnection.connect();
 //0
 //get response code
-            responseCode = urlConnection.getResponseCode();
-            responseBody = urlConnection.getResponseMessage();
+                responseCode = urlConnection.getResponseCode();
+                responseBody = urlConnection.getResponseMessage();
 
-            InputStream inputStream = urlConnection.getInputStream();
+                InputStream inputStream = urlConnection.getInputStream();
 //input stream
-            StringBuilder buffer = new StringBuilder();
-            if (inputStream == null) {
-                // Nothing to do.
-                //  android.util.Log.e(TAG, "InputStream Is Null");
-                return null;
+                StringBuilder buffer = new StringBuilder();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    //  android.util.Log.e(TAG, "InputStream Is Null");
+                    return null;
 
-            }
-            reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                }
+                reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
-            String inputLine;
-            while ((inputLine = reader.readLine()) != null)
-                buffer.append(inputLine).append("\n");
+                String inputLine;
+                while ((inputLine = reader.readLine()) != null)
+                    buffer.append(inputLine).append("\n");
 
-            if (buffer.length() == 0) {
-                //android.util.Log.e(TAG, "Stream was empty. No point in parsing.");
-                return null;
-            } else {
+                if (buffer.length() == 0) {
+                    //android.util.Log.e(TAG, "Stream was empty. No point in parsing.");
+                    return null;
+                } else {
 
-                JsonResponse = buffer.toString();
-//response data
-                //android.util.Log.i(TAG, "doInBackGround() " + JsonResponse);
-                return JsonResponse;
-            }
+                    JsonResponse = buffer.toString();
+                    //android.util.Log.i(TAG, "doInBackGround() " + JsonResponse);
+                    return JsonResponse;
+                }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final IOException e) {
-                    android.util.Log.e(TAG, "Error closing stream", e);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        android.util.Log.e(TAG, "Error closing stream", e);
+                    }
                 }
             }
+            return null;
         }
-        return null;
+
+        protected void onPostExecute(String data) {
+
+            //android.util.Log.i(TAG, "no return");
+            if (data == null) {
+                android.util.Log.e(TAG, "Error Null");
+                sent.setVisibility(View.GONE);
+                notSent.setVisibility(View.VISIBLE);
+                sendNotifications();
+            }
+
+
+            if (responseCode == 200) {
+
+                android.util.Log.i(TAG, "Response Code = 200.... " + data);
+                sent.setVisibility(View.VISIBLE);
+                notSent.setVisibility(View.GONE);
+                sentMessage.setText("Emergency Messages Have Been Sent...");
+                load.dismiss();
+                Log.d(TAG, "Messages Sent");
+                Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();
+                sendNotifications();
+
+
+
+            }
+
+        }
+
+
     }
-
-    protected void onPostExecute(String data) {
-
-        //android.util.Log.i(TAG, "no return");
-        if (data == null) {
-
-            android.util.Log.e(TAG, "Error Null");
-        }
-
-
-        if (responseCode == 200) {
-
-            android.util.Log.i(TAG, "Response Code = 200.... " + data);
-
-            Log.d(TAG, "Messages Sent");
-
-
-        }
-
-    }
-
-
 }
+
+
+

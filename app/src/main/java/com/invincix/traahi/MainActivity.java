@@ -459,22 +459,7 @@ public class MainActivity extends AppCompatActivity
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        volunteerDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                volunteerStatus = (String) dataSnapshot.getValue();
-                if(volunteerStatus == "Yes" && latitude !=null && longitude != null){
-                    volMainDatabase.child("Profile").child("Location").child("Lat").setValue(latitude);
-                    volMainDatabase.child("Profile").child("Location").child("Long").setValue(longitude);
-                }
 
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
         locationDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -563,6 +548,8 @@ public class MainActivity extends AppCompatActivity
                 editor.apply();
                 locationDatabase.child("Lat").setValue(latitude);
                 locationDatabase.child("Long").setValue(longitude);
+                volMainDatabase.child(ownNumber).child("Profile").child("Location").child("Lat").setValue(latitude);
+                volMainDatabase.child(ownNumber).child("Profile").child("Location").child("Long").setValue(longitude);
 
 
 
@@ -699,6 +686,7 @@ public class MainActivity extends AppCompatActivity
         // Once connected with google api, get the location
         displayLocation();
     }
+
 
     @Override
     public void onConnectionSuspended(int arg0) {
