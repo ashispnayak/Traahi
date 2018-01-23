@@ -285,7 +285,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         // check if all permissions are granted
                         if (report.areAllPermissionsGranted()) {
-                            if(validation_number(edittext_phone.getText().toString())) {
+
                                 if (isNetworkAvailable()) {
                                     newtonCradleLoading.setVisibility(View.VISIBLE);
                                     phone_number = edittext_phone.getText().toString();
@@ -307,7 +307,7 @@ public class LoginActivity extends AppCompatActivity {
                                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                                             .show();
                                 }
-                            }
+
                             Toast.makeText(getApplicationContext(), "All permissions are granted!", Toast.LENGTH_SHORT).show();
                         }
 
@@ -360,21 +360,6 @@ public class LoginActivity extends AppCompatActivity {
         Uri uri = Uri.fromParts("package", getPackageName(), null);
         intent.setData(uri);
         startActivityForResult(intent, 101);
-    }
-
-    private boolean validation_number(String data_valid_number) {
-        boolean valid = true;
-        if (data_valid_number.length() != 10) {
-            edittext_phone.setError("Invalid Number");
-            valid = false;
-
-
-        } else {
-        }
-
-
-
-        return valid;
     }
 
 

@@ -1,10 +1,12 @@
 package com.invincix.traahi;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -22,10 +24,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class VictimLocation extends AppCompatActivity implements OnMapReadyCallback {
+public class VictimLocation extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private GoogleMap mMap;
     private Marker mMarker;
-    private String lat, lng;
+    private String lat, lng,name,number;
     private LatLng location;
     private Button victimDirection;
 
@@ -38,6 +40,8 @@ public class VictimLocation extends AppCompatActivity implements OnMapReadyCallb
         Bundle extras = intent.getExtras();
         lat = extras.getString("lat");
         lng = extras.getString("lng");
+        name = extras.getString("name");
+        number = extras.getString("phoneNumber");
         final double latitude = Double.parseDouble(lat);
         final double longitude = Double.parseDouble(lng);
         location = new LatLng(latitude,longitude);
@@ -86,13 +90,40 @@ public class VictimLocation extends AppCompatActivity implements OnMapReadyCallb
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.clear();
         mMarker = null;
-
+        mMap.setOnMarkerClickListener( this);
         mMarker = mMap.addMarker(new MarkerOptions().position(location).title("Victim's Location").anchor(0.5f, .05f));
         mMarker.hideInfoWindow();
+
 
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        mMarker.hideInfoWindow();
+        createDialogForDetails();
+        return true;
+    }
+
+    private void createDialogForDetails() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(VictimLocation.this);
+            builder.setTitle("Victim Details");
+        String name_victim = "Victim's Name: " + name;
+        String number_victim = "Victim's Number: " + number;
+        builder.setMessage(name_victim +"\n"+ number_victim );
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    dialog.cancel();
+
+                }
+            });
+
+            builder.show();
 
     }
 }

@@ -5,11 +5,11 @@ package com.invincix.traahi;
  */
 
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.onesignal.OSNotificationDisplayedResult;
-import com.onesignal.OSNotificationPayload;
 import com.onesignal.NotificationExtenderService;
 import com.onesignal.OSNotificationReceivedResult;
 
@@ -29,7 +29,9 @@ public class OnNotificationsRecieved extends NotificationExtenderService {
             @Override
             public NotificationCompat.Builder extend(NotificationCompat.Builder builder) {
                 // Sets the background notification color to Green on Android 5.0+ devices.
-                builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.large_notification)).setContentTitle("Traahi Volunteer");
+                builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.large_notification)).setContentTitle("Traahi Sevak");
+                builder.setSound( Uri.parse("android.resource://"
+                        + getPackageName() + "/" + R.raw.onesignal_default_sound));
                 return builder.setColor(new BigInteger("FF00FF00", 16).intValue());
             }
         };

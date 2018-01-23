@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity
 
     public String latitude, longitude, ownNumber, volunteerStatus;
     public static final String STORE_DATA = "MyPrefs";
-    private TextView toolbarText,texttag, newsText, addcontacts, safetybutton, policebutton, rtibutton, ambulancebutton, traahiVolunteer;
+    private TextView toolbarText,texttag, newsText, addcontacts, safetybutton, policebutton,  ambulancebutton, traahiVolunteer;
     private SliderLayout imageSlider;
     private FirebaseAuth mAuth;
     private ContextMenuDialogFragment  mMenuDialogFragment;
@@ -303,16 +303,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        //rti process
-        rtibutton = (TextView) findViewById(R.id.rtibutton);
-        rtibutton.setTypeface(typeface);
-        rtibutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               Toast.makeText(getApplicationContext(),"Under Development....",Toast.LENGTH_SHORT).show();
-
-            }
-        });
 
 
         //Retrieve Datas
@@ -465,6 +455,17 @@ public class MainActivity extends AppCompatActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 location = (HashMap) dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        volunteerDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                volunteerStatus = (String) dataSnapshot.getValue();
             }
 
             @Override

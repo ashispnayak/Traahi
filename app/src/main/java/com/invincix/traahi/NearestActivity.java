@@ -285,10 +285,10 @@ public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCa
 
 
                 if(searchType.equals("police")) {
+                    markerIcon.setTextColor(Color.parseColor("#654321"));
                     mMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + "~" + vicinity).anchor(0.5f, .05f).icon(BitmapDescriptorFactory.fromBitmap(markerIcon.getDrawingCache())));
                 }
                 else if(searchType.equals("hospital")){
-                    markerIcon.setTextColor(Color.parseColor("#ffb6c1"));
                     mMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(placeName + "~" + vicinity).anchor(0.5f, .05f).icon(BitmapDescriptorFactory.fromBitmap(markerIcon.getDrawingCache())));
                 }
                 dropPinEffect(mMarker);
@@ -312,6 +312,8 @@ public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCa
             final String placeName = titlepart[0];
             String placeAddress = titlepart[1];
             String placeContact = " ";
+            LatLng latln = new LatLng(latitude,longitude);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latln));
 
 
             Log.e("clicked","marker");

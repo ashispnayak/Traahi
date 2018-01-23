@@ -23,6 +23,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -42,6 +43,12 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,6 +58,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Scanner;
 
 import static com.invincix.traahi.MainActivity.REQUEST_CHECK_SETTINGS;
@@ -64,11 +73,13 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     String[] data_phone_number=new String[8];
     public TextView sentMessage, emergencyToolbarText;
     public ImageView sent, notSent;
-    public String data_name;
+    public String data_name, ownNumber, date;
+
     public ProgressDialog load;
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
+    private DatabaseReference counterDB;
 
 
 
@@ -89,6 +100,8 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
             buildGoogleApiClient();
         }
 
+
+
         load = new ProgressDialog(this);
         load.setMessage("Sending Messages...");
         load.show();
@@ -106,6 +119,12 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
 
         }
         data_name = (sharedPrefLogin.getString("LOCAL_NAME", null));
+        ownNumber = (sharedPrefLogin.getString("LOCAL_OWN_NUMBER", null));
+
+        counterDB = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("Limit");
+
+
+
 
         sentMessage = (TextView) findViewById(R.id.sentMessageText);
         emergencyToolbarText = (TextView) findViewById(R.id.emergencytoolbartext);
@@ -167,6 +186,12 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     protected void onResume() {
         super.onResume();
         checkPlayServices();
+    }
+    private String getDate(long time) {
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(time);
+        String date = DateFormat.format("dd-MM-yyyy", cal).toString();
+        return date;
     }
 
     private void displayLocation() {
@@ -298,6 +323,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     public  boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        counterDB.child("TimeStamp").setValue(ServerValue.TIMESTAMP);
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
@@ -322,7 +348,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                     String strJsonBody = "{"
                             +   "\"app_id\": \"833c1a76-5059-44ad-9cff-2a7909cc027d\","
                             +   "\"filters\": [{\"field\": \"tag\", \"key\": \"isaVolunteer\", \"relation\": \"=\", \"value\": \"Yes\"},{\"field\": \"location\", \"radius\": \"10000\",\"lat\": \"" +latitude+ "\",\"long\": \"" +longitude+"\"}],"
-                            +   "\"data\": {\"lat\": \""+latitude+"\",\"long\": \""+longitude+"\",\"activity\":\"VictimLocation\"},"
+                            +   "\"data\": {\"lat\": \""+latitude+"\",\"long\": \""+longitude+"\",\"name\": \""+data_name+"\",\"number\": \""+ownNumber+"\",\"activity\":\"VictimLocation\"},"
                             +   "\"contents\": {\"en\": \"Help! Someone is in danger. Get the location\"}"
                             + "}";
 
@@ -344,7 +370,6 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                         Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
                         jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
                         scanner.close();
-                        Toast.makeText(getApplicationContext(),"Notifications Sent",Toast.LENGTH_SHORT).show();
                     }
                     else {
                         Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");

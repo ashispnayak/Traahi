@@ -28,7 +28,7 @@ public class OnNotificationOpened implements OneSignal.NotificationOpenedHandler
     public void notificationOpened(OSNotificationOpenResult result) {
         OSNotificationAction.ActionType actionType = result.action.type;
         JSONObject data = result.notification.payload.additionalData;
-        String activityToBeOpened,lat,lng;
+        String activityToBeOpened,lat,lng,name,number;
         //While sending a Push notification from OneSignal dashboard
         // you can send an addtional data named "activityToBeOpened" and retrieve the value of it and do necessary operation
         //If key is "activityToBeOpened" and value is "AnotherActivity", then when a user clicks
@@ -39,11 +39,15 @@ public class OnNotificationOpened implements OneSignal.NotificationOpenedHandler
             activityToBeOpened = data.optString("activity", null);
            lat = data.optString("lat",null);
             lng = data.optString("long",null);
+            name = data.optString("name",null);
+            number = data.optString("number",null);
             if (activityToBeOpened != null && activityToBeOpened.equals("VictimLocation")) {
                 Intent intent = new Intent(context, VictimLocation.class);
                 Bundle extras = new Bundle();
                 extras.putString("lat",lat);
                 extras.putString("lng",lng);
+                extras.putString("name",name);
+                extras.putString("phoneNumber",number);
                 intent.putExtras(extras);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                context.startActivity(intent);

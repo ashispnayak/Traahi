@@ -15,7 +15,7 @@ android {
     defaultConfig {
         applicationId "com.invincix.traahi"
         multiDexEnabled true
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -52,7 +52,7 @@ dependencies {
     compile 'com.onesignal:OneSignal:[3.6.5, 3.99.99]'
     compile 'com.google.android.gms:play-services-location:11.0.4'
     compile 'com.google.android.gms:play-services-places:11.0.4'
-    compile 'com.android.support:multidex:1.0.0'
+    compile 'com.android.support:multidex:1.0.1'
     compile 'com.karumi:dexter:4.2.0'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.daimajia.slider:library:1.1.5@aar'
