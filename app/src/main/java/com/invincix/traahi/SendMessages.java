@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
@@ -19,8 +20,10 @@ import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -58,7 +61,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -73,7 +79,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     String[] data_phone_number=new String[8];
     public TextView sentMessage;
     public ImageView sent, notSent;
-    public String data_name, ownNumber, date;
+    public String data_name, ownNumber, date, flag;
 
     public ProgressDialog load;
     private Location mLastLocation;
@@ -100,7 +106,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
             buildGoogleApiClient();
         }
 
-
+        flag = "0";
 
         load = new ProgressDialog(this);
         load.setCanceledOnTouchOutside(false);
@@ -146,8 +152,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
             load.dismiss();
         }
         else {
-            displayLocation();
-
+                doOperation();
         }
 
 
@@ -198,7 +203,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     private String getDate(long time) {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(time);
-        String date = DateFormat.format("dd-MM-yyyy", cal).toString();
+        String date = DateFormat.format("dd/MM/yyyy", cal).toString();
         return date;
     }
 
@@ -275,7 +280,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
                         if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
-                            displayLocation();
+                            doOperation();
                         }
                         else{
                             sentMessage.setText("Please Login to use this feature");
@@ -310,7 +315,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
-                            displayLocation();
+                            doOperation();
                         }
                         else{
                             sentMessage.setText("Please Login to use this feature");
@@ -330,21 +335,98 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                 .setAction("Retry", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        displayLocation();
+                        isNetworkAvailable();
                     }
                 })
                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                 .show();
     }
 
+    public void doOperation(){
+        if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+            counterDB.child("TimeStamp").setValue(ServerValue.TIMESTAMP);
+
+            counterDB.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Long timeStamp = (Long) dataSnapshot.child("TimeStamp").getValue();
+                    String date_Count = (String) dataSnapshot.child("date").getValue();
+                    String count = (String) dataSnapshot.child("count").getValue();
+                    if (timeStamp != null) {
+                        String date = getDate(timeStamp);
+                        if(count == null && date_Count == null){
+                            flag = "1" ;
+                            counterDB.child("date").setValue(date);
+                            counterDB.child("count").setValue(String.valueOf(1));
+                            displayLocation();
+
+                        }
+                       else if (date_Count != null && count != null && flag.equals("0")) {
+                            try {
+                                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+                                Date date1 = formatter.parse(date);
+
+                                Date date2 = formatter.parse(date_Count);
+
+                                if (date1.compareTo(date2) == 0) {
+                                    int ctr = Integer.parseInt(count);
+                                    if (ctr < 3) {
+                                        ctr++;
+                                        flag = "1";
+                                        counterDB.child("count").setValue(String.valueOf(ctr));
+                                        displayLocation();
+                                    } else if (ctr >= 3) {
+                                        limitReached();
+                                        flag = "1";
+                                    }
+
+                                } else if (date1.compareTo(date2) > 0) {
+                                    counterDB.child("count").setValue(String.valueOf(1));
+                                    counterDB.child("date").setValue(date);
+                                    flag = "1";
+                                    displayLocation();
+
+
+                                }
+                            } catch (ParseException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
 
     public  boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
-            counterDB.child("TimeStamp").setValue(ServerValue.TIMESTAMP);
-        }
+
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void limitReached() {
+        load.dismiss();
+        AlertDialog.Builder builder = new AlertDialog.Builder(SendMessages.this);
+        builder.setTitle("Limit Reached");
+        builder.setMessage("Sorry for security reasons we provide only sending 3 messages per day");
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.cancel();
+
+            }
+        });
+        builder.show();
     }
 
     private void sendNotifications() {
@@ -412,7 +494,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
-            displayLocation();
+            doOperation();
         }
 
     }
@@ -536,7 +618,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                 sentMessage.setText("Help is reaching out for you soon!");
                 load.dismiss();
                 Log.d(TAG, "Messages Sent");
-                Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_SHORT).show();
                 sendNotifications();
 
 
