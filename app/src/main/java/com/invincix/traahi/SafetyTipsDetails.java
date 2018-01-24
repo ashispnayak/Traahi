@@ -23,22 +23,46 @@ public class SafetyTipsDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_safety_tips_details);
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         CardView cardView = (CardView) findViewById(R.id.card_view);
         ImageView cover = (ImageView) findViewById(R.id.cover_details);
         TextView safetitle = (TextView) findViewById(R.id.txt_safety_title);
         ImageView mainpic = (ImageView) findViewById(R.id.cover_bg_details);
         TextView details = (TextView) findViewById(R.id.txt_safety_details);
         TextView goBackButton = (TextView) findViewById(R.id.goBackButton);
+        TextView safetyTag = (TextView) findViewById(R.id.safetytag);
         Typeface typeface = Typeface.createFromAsset(getAssets(),"fonts/fontawesome-webfont.ttf");
         goBackButton.setTypeface(typeface);
+
+        final Bundle extras = intent.getExtras();
+
+        Picasso.with(this).load(extras.getString("mainpic")).into(mainpic);
+        Picasso.with(this).load(extras.getString("cover")).into(cover);
+        safetitle.setText(extras.getString("title"));
+        details.setText(extras.getString("description"));
+
+        if(extras.getString("Author")!=null) {
+            safetyTag.setText(extras.getString("Author"));
+        }
+
+
+
+
 
         goBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SafetyTipsDetails.this,SafetyTips.class);
-                startActivity(intent);
-                finish();
+                String activityOpen = extras.getString("activity");
+                if(activityOpen.equals("SafetyTips") ) {
+                    Intent intent = new Intent(SafetyTipsDetails.this, SafetyTips.class);
+                    startActivity(intent);
+                    finish();
+                }
+                else{
+                    Intent intent = new Intent(SafetyTipsDetails.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
 
@@ -64,13 +88,7 @@ public class SafetyTipsDetails extends AppCompatActivity {
         animationSet.playTogether(card_y,cover_y);
         animationSet.start();
 
-        Bundle extras = intent.getExtras();
 
-        Picasso.with(this).load(extras.getString("mainpic")).into(mainpic);
-        Picasso.with(this).load(extras.getString("cover")).into(cover);
-        safetitle.setText(extras.getString("title"));
-        details.setText(extras.getString("description"));
-        Log.e("details",extras.getString("description"));
 
 
     }

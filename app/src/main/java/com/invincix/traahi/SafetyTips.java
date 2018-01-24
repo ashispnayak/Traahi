@@ -55,10 +55,7 @@ public class SafetyTips extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        //set toolbar text
-        TextView toolbarText = (TextView) findViewById(R.id.toolbartext_tips);
-        Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
-        toolbarText.setTypeface(custom);
+
 
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Safety");
@@ -160,6 +157,7 @@ public class SafetyTips extends AppCompatActivity {
                         extras.putString("cover",coverpic);
                         extras.putString("description",descr);
                         extras.putString("mainpic",mainpic);
+                        extras.putString("activity","SafetyTips");
                         intent.putExtras(extras);
                         startActivity(intent);
                         finish();

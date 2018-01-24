@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/contactPage"
+    android:orientation="vertical"
     android:fitsSystemWindows="true"
     android:background="#E8E8E8"
     tools:context="com.invincix.traahi.AddContacts">
@@ -23,16 +24,15 @@
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <TextView
+            <ImageView
+                android:layout_width="90dp"
                 android:id="@+id/toolbartext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Traahi"
-                android:textColor="#fdfdfd"
-                android:textSize="40sp"
-                android:textStyle="bold"
+                android:layout_height="60dp"
+                android:src="@drawable/logotext"
                 android:layout_gravity="center"
                 />
+
+
 
 
         </android.support.v7.widget.Toolbar>
@@ -45,15 +45,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add Contacts"
-        android:layout_marginTop="60dp"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:textColor="#ffffff"
+        android:layout_margin="10dp"
         android:background="@drawable/border_background"
         android:id="@+id/addcontactsbutton" />
 
     <GridView
         android:layout_width="match_parent"
-        android:layout_marginTop="120dp"
         android:layout_height="match_parent"
         android:numColumns="2"
         android:gravity="center"
@@ -63,4 +62,4 @@
 
 
 
-</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

@@ -32,10 +32,20 @@
                 android:id="@+id/logintoolbartext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Login"
+                android:text="Sign In"
                 android:textColor="#000"
                 android:textSize="18sp"
                 android:layout_gravity="center"></TextView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="normal"
+                android:text="@string/fa_back"
+                android:padding="10dp"
+                android:visibility="gone"
+                android:textColor="#000"
+                android:id="@+id/backButton"
+                android:textSize="30sp"/>
 
 
 
@@ -59,11 +69,22 @@
             android:orientation="vertical"
             android:layout_height="match_parent">
 
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/ic_launcher"
+                android:id="@+id/logo"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"/>
+
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_margin="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:id="@+id/otpcardname"
                 android:visibility="gone"
                 app:cardCornerRadius="15dp"
@@ -93,23 +114,47 @@
                     android:inputType="textPersonName"
                     android:textColorHint="#e8dad9d9"
                     android:fontFamily="sans-serif"
+                    android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:hint="First Name"
+                    android:padding="5dp"
+                    android:layout_marginRight="15dp"
                     android:backgroundTint="@null"
                     android:gravity="center"
                     android:ems="13"
-                    android:id="@+id/editText_name"
+                    android:id="@+id/editText_firstName"
                     android:textColor="#000"
                     />
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#C8C8C8" />
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:textColorHint="#e8dad9d9"
+                        android:fontFamily="sans-serif"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:hint="Last Name"
+                        android:padding="5dp"
+                        android:layout_marginRight="15dp"
+                        android:backgroundTint="@null"
+                        android:gravity="center"
+                        android:ems="13"
+                        android:id="@+id/editText_lastName"
+                        android:textColor="#000"
+                        />
                 </LinearLayout>
 
-           </android.support.v7.widget.CardView>
+            </android.support.v7.widget.CardView>
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="20dp"
         android:id="@+id/phonecard"
         android:visibility="visible"
         app:cardCornerRadius="15dp"
@@ -140,7 +185,7 @@
            android:textColorHint="#e8dad9d9"
            android:fontFamily="sans-serif"
            android:background="@android:color/transparent"
-           android:hint="Phone"
+           android:hint="Mobile Number"
            android:gravity="center"
            android:ems="13"
            android:id="@+id/editText_phone"
@@ -161,8 +206,10 @@
     </android.support.v7.widget.CardView>
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_margin="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
         app:cardCornerRadius="15dp"
         android:id="@+id/otpcardcreate"
         android:visibility="gone"
@@ -180,17 +227,18 @@
                 android:padding="10dp"
                 android:id="@+id/otphead"
                 android:textColor="#fff"
-                android:background="#cf3025" >
+                android:background="#339900" >
                 </TextView>
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginLeft="30dp"
                 android:id="@+id/otpCard"
                 app:cardCornerRadius="15dp"
+                android:layout_marginBottom="20dp"
                 app:cardElevation="5dp">
         <LinearLayout
             android:orientation="horizontal"
@@ -228,18 +276,7 @@
         </LinearLayout>
             </android.support.v7.widget.CardView>
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#33CC33"
-                android:textAlignment="center"
-                android:visibility="visible"
-                android:textColor="#fff"
-                android:layout_marginTop="50dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginLeft="30dp"
-                android:text="Create Traahi Account"
-                android:id="@+id/createaccbutton"/>
+
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
@@ -251,8 +288,18 @@
                 android:textColor="#fff"
                 android:visibility="gone"
                 android:layout_margin="25dp"
-                android:text="Create Traahi Account"
+                android:text="Sign In"
                 android:id="@+id/createaccbuttonname"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#33CC33"
+                android:textAlignment="center"
+                android:visibility="gone"
+                android:textColor="#fff"
+                android:layout_margin="25dp"
+                android:text="Create Traahi Account"
+                android:id="@+id/createaccbutton"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -261,7 +308,7 @@
         android:textSize="16sp"
         android:id="@+id/SMS_Verify_text"
         android:textAlignment="center"
-        android:text="A 6-Digit Verification Code Will Be sent via SMS if the number is not verified"/>
+        android:text="A Verification Code Will Be sent via SMS if the number is not verified"/>
 
     <TextView
         android:layout_width="wrap_content"

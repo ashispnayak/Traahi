@@ -47,15 +47,14 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             android:layout_gravity="bottom">
 
-            <TextView
+            <ImageView
+                android:layout_width="90dp"
                 android:id="@+id/victimtoolbartext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Traahi"
-                android:textColor="#fdfdfd"
-                android:textSize="40sp"
+                android:layout_height="60dp"
+                android:src="@drawable/logotext"
                 android:layout_gravity="center"
                 />
+
 
 
 

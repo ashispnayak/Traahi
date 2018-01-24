@@ -71,7 +71,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     int counter;
     int check = 0;
     String[] data_phone_number=new String[8];
-    public TextView sentMessage, emergencyToolbarText;
+    public TextView sentMessage;
     public ImageView sent, notSent;
     public String data_name, ownNumber, date;
 
@@ -103,8 +103,16 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
 
 
         load = new ProgressDialog(this);
+        load.setCanceledOnTouchOutside(false);
         load.setMessage("Sending Messages...");
         load.show();
+
+        if(FirebaseAuth.getInstance().getCurrentUser() == null){
+            Intent intent = new Intent(SendMessages.this,LoginActivity.class);
+            startActivity(intent);
+            Toast.makeText(getApplicationContext(),"Please Login To Continue",Toast.LENGTH_LONG).show();
+            finish();
+        }
 
 
         //Retrieve Datas
@@ -121,17 +129,17 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
         data_name = (sharedPrefLogin.getString("LOCAL_NAME", null));
         ownNumber = (sharedPrefLogin.getString("LOCAL_OWN_NUMBER", null));
 
-        counterDB = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("Limit");
-
+        if(ownNumber != null) {
+            counterDB = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("Limit");
+        }
 
 
 
         sentMessage = (TextView) findViewById(R.id.sentMessageText);
-        emergencyToolbarText = (TextView) findViewById(R.id.emergencytoolbartext);
+
         sent = (ImageView) findViewById(R.id.sent) ;
         notSent = (ImageView) findViewById(R.id.notSent) ;
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
-        emergencyToolbarText.setTypeface(typeface);
+
 
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
             sentMessage.setText("Please Login to use this feature..");
@@ -266,7 +274,12 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                 final Status status = result.getStatus();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
-                        displayLocation();
+                        if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+                            displayLocation();
+                        }
+                        else{
+                            sentMessage.setText("Please Login to use this feature");
+                        }
                         // All location settings are satisfied. The client can initialize location
                         // requests here.
                         break;
@@ -296,7 +309,12 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        displayLocation();
+                        if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+                            displayLocation();
+                        }
+                        else{
+                            sentMessage.setText("Please Login to use this feature");
+                        }
                         break;
                     case Activity.RESULT_CANCELED:
                         displayLocationSettingsRequest(mGoogleApiClient);//keep asking if imp or do whatever
@@ -323,7 +341,9 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     public  boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        counterDB.child("TimeStamp").setValue(ServerValue.TIMESTAMP);
+        if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+            counterDB.child("TimeStamp").setValue(ServerValue.TIMESTAMP);
+        }
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
@@ -391,7 +411,9 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        displayLocation();
+        if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+            displayLocation();
+        }
 
     }
 
@@ -511,7 +533,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                 android.util.Log.i(TAG, "Response Code = 200.... " + data);
                 sent.setVisibility(View.VISIBLE);
                 notSent.setVisibility(View.GONE);
-                sentMessage.setText("Emergency Messages Have Been Sent...");
+                sentMessage.setText("Help is reaching out for you soon!");
                 load.dismiss();
                 Log.d(TAG, "Messages Sent");
                 Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_LONG).show();

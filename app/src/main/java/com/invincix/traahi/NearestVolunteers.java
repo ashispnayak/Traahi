@@ -46,7 +46,6 @@ import java.util.List;
 import static android.util.Log.d;
 
 public class NearestVolunteers extends AppCompatActivity implements OnMapReadyCallback {
-    private  TextView toolbarText;
     private GoogleMap mMap;
     private Marker mMarker;
     private  Transformation transformation;
@@ -60,6 +59,9 @@ public class NearestVolunteers extends AppCompatActivity implements OnMapReadyCa
         setContentView(R.layout.activity_nearest_volunteers);
 
         loader = new ProgressDialog(this);
+        loader.setCanceledOnTouchOutside(false);
+        loader.setMessage("Searching...");
+        loader.show();
 
 
         transformation = new RoundedTransformationBuilder()
@@ -76,9 +78,7 @@ public class NearestVolunteers extends AppCompatActivity implements OnMapReadyCa
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         assert toolbar != null;
         toolbar.bringToFront();
-        toolbarText = (TextView)  findViewById(R.id.nearestVolToolbartext);
-        Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
-        toolbarText.setTypeface(custom);
+
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nearestVolunteersMap);
@@ -127,8 +127,7 @@ public class NearestVolunteers extends AppCompatActivity implements OnMapReadyCa
     private void plotPoints() {
         mMarker = null;
         mMap.clear();
-        loader.setMessage("Searching...");
-        loader.show();
+
 
         DatabaseReference volunteerDatabase = FirebaseDatabase.getInstance().getReference().child("Volunteers");
         volunteerDatabase.addValueEventListener(new ValueEventListener() {

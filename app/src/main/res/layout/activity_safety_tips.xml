@@ -25,16 +25,15 @@
         android:background="@drawable/backround_bottom_sheet"
         android:layout_height="?attr/actionBarSize"
         app:popupTheme="@style/AppTheme.PopupOverlay">
-        <TextView
+
+        <ImageView
+            android:layout_width="90dp"
             android:id="@+id/toolbartext_tips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Traahi"
-            android:textColor="#fdfdfd"
-            android:textSize="40sp"
-            android:textStyle="bold"
+            android:layout_height="60dp"
+            android:src="@drawable/logotext"
             android:layout_gravity="center"
             />
+
 
 
     </android.support.v7.widget.Toolbar>

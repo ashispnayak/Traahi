@@ -35,7 +35,6 @@ import java.util.ArrayList;
 
 public class AddContacts extends AppCompatActivity {
 
-    private TextView toolbarText;
     public ArrayList<String>  contactnames =new ArrayList<String>();
     public ArrayList<String> contactnumbers=new ArrayList<String>();
     private static final int PICK_CONTACT = 1;
@@ -59,6 +58,7 @@ public class AddContacts extends AppCompatActivity {
         ownNumber = sharedPrefs.getString("LOCAL_OWN_NUMBER", null);
         contactDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("Contacts");
 
+        counter= (sharedPref.getInt("CONTACT_NUMBER",-1));
         counter= (sharedPref.getInt("CONTACT_NUMBER",-1));
         Log.e(String.valueOf(counter),"counter value begin");
 
@@ -181,10 +181,7 @@ public class AddContacts extends AppCompatActivity {
 
 
 
-        //set toolbar text
-        toolbarText = (TextView) findViewById(R.id.toolbartext);
-        Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
-        toolbarText.setTypeface(custom);
+
 
         //gridview
         final GridView gridView = (GridView)findViewById(R.id.grid);
@@ -209,7 +206,7 @@ Log.e("Postition: ", String.valueOf(position));
                                 AlertDialog.Builder builder = new AlertDialog.Builder(AddContacts.this);
                                 LayoutInflater inflater = (LayoutInflater) AddContacts.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                                 builder.setView(inflater.inflate(R.layout.edit_contact_dialog, null));
-                                builder.setPositiveButton("Save Edit", new DialogInterface.OnClickListener() {
+                                builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
 

@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -52,8 +53,11 @@ import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import android.content.Context;
 import android.content.Intent;
@@ -110,7 +114,7 @@ public class MainActivity extends AppCompatActivity
 
     public String latitude, longitude, ownNumber, volunteerStatus;
     public static final String STORE_DATA = "MyPrefs";
-    private TextView toolbarText,texttag, newsText, addcontacts, safetybutton, policebutton,  ambulancebutton, traahiVolunteer;
+    private TextView texttag, newsText, addcontacts, safetybutton, policebutton,  ambulancebutton, traahiVolunteer;
     private SliderLayout imageSlider;
     private FirebaseAuth mAuth;
     private ContextMenuDialogFragment  mMenuDialogFragment;
@@ -118,7 +122,7 @@ public class MainActivity extends AppCompatActivity
     final Context context = this;
     private HashMap location;
     SharedPreferences sharedPref;
-    HashMap<String,String> url_maps;
+    HashMap<String,List<String>> url_maps;
     private Button addNews;
 
 
@@ -185,12 +189,10 @@ public class MainActivity extends AppCompatActivity
 
 
         TextView horText = (TextView) findViewById(R.id.horText);
-        toolbarText = (TextView)  findViewById(R.id.maintoolbartext);
         texttag = (TextView) findViewById(R.id.safeTag) ;
         newsText = (TextView) findViewById(R.id.newsText);
         Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
         horText.setTypeface(custom);
-        toolbarText.setTypeface(custom);
         texttag.setTypeface(custom);
         newsText.setTypeface(custom);
 
@@ -355,7 +357,16 @@ public class MainActivity extends AppCompatActivity
                             if (value != null) {
                                 String title = (String) dataSnapshot.child("Title").getValue();
                                 String picUrl = (String) dataSnapshot.child("picUrl").getValue();
-                                url_maps.put(title,picUrl);
+                                String description = (String) dataSnapshot.child("Description").getValue();
+                                String coverPic = (String) dataSnapshot.child("coverPic").getValue();
+                                String author = (String) dataSnapshot.child("Author").getValue();
+                                Log.e("madarchiod",author);
+                                List<String> details = new ArrayList<>();
+                                details.add(0,picUrl);
+                                details.add(1,description);
+                                details.add(2,coverPic);
+                                details.add(3, author);
+                                url_maps.put(title,details);
                                 loadNews();
                             }
 
@@ -385,14 +396,29 @@ public class MainActivity extends AppCompatActivity
 
     private void loadNews() {
         imageSlider.removeAllSliders();
-        for(String name : url_maps.keySet()){
+        for(final String name : url_maps.keySet()){
             TextSliderView textSliderView = new TextSliderView(this);
             // initialize a SliderLayout
             textSliderView
                     .description(name)
-                    .image(url_maps.get(name))
-                    .setScaleType(BaseSliderView.ScaleType.Fit)
-                    .setOnSliderClickListener(this);
+                    .image(url_maps.get(name).get(0))
+                    .setScaleType(BaseSliderView.ScaleType.Fit);
+
+            textSliderView.setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
+                @Override
+                public void onSliderClick(BaseSliderView slider) {
+                    Intent intent = new Intent(MainActivity.this, SafetyTipsDetails.class);
+                    Bundle extras = new Bundle();
+                    extras.putString("title",name);
+                    extras.putString("description",url_maps.get(name).get(1));
+                    extras.putString("cover",url_maps.get(name).get(2));
+                    extras.putString("mainpic",url_maps.get(name).get(0));
+                    extras.putString("Author",url_maps.get(name).get(3));
+                    extras.putString("activity","MainActivity");
+                    intent.putExtras(extras);
+                    startActivity(intent);
+                }
+            });
 
             //add your extra information
             textSliderView.bundle(new Bundle());
@@ -425,7 +451,7 @@ public class MainActivity extends AppCompatActivity
         close.setResource(R.drawable.cancel);
         close.setBgColor(Color.parseColor("#f73103"));
         MenuObject profile = new MenuObject("Profile");
-        profile.setResource(R.drawable.users);
+        profile.setResource(R.drawable.ic_stat_name);
         profile.setBgColor(Color.parseColor("#f73103"));
         MenuObject share = new MenuObject("Share");
         share.setResource(R.drawable.ic_share);
@@ -466,6 +492,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 volunteerStatus = (String) dataSnapshot.getValue();
+                displayLocation();
+
             }
 
             @Override
@@ -547,10 +575,16 @@ public class MainActivity extends AppCompatActivity
                 editor.putString("LATITUDE_SAVE", latitude);
                 editor.putString("LONGITUDE_SAVE", longitude);
                 editor.apply();
+                if(volunteerStatus != null) {
+                    if (volunteerStatus.equals("Yes") && latitude != " " && longitude != " ") {
+                        volMainDatabase.child(ownNumber).child("Profile").child("Location").child("Lat").setValue(latitude);
+                        volMainDatabase.child(ownNumber).child("Profile").child("Location").child("Long").setValue(longitude);
+                    }
+                }
                 locationDatabase.child("Lat").setValue(latitude);
                 locationDatabase.child("Long").setValue(longitude);
-                volMainDatabase.child(ownNumber).child("Profile").child("Location").child("Lat").setValue(latitude);
-                volMainDatabase.child(ownNumber).child("Profile").child("Location").child("Long").setValue(longitude);
+
+
 
 
 
@@ -711,6 +745,7 @@ public class MainActivity extends AppCompatActivity
             if(isNetworkAvailable()) {
                 Intent intent = new Intent(MainActivity.this,ProfileActivity.class);
                 startActivity(intent);
+                finish();
 
             }
             else{

@@ -49,7 +49,7 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 public class TraahiVolunteer extends AppCompatActivity {
 
-    private TextView volunteerToolbarText, volunteerStatus, volunteerStatusShow;
+    private TextView volunteerStatus, volunteerStatusShow;
     private Button volunteerStatusButton, nearbyVolunteers;
     private DatabaseReference volunteerDatabase, volMainDatabase,userDB;
     private String ownNumber, volunteerStat,picData, userChoosenTask;
@@ -70,10 +70,8 @@ public class TraahiVolunteer extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        //set toolbar text
-        volunteerToolbarText = (TextView) findViewById(R.id.volunteertoolbartext);
         Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
-        volunteerToolbarText.setTypeface(custom);
+
 
         volunteerStatusShow = (TextView) findViewById(R.id.volunteerStatusShow);
 
@@ -108,6 +106,7 @@ public class TraahiVolunteer extends AppCompatActivity {
         mStorage = FirebaseStorage.getInstance().getReference().child("Profile Pictures").child(ownNumber);
 
         uploadProgress = new ProgressDialog(this);
+        uploadProgress.setCanceledOnTouchOutside(false);
 
 
 
@@ -118,7 +117,7 @@ public class TraahiVolunteer extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                if (isNetworkAvailable() && volunteer != null && picData != null ) {
+                if (isNetworkAvailable() && volunteer != null ) {
                     if (volunteerStat.equals("Yes")) {
                         createDialogforOptOut();
 

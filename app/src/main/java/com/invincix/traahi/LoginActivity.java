@@ -53,7 +53,7 @@ import java.util.List;
 public class LoginActivity extends AppCompatActivity {
 
 
-    private TextView smsverify,termstext,otptext,phonetext,nametext,logintoolbartext;
+    private TextView smsverify,termstext,otptext,phonetext,nametext,logintoolbartext, goBack;
     private CardView otpcardname,otpcardcreate,phonecard;
     private static final String TAG = "PhoneLogin";
     private boolean mVerificationInProgress = false;
@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Button signin,createacc,createaccname;
     private DatabaseReference loginDatabase, contactDatabase;
-    private EditText edittext_phone, edittext_otp, edittext_name;
+    private EditText edittext_phone, edittext_otp, edittext_firstName, edittext_lastName;
     private String phone_number;
     private PhoneAuthCredential cred;
     public static final String STORE_DATA_NAME = "MyPref";
@@ -83,10 +83,12 @@ public class LoginActivity extends AppCompatActivity {
         otptext = (TextView) findViewById(R.id.textView_name_OTP);
         phonetext = (TextView) findViewById(R.id.textView_phone_LogIn);
         nametext = (TextView) findViewById(R.id.textView_name_LogIn);
+        goBack = (TextView) findViewById(R.id.backButton);
         logintoolbartext = (TextView) findViewById(R.id.logintoolbartext) ;
         edittext_phone = (EditText) findViewById(R.id.editText_phone);
         edittext_otp = (EditText) findViewById(R.id.editText_otp);
-        edittext_name = (EditText) findViewById(R.id.editText_name);
+        edittext_firstName = (EditText) findViewById(R.id.editText_firstName);
+        edittext_lastName = (EditText) findViewById(R.id.editText_lastName);
         otpcardname = (CardView) findViewById(R.id.otpcardname);
         otpcardcreate = (CardView) findViewById(R.id.otpcardcreate);
         phonecard = (CardView) findViewById(R.id.phonecard);
@@ -98,6 +100,7 @@ public class LoginActivity extends AppCompatActivity {
         otptext.setTypeface(typeface);
         nametext.setTypeface(typeface);
         phonetext.setTypeface(typeface);
+        goBack.setTypeface(typeface);
         otptext.setText("\uf084");
         phonetext.setText("\uf10b");
 
@@ -116,14 +119,18 @@ public class LoginActivity extends AppCompatActivity {
                 cred = credential;
                 phonecard.setVisibility(View.GONE);
                 smsverify.setVisibility(View.GONE);
+                goBack.setVisibility(View.VISIBLE);
 
-                loginDatabase.child(phone_number).child("Profile").child("firstName").addValueEventListener(new ValueEventListener() {
+                loginDatabase.child(phone_number).child("Profile").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String value = (String) dataSnapshot.getValue();
+                        String fvalue = (String) dataSnapshot.child("firstName").getValue();
+                        String lvalue = (String) dataSnapshot.child("lastName").getValue();
+                        String value = fvalue+" "+lvalue;
 
-                        if (value!=null)
+                        if (fvalue!=null && lvalue != null)
                         {
+
                             newtonCradleLoading.setVisibility(View.VISIBLE);
                             Log.e("Name: ",value);
                             userName = value;
@@ -134,6 +141,7 @@ public class LoginActivity extends AppCompatActivity {
                             edittext_otp.setEnabled(false);
                             otpcardname.setVisibility(View.VISIBLE);
                             createaccname.setVisibility(View.VISIBLE);
+                            createacc.setVisibility(View.GONE);
                             otpcardcreate.setVisibility(View.VISIBLE);
                             createacc.setVisibility(View.GONE);
                             termstext.setVisibility(View.VISIBLE);
@@ -174,19 +182,19 @@ public class LoginActivity extends AppCompatActivity {
                                    final PhoneAuthProvider.ForceResendingToken token) {
 
 
-                loginDatabase.child(phone_number).child("Profile").child("firstName").addValueEventListener(new ValueEventListener() {
+                loginDatabase.child(phone_number).child("Profile").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String value = (String) dataSnapshot.getValue();
+                        String fvalue = (String) dataSnapshot.child("firstName").getValue();
+                        String lvalue = (String) dataSnapshot.child("lastName").getValue();
 
-                        if (value != null) {
-                            edittext_name.setText(value);
+
+                        if (fvalue != null && lvalue != null) {
+                            edittext_firstName.setText(fvalue);
+                            edittext_lastName.setText(lvalue);
                             createacc.setText("Sign In");
-                            newtonCradleLoading.setVisibility(View.GONE);
-                        } else {
 
                         }
-
 
                     }
                     @Override
@@ -205,6 +213,9 @@ public class LoginActivity extends AppCompatActivity {
                 termstext.setVisibility(View.VISIBLE);
                 mVerificationId = verificationId;
                 mResendToken = token;
+                createacc.setVisibility(View.VISIBLE);
+                newtonCradleLoading.setVisibility(View.GONE);
+                goBack.setVisibility(View.VISIBLE);
 
                 logintoolbartext.setText("Verify");
 
@@ -219,21 +230,38 @@ public class LoginActivity extends AppCompatActivity {
                 checkPermissions();
 
 
-
-
                 }
 
 
+        });
+
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                phonecard.setVisibility(View.VISIBLE);
+                otpcardcreate.setVisibility(View.GONE);
+                otpcardname.setVisibility(View.GONE);
+                smsverify.setVisibility(View.VISIBLE);
+                termstext.setVisibility(View.GONE);
+                createacc.setVisibility(View.GONE);
+                createaccname.setVisibility(View.GONE);
+                newtonCradleLoading.setVisibility(View.GONE);
+                goBack.setVisibility(View.GONE);
+
+                logintoolbartext.setText("Verify");
+
+            }
         });
 
         createaccname.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(validation_signup(edittext_name.getText().toString())) {
+                if(validation_signup(edittext_firstName.getText().toString(),edittext_lastName.getText().toString())) {
                     newtonCradleLoading.setVisibility(View.VISIBLE);
-                    loginDatabase.child(phone_number).child("Profile").child("firstName").setValue(edittext_name.getText().toString());
-                    userName = edittext_name.getText().toString();
+                    loginDatabase.child(phone_number).child("Profile").child("firstName").setValue(edittext_firstName.getText().toString());
+                    loginDatabase.child(phone_number).child("Profile").child("lastName").setValue(edittext_lastName.getText().toString());
+                    userName = edittext_firstName.getText().toString()+" "+edittext_lastName.getText().toString();
                     signInWithPhoneAuthCredential(cred);
                 }
                 else{
@@ -253,10 +281,10 @@ public class LoginActivity extends AppCompatActivity {
                     newtonCradleLoading.setVisibility(View.VISIBLE);
                     final PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, edittext_otp.getText().toString());
 
-                            loginDatabase.child(phone_number).child("Profile").child("firstName").setValue(edittext_name.getText().toString());
-                            userName = edittext_name.getText().toString();
+                            loginDatabase.child(phone_number).child("Profile").child("firstName").setValue(edittext_firstName.getText().toString());
+                    loginDatabase.child(phone_number).child("Profile").child("lastName").setValue(edittext_lastName.getText().toString());
+                    userName = edittext_firstName.getText().toString()+" "+edittext_lastName.getText().toString();
                             signInWithPhoneAuthCredential(credential);
-
 
                         }
                 else{
@@ -285,12 +313,13 @@ public class LoginActivity extends AppCompatActivity {
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         // check if all permissions are granted
                         if (report.areAllPermissionsGranted()) {
-
+                            if(validation_number(edittext_phone.getText().toString())) {
                                 if (isNetworkAvailable()) {
                                     newtonCradleLoading.setVisibility(View.VISIBLE);
                                     phone_number = edittext_phone.getText().toString();
+                                    String firebase_num = "+91"+phone_number;
                                     PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                                            edittext_phone.getText().toString(),
+                                            firebase_num,
                                             60,
                                             java.util.concurrent.TimeUnit.SECONDS,
                                             LoginActivity.this,
@@ -307,8 +336,7 @@ public class LoginActivity extends AppCompatActivity {
                                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                                             .show();
                                 }
-
-                            Toast.makeText(getApplicationContext(), "All permissions are granted!", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         // check for permanent denial of any permission
@@ -362,6 +390,21 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(intent, 101);
     }
 
+    private boolean validation_number(String data_valid_number) {
+        boolean valid = true;
+        if (data_valid_number.length() != 10) {
+            edittext_phone.setError("Invalid Number");
+            valid = false;
+
+
+        } else {
+        }
+
+
+
+        return valid;
+    }
+
 
 
 
@@ -374,13 +417,20 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean validation_signup_name() {
         boolean valid = true;
-        String data_name = edittext_name.getText().toString();
+        String data_fname = edittext_firstName.getText().toString();
+        String data_lname = edittext_lastName.getText().toString();
         String data_otp = edittext_otp.getText().toString();
-        if (TextUtils.isEmpty(data_name)) {
-            edittext_name.setError("Required");
+        if (TextUtils.isEmpty(data_fname)) {
+            edittext_firstName.setError("Required");
             valid = false;
         } else {
-            edittext_name.setError(null);
+            edittext_firstName.setError(null);
+        }
+        if (TextUtils.isEmpty(data_lname)) {
+            edittext_lastName.setError("Required");
+            valid = false;
+        } else {
+            edittext_lastName.setError(null);
         }
         if (TextUtils.isEmpty(data_otp)) {
             edittext_otp.setError("Required");
@@ -388,26 +438,40 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             edittext_otp.setError(null);
         }
-        if(data_name.length() > 0 && data_name.length() < 5 )
+        if(data_fname.length() < 3 )
         {
-            edittext_name.setError("Minimum 5 Characters");
+            edittext_firstName.setError("Minimum 3 Characters");
             valid = false;
         }
         else{
-            edittext_name.setError(null);
+            edittext_firstName.setError(null);
+        }
+        if(data_lname.length() < 2 )
+        {
+            edittext_lastName.setError("Minimum 2 Characters");
+            valid = false;
+        }
+        else{
+            edittext_lastName.setError(null);
         }
         return valid;
     }
 
-    private boolean validation_signup(String name) {
+    private boolean validation_signup(String fname,String lname) {
         boolean valid = true;
 
 
-        if (name.length() < 4) {
-            edittext_name.setError("Atleast 4 digits");
+        if (fname.length() < 3) {
+            edittext_firstName.setError("Atleast 3 digits");
             valid = false;
         } else {
-            edittext_name.setError(null);
+            edittext_firstName.setError(null);
+        }
+        if (lname.length() < 2) {
+            edittext_firstName.setError("Atleast 2 digits");
+            valid = false;
+        } else {
+            edittext_lastName.setError(null);
         }
         return valid;
     }

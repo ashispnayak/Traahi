@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    android:background="@drawable/backround_bottom_sheet"
+    android:background="#E8E8E8"
     tools:context="com.invincix.traahi.ProfileActivity">
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:text="Profile"
                 android:textColor="#fdfdfd"
-                android:textSize="35sp"
+                android:textSize="25sp"
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 />
@@ -50,16 +50,19 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:id="@+id/profPic"
-        android:src="@drawable/pchold"
-        android:scaleType="centerCrop"/>
+        android:src="@drawable/defaultimage"
+        android:paddingBottom="20dp"
+        android:scaleType="center"
+        android:background="#E8E8E8"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Change Profile Pic"
-            android:background="#B0B0B0"
+            android:background="@drawable/backround_bottom_sheet"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
+            android:textColor="#fff"
             android:id="@+id/changeProfPic" />
     </RelativeLayout>
 
@@ -73,6 +76,8 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@drawable/backround_bottom_sheet"
             >
 
 
@@ -80,6 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <EditText
                     android:id="@+id/firstNameEdit"
                     android:layout_width="match_parent"
@@ -134,7 +140,7 @@
         android:id="@+id/updateButton"
         android:textColor="#fff"
         android:layout_weight="1"
-        android:padding="20dp"
+        android:padding="10dp"
         android:layout_margin="20dp"
         android:background="@drawable/border_background"
         android:layout_gravity="center"/>
@@ -146,7 +152,7 @@
 
             android:id="@+id/logoutButton"
             android:textColor="#fff"
-            android:padding="20dp"
+            android:padding="10dp"
             android:layout_margin="20dp"
             android:background="@drawable/border_background"
             android:layout_gravity="center"/>

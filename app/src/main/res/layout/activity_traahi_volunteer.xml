@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:text="Traahi Sevak"
                 android:textColor="#fdfdfd"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 />
@@ -97,7 +97,7 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:paddingTop="10dp"
-                    android:text="Being a Traahi Volunteer is nothing less than being a hero! Whenever someone will be in trouble you will get a notification with the real time location of the victim where you can go, help and be a hero.\nJoin the Traahi Volunteer's Community Today and save the world because A TRAAHI VOLUNTEER TODAY IS A HERO TOMORROW."
+                    android:text="Being a Traahi Sevak is nothing less than being a hero! Whenever someone will be in trouble you will get a notification with the real time location of the victim where you can go, help and be a hero.\nJoin the Traahi Sevak's Community Today and save the world because A TRAAHI SEVAK TODAY IS A HERO TOMORROW."
                     android:textSize="20sp"
                     android:ellipsize="end"
                     android:textColor="#ffffff"
@@ -106,7 +106,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="See Nearby Volunteers"
+                    android:text="See Nearby Sevaks"
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/border_background"
                     android:textColor="#ffff"

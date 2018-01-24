@@ -81,11 +81,12 @@ public class ProfileActivity extends AppCompatActivity {
         profileToolbarText.setTypeface(custom);
 
         uploadProgress = new ProgressDialog(this);
+        uploadProgress.setCanceledOnTouchOutside(false);
         mAuth = FirebaseAuth.getInstance();
 
 
 
-        SharedPreferences sharedPrefContact = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
+        final SharedPreferences sharedPrefContact = getSharedPreferences(LoginActivity.STORE_DATA_NAME, Context.MODE_PRIVATE);
         ownNumber = sharedPrefContact.getString("LOCAL_OWN_NUMBER", null);
         profileDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(ownNumber).child("Profile");
         volMainDatabase = FirebaseDatabase.getInstance().getReference().child("Volunteers");
@@ -116,6 +117,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                     if(picUrl!=null) {
                         Picasso.with(getApplicationContext()).load(picUrl).into(profPic);
+                        profPic.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     }
 
                     firstNameEdit.setText(firstName);
@@ -169,6 +171,9 @@ public class ProfileActivity extends AppCompatActivity {
                                 SharedPreferences.Editor edit = sharedPref.edit();
                                 edit.clear();
                                 edit.apply();
+                                SharedPreferences.Editor edit1 = sharedPrefContact.edit();
+                                edit1.clear();
+                                edit1.apply();
                                 mAuth.signOut();
 
                                 Intent loginIntent = new Intent(ProfileActivity.this,LoginActivity.class);
@@ -316,8 +321,17 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed(){
+        Intent intentB = new Intent(ProfileActivity.this,MainActivity.class);
+        startActivity(intentB);
+        finish();
+    }
+
+    @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        Intent intent = new Intent(ProfileActivity.this,MainActivity.class);
+        startActivity(intent);
+        finish();
         return true;
     }
 

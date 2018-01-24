@@ -56,6 +56,7 @@ public class CreateNews extends AppCompatActivity {
         phoneNumber = extras.getString("Number");
 
         uploadProg = new ProgressDialog(this);
+        uploadProg.setCanceledOnTouchOutside(false);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.newsToolbar);
         setSupportActionBar(toolbar);
@@ -176,6 +177,7 @@ public class CreateNews extends AppCompatActivity {
             Uri uri = data.getData();
             postImg.setImageURI(null);
             postImg.setImageURI(uri);
+            postImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
             mainUri = uri;
 
 
@@ -201,6 +203,7 @@ public class CreateNews extends AppCompatActivity {
             }
 
             postImg.setImageBitmap(thumbnail);
+            postImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
             mainUri = thumbNail;
         }
     }

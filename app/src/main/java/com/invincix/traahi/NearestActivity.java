@@ -47,7 +47,7 @@ public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCa
 
     private GoogleMap mMap;
     private String latitude, longitude, searchType;
-    private TextView placename, placeaddress, placenumber, policetoolbar, markerIcon, closeButton, locationNearest, phoneNearest;
+    private TextView placename, placeaddress, placenumber, markerIcon, closeButton, locationNearest, phoneNearest;
     private Button policeDirection;
 
     private BottomSheetBehavior mBottomSheetBehaviour;
@@ -67,6 +67,7 @@ public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCa
         searchType = extras.getString("searchType");
 
         loader = new ProgressDialog(this);
+        loader.setCanceledOnTouchOutside(false);
         loader.setMessage("Searching...");
 
 
@@ -81,10 +82,7 @@ public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCa
         assert toolbar != null;
         toolbar.bringToFront();
 
-        //set toolbar text
-        policetoolbar = (TextView) findViewById(R.id.policetoolbartext) ;
-        Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
-        policetoolbar.setTypeface(custom);
+
 
         //Setting the bottom Sheet
 
@@ -123,8 +121,20 @@ public class NearestActivity extends  AppCompatActivity  implements OnMapReadyCa
 
     }
     @Override
+    public void onBackPressed(){
+        if(mBottomSheetBehaviour != null) {
+            if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_HIDDEN);
+            } else {
+               onSupportNavigateUp();
+            }
+
+        }
+    }
+    @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+
+        finish();
         return true;
     }
 

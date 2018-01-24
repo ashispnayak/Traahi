@@ -68,10 +68,7 @@ public class VictimLocation extends AppCompatActivity implements OnMapReadyCallb
         assert toolbar != null;
         toolbar.bringToFront();
 
-        //set toolbar text
-        TextView victimtoolbar = (TextView) findViewById(R.id.victimtoolbartext) ;
-        Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/toolbarfont.ttf");
-        victimtoolbar.setTypeface(custom);
+
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
