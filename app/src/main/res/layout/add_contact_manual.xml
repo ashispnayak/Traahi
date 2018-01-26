@@ -41,7 +41,6 @@
        android:layout_margin="15dp"
         android:textAllCaps="false"
         android:textColor="#fff"
-        android:fontFamily="sans-serif"
         android:text="Manual Addition"
         android:background="#f73103"
         />

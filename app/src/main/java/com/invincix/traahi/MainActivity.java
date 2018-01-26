@@ -456,15 +456,12 @@ public class MainActivity extends AppCompatActivity
         MenuObject share = new MenuObject("Share");
         share.setResource(R.drawable.ic_share);
         share.setBgColor(Color.parseColor("#f73103"));
-        MenuObject credits = new MenuObject("Credits");
-        credits.setResource(R.drawable.ic_credits);
-        credits.setBgColor(Color.parseColor("#f73103"));
+
 
 
         menuObjects.add(close);
         menuObjects.add(profile);
         menuObjects.add(share);
-        menuObjects.add(credits);
 
 
         return menuObjects;
@@ -738,9 +735,7 @@ public class MainActivity extends AppCompatActivity
                            sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Traahi");
              startActivity(Intent.createChooser(sharingIntent, "Share via "));
         }
-        else if( position == 3){
-            Toast.makeText(getApplicationContext(),"Under Development...",Toast.LENGTH_SHORT).show();
-        }
+
         else if(position  == 1){
             if(isNetworkAvailable()) {
                 Intent intent = new Intent(MainActivity.this,ProfileActivity.class);

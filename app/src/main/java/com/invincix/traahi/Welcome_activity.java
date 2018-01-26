@@ -31,7 +31,7 @@ public class Welcome_activity extends AppCompatActivity {
                     e.printStackTrace();
                 }finally{
                     if(FirebaseAuth.getInstance().getCurrentUser()==null){
-                        Intent intentc = new Intent(Welcome_activity.this,LoginActivity.class);
+                        Intent intentc = new Intent(Welcome_activity.this,IntroActivity.class);
                         startActivity(intentc);
                     }
                     else{

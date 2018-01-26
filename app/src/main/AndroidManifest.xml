@@ -30,6 +30,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.invincix.traahi.IntroActivity"
+            android:label="InroActivity" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -98,7 +100,7 @@
         <activity android:name=".TraahiVolunteer" />
         <activity android:name=".NearestVolunteers" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".CreateNews"></activity>
+        <activity android:name=".CreateNews" />
     </application>
 
 </manifest>

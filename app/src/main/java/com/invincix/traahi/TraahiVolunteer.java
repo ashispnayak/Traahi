@@ -217,7 +217,7 @@ public class TraahiVolunteer extends AppCompatActivity {
     private void createDialogforProfilePic() {
         AlertDialog.Builder builder = new AlertDialog.Builder(TraahiVolunteer.this);
         builder.setTitle("Set a Profile Picture");
-        builder.setMessage("It is recommended to set a Profile Picture being a Volunteer");
+        builder.setMessage("It is recommended to set a Profile Picture being a Traahi Sevak");
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

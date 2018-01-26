@@ -79,13 +79,14 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     String[] data_phone_number=new String[8];
     public TextView sentMessage;
     public ImageView sent, notSent;
-    public String data_name, ownNumber, date, flag;
+    public String data_name, ownNumber, date, flag, count;
 
     public ProgressDialog load;
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
     private DatabaseReference counterDB;
+
 
 
 
@@ -211,6 +212,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
         LocationManager lm = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if(gps_enabled) {
+            flag = "1";
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
@@ -280,6 +282,8 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
                         if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+
+                            flag = "0";
                             doOperation();
                         }
                         else{
@@ -315,6 +319,8 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+
+                            flag = "0";
                             doOperation();
                         }
                         else{
@@ -335,7 +341,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                 .setAction("Retry", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        isNetworkAvailable();
+                        doOperation();
                     }
                 })
                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
@@ -343,65 +349,80 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void doOperation(){
-        if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
-            counterDB.child("TimeStamp").setValue(ServerValue.TIMESTAMP);
 
-            counterDB.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Long timeStamp = (Long) dataSnapshot.child("TimeStamp").getValue();
-                    String date_Count = (String) dataSnapshot.child("date").getValue();
-                    String count = (String) dataSnapshot.child("count").getValue();
-                    if (timeStamp != null) {
-                        String date = getDate(timeStamp);
-                        if(count == null && date_Count == null){
-                            flag = "1" ;
-                            counterDB.child("date").setValue(date);
-                            counterDB.child("count").setValue(String.valueOf(1));
-                            displayLocation();
+        if(isNetworkAvailable()) {
+            LocationManager lm = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+            boolean gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            if (gps_enabled) {
 
-                        }
-                       else if (date_Count != null && count != null && flag.equals("0")) {
-                            try {
-                                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    counterDB.child("TimeStamp").setValue(ServerValue.TIMESTAMP);
 
-                                Date date1 = formatter.parse(date);
-
-                                Date date2 = formatter.parse(date_Count);
-
-                                if (date1.compareTo(date2) == 0) {
-                                    int ctr = Integer.parseInt(count);
-                                    if (ctr < 3) {
-                                        ctr++;
-                                        flag = "1";
-                                        counterDB.child("count").setValue(String.valueOf(ctr));
-                                        displayLocation();
-                                    } else if (ctr >= 3) {
-                                        limitReached();
-                                        flag = "1";
-                                    }
-
-                                } else if (date1.compareTo(date2) > 0) {
-                                    counterDB.child("count").setValue(String.valueOf(1));
-                                    counterDB.child("date").setValue(date);
+                    counterDB.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Long timeStamp = (Long) dataSnapshot.child("TimeStamp").getValue();
+                            String date_Count = (String) dataSnapshot.child("date").getValue();
+                            count = (String) dataSnapshot.child("count").getValue();
+                            if (timeStamp != null) {
+                                String date = getDate(timeStamp);
+                                if (count == null && date_Count == null && flag.equals("0")) {
                                     flag = "1";
+                                    Log.e("New","User");
+                                    counterDB.child("date").setValue(date);
+                                    counterDB.child("count").setValue(String.valueOf(1));
                                     displayLocation();
 
+                                } else if (date_Count != null && count != null && flag.equals("0")) {
+                                    try {
+                                        Log.e("Inside","Main");
+                                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
+                                        Date date1 = formatter.parse(date);
+
+                                        Date date2 = formatter.parse(date_Count);
+
+                                        if (date1.compareTo(date2) == 0) {
+                                            int ctr = Integer.parseInt(count);
+                                            if (ctr < 3) {
+                                                ctr++;
+                                                flag = "1";
+                                                counterDB.child("count").setValue(String.valueOf(ctr));
+                                                displayLocation();
+                                            } else if (ctr >= 3) {
+                                                limitReached();
+                                                flag = "1";
+                                            }
+
+                                        } else if (date1.compareTo(date2) > 0) {
+                                            counterDB.child("count").setValue(String.valueOf(1));
+                                            counterDB.child("date").setValue(date);
+                                            flag = "1";
+                                            displayLocation();
+
+
+                                        }
+                                    } catch (ParseException e1) {
+                                        e1.printStackTrace();
+                                    }
                                 }
-                            } catch (ParseException e1) {
-                                e1.printStackTrace();
                             }
+
                         }
-                    }
 
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
+            }
+            else{
+                displayLocationSettingsRequest(mGoogleApiClient);
+            }
+        }
+        else{
+            produceSnackBar();
         }
     }
 
@@ -618,6 +639,7 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
                 sentMessage.setText("Help is reaching out for you soon!");
                 load.dismiss();
                 Log.d(TAG, "Messages Sent");
+
                 Toast.makeText(getApplicationContext(), "Messages Sent", Toast.LENGTH_SHORT).show();
                 sendNotifications();
 

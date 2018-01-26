@@ -73,7 +73,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/logologin"
                 android:id="@+id/logo"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"/>
