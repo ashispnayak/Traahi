@@ -590,6 +590,16 @@ public class MainActivity extends AppCompatActivity
                 //  displayLocationSettingsRequest(getApplicationContext());
 
                 Log.e("Location not retrieved", "Turn on your location");
+                Snackbar.make(findViewById(R.id.content_main), "Location Not Retrieved", Snackbar.LENGTH_SHORT)
+                        .setAction("Retry", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                displayLocation();
+                            }
+                        })
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
+                        .show();
+
             }
         }
         else{

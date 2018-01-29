@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -54,7 +55,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Button changeProfPic, updateProf, logout;
     private DatabaseReference profileDatabase,volMainDatabase,userDB;
     private EditText firstNameEdit, lastNameEdit, phoneNumber;
-    private String ownNumber, firstName, lastName, picUrl, userChoosenTask,first_name,last_name;
+    private String ownNumber, firstName, lastName, picUrl, userChoosenTask,first_name,last_name, volunteerStatus;
     private ProgressDialog uploadProgress;
     private StorageReference mStorage;
     final Context context = this;
@@ -134,10 +135,37 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        userDB.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                volunteerStatus = (String) dataSnapshot.child("isaVolunteer").getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
         changeProfPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createDialogforProfChange();
+                if(volunteerStatus != null){
+                    createDialogforProfChange();
+                }
+                else{
+                    Snackbar.make(findViewById(R.id.activity_profile), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Ok", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                }
+                            })
+                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                            .show();
+                }
+
             }
         });
 
@@ -244,7 +272,10 @@ public class ProfileActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"Upload Success",Toast.LENGTH_LONG).show();
                         uploadProgress.dismiss();
                         String url = taskSnapshot.getDownloadUrl().toString();
-                        volMainDatabase.child(ownNumber).child("Profile").child("Profile").child("picUrl").setValue(url);
+
+                        if(volunteerStatus.equals("Yes")){
+                            volMainDatabase.child(ownNumber).child("Profile").child("Profile").child("picUrl").setValue(url);
+                        }
                         userDB.child("Profile").child("picUrl").setValue(url);
 
 
@@ -283,7 +314,10 @@ public class ProfileActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"Upload Success",Toast.LENGTH_LONG).show();
                         uploadProgress.dismiss();
                         String url = taskSnapshot.getDownloadUrl().toString();
-                        volMainDatabase.child(ownNumber).child("Profile").child("Profile").child("picUrl").setValue(url);
+
+                        if(volunteerStatus.equals("Yes")){
+                            volMainDatabase.child(ownNumber).child("Profile").child("Profile").child("picUrl").setValue(url);
+                        }
                         userDB.child("Profile").child("picUrl").setValue(url);
 
 

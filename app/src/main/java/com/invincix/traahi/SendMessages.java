@@ -253,6 +253,9 @@ public class SendMessages extends AppCompatActivity implements GoogleApiClient.C
             } else {
                 //  displayLocationSettingsRequest(getApplicationContext());
 
+                load.dismiss();
+                produceSnackBar();
+
                 Log.e("Location not retrieved", "Turn on your location");
             }
         }
